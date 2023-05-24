@@ -15,7 +15,8 @@ OBJ          = $(SRC:.c=.o)
 INCLUDE      = -I./include/ -I./include/**/
 C_FLAGS    = -Wall -Wextra -std=c99
 FAST_FLAGS   = -O3 -march=native -flto -funroll-loops -fomit-frame-pointer
-LIB_THREADS  = -lpthread -lcriterion --coverage
+LIB_THREADS  = -lpthread
+TEST_FLAGS   = -lpthread -lcriterion --coverage
 LIBS         = $(LIB_THREADS)
 
 # Targets
@@ -51,7 +52,7 @@ tests_run: fclean
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 	@printf "$(PBOLD) $(PBLUEC) RUNNING TESTS 🧪\n"
-	@$(COMPILER) -o ../zappy_server_tests $(SRC) $(C_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
+	@$(COMPILER) -o ../zappy_server_tests $(SRC) $(TEST_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 
