@@ -1,0 +1,29 @@
+name: Simple CI to check build
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Update package list
+      run: sudo apt-get update
+    - name: Run build
+      run: |
+        make
+    - name: Check
+      run: |
+        if [ -f zappy_server ] && [ -f zappy_ai ] && [ -f zappy_gui ] ; then
+          echo "Build OK"
+        else
+          echo "Build KO"
+          exit 1
+        fi

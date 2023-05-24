@@ -227,3 +227,21 @@ dkms.conf
 *.gcno
 *.gcda
 vgcore.*
+*.data
+.Test
+*.yxy
+*.log
+*.txt
+test
+
+# others
+*.o
+*.gcno
+*.gcda
+.ninja_log
+.idea
+CMakeLists.txt
+cmake-build-debug/
+test
+*.gif
+*.ninja

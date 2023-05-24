@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Check
 if user has root privilegesif [[ $EUID -ne 0 ]]; then
   echo "This script must be run as root"
