@@ -31,6 +31,11 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@$(COMPILER) -o $(NAME) $(OBJ) $(CXX_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
+	@ninja zappy_gui
+
+gen:
+	@-./install/install_ninja_fedora.sh 2> /dev/null
+	@./Script/Generate_Ninja.py
 
 clean:
 	@rm -rf $(OBJ)
@@ -61,3 +66,8 @@ debug: re
 
 %.o: %.cpp
 	@$(COMPILER) $(CXX_FLAGS) $(FAST_FLAGS) $(INCLUDE) -c $< -o $@
+
+tests_run: gen
+	@ninja test
+	@mv test zappy_gui_tests
+	@mv zappy_gui_tests ../
