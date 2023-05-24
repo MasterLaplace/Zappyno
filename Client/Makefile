@@ -15,7 +15,7 @@ OBJ          = $(SRC:.cpp=.o)
 INCLUDE      = -I./include/ -I./include/**/
 CXX_FLAGS    = -Wall -Wextra -std=c++17
 FAST_FLAGS   = -O3 -march=native -flto -funroll-loops -fomit-frame-pointer
-LIB_THREADS  = -lpthread -lcriterion --coverage
+LIB_THREADS  = -lpthread
 LIBS         = $(LIB_THREADS)
 
 # Targets

@@ -5,6 +5,39 @@
 ## Makefile
 ##
 
+all:
+	@ $(MAKE) -C Client
+	@ $(MAKE) -C GUI
+	@ $(MAKE) -C Server
+
+clean:
+	@ $(MAKE) -C Client clean
+	@ $(MAKE) -C GUI clean
+	@ $(MAKE) -C Server clean
+	@rm -f zappy_gui_tests
+	@rm -f zappy_server_tests
+	@rm -f zappy_gui
+	@rm -f zappy_server
+	@rm -f zappy_ai
+	@rm -f build.ninja
+
+fclean: clean
+	@ $(MAKE) -C Client fclean
+	@ $(MAKE) -C GUI fclean
+	@ $(MAKE) -C Server fclean
+
+tests_run:
+	@ $(MAKE) -C GUI tests_run
+	@ $(MAKE) -C Server tests_run
+
+re:
+	@ $(MAKE) -C Client re
+	@ $(MAKE) -C GUI re
+	@ $(MAKE) -C Server re
+
+.PHONY: all clean fclean re tests_run
+
+
 # Variables (do not edit)
 NO_PRINT = --no-print-directory
 
