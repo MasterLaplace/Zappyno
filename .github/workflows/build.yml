@@ -17,7 +17,7 @@ jobs:
     - name: Update package list and install SFML
       run: |
         sudo apt-get update -y
-        sudo apt-get install libsfml-dev
+        sudo apt-get install libsfml-dev -y
 
     - name: Run build
       run: |
