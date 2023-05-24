@@ -1,12 +1,12 @@
 ##
 ## EPITECH PROJECT, 2023
-## B-YEP-400-REN-4-1-zappy-tristan.bros
+## B-YEP-400-REN-4-1-zappy
 ## File description:
-## Makefile for GUI
+## Makefile for AI
 ##
 
 # Project settings
-NAME         = zappy_ai
+NAME         = ../zappy_ai
 COMPILER     = g++
 SRC_DIR      = src/
 SRC          = $(shell find $(SRC_DIR) -name '*.cpp')
@@ -25,7 +25,6 @@ $(NAME): $(OBJ)
 	@$(COMPILER) -o $(NAME) $(OBJ) $(CXX_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
-	@mv $(NAME) ../
 
 %.o: %.cpp
 	$(eval counter=$(shell echo $$(($(counter)+1))))

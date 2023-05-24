@@ -6,7 +6,7 @@
 ##
 
 # Project settings
-NAME         = zappy_server
+NAME         = ../zappy_server
 COMPILER     = gcc
 SRC_DIR      = src/
 SRC          = $(shell find $(SRC_DIR) -name '*.c')
@@ -25,7 +25,6 @@ $(NAME): $(OBJ)
 	@$(COMPILER) -o $(NAME) $(OBJ) $(C_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
-	@mv $(NAME) ../
 
 %.o: %.cpp
 	$(eval counter=$(shell echo $$(($(counter)+1))))
@@ -52,8 +51,7 @@ tests_run: fclean
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 	@printf "$(PBOLD) $(PBLUEC) RUNNING TESTS 🧪\n"
-	@$(COMPILER) -o zappy_server_tests $(SRC) $(C_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
-	@mv zappy_server_tests ../
+	@$(COMPILER) -o ../zappy_server_tests $(SRC) $(C_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 

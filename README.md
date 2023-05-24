@@ -62,19 +62,40 @@ $ ./zappy_gui [-p:"port"] [-h:"host"]
 
 ```shell
 .
-└── GUI
-    ├── includes
-    ├── obj
-    ├── scripts
-    └── src
-        ├── Core
-        ├── Engine
-        ├── Interface
-        ├── Manager
-        └── Utils
-            ├── Math
-            ├── Parser
-            └── String
+├── AI
+│   ├── Docs
+│   ├── include
+│   ├── src
+│   └── tests
+├── Docs
+├── GUI
+│   ├── Docs
+│   ├── includes
+│   ├── Install
+│   ├── obj
+│   ├── Script
+│   ├── src
+│   │   ├── Core
+│   │   ├── Engine
+│   │   ├── Interface
+│   │   ├── Manager
+│   │   └── Utils
+│   │       ├── Math
+│   │       ├── Parser
+│   │       └── String
+│   └── tests
+├── __MACOSX
+│   └── Zappy
+│       └── Docs
+└── Server
+    ├── Docs
+    ├── include
+    ├── src
+    │   ├── commands
+    │   ├── game_logic
+    │   ├── network
+    │   └── thread_logic
+    └── tests
 ```
 
 ## :wrench: More help

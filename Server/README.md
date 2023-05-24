@@ -1,19 +1,14 @@
-# ME : <p align="center">Zappyno (Client AI)</p>
+# ME : <p align="center">Zappyno (Server)</p>
 
 <p align="center">
-    <a href="https://github.com/EpitechPromo2026/B-OOP-400-REN-4-1-raytracer-guillaume.papineau/blob/main/LICENSE">
+    <a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License: MIT">
-    </a>
-    <a>
+    </a><a>
         <img src="https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge" alt="OS: Linux">
+    </a><a>
+        <img src="https://img.shields.io/badge/C-18-blue?style=for-the-badge" alt="C: 18">
     </a>
 </p>
-
-___
-## :warning: ATTENTION !!!
-## C'est en CPP, mais vous pouvez utiliser le langage que vous voulez :)
-
-___
 
 Status: in progress
 
@@ -44,8 +39,8 @@ $ cd B-YEP-400-REN-4-1-zappy-tristan.bros
 # Dependencies
 $ make
 
-#Run Zappy AI
-$./zappy_ai –help
+# Run Zappy Server
+$ ./zappy_server –help
 ```
 
 
@@ -56,15 +51,19 @@ $./zappy_ai –help
 ```shell
 Zappy/
 │
-├── Client/               # AI client code
+├── Server/               # Server code
     ├── Docs/
-    │   └── README.md  
+    │   └── README.md
     ├── src/
+    │   ├── commands/
+    │   ├── network/
+    │   ├── game_logic/
+    │   ├── thread_management/
+    │   └── main.c
     ├── include/
     ├── tests/
-    │   └── main_tests.cpp
+    │   └── main_tests.c
     └── Makefile
-    
 ```
 
 <div id='license'/>
@@ -91,8 +90,8 @@ Copyright © 2022-2023 :
 
 ## :mailbox_with_mail: **CONTACTS**
 
-[![GitHub MathieuCouronne](https://img.shields.io/github/followers/MathieuCouronne?label=MathieuCouronne&style=social)](https://github.com/MathieuCouronne)
-[![GitHub mlbonniec](https://img.shields.io/github/followers/mlbonniec?label=mlbonniec&style=social)](https://github.com/mlbonniec)
+[![GitHub M7T5M3P](https://img.shields.io/github/followers/M7T5M3P?label=MathysT&style=social)](https://github.com/M7T5M3P)
+[![GitHub Tristan](https://img.shields.io/github/followers/Tristan?label=Tristan&style=social)](https://github.com/Tristan)
 
 ---
 <p align="center">ME.inc</p>

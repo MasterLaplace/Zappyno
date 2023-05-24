@@ -1,13 +1,14 @@
-# ME : <p align="center">Zappyno (Server)</p>
+# ME : <p align="center">Zappyno (GUI)</p>
 
 <p align="center">
-    <a href="https://github.com/EpitechPromo2026/B-OOP-400-REN-4-1-raytracer-guillaume.papineau/blob/main/LICENSE">
+    <a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License: MIT">
-    </a>
+    </a><a>
+        <img src="https://img.shields.io/badge/C++-17-blue?style=for-the-badge" alt="C++: 17">
+    </a><a>
         <img src="https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge" alt="OS: Linux">
-    </a>
-    <a>
-        <img src="https://img.shields.io/badge/C-18-blue?style=for-the-badge" alt="C: 18">
+    </a><a>
+        <img src="https://img.shields.io/badge/SFML-2.5-blue?style=for-the-badge" alt="SFML: 2.5">
     </a>
 </p>
 
@@ -40,8 +41,8 @@ $ cd B-YEP-400-REN-4-1-zappy-tristan.bros
 # Dependencies
 $ make
 
-# Run Zappy Server
-$ ./zappy_server –help
+#Run Zappy Gui
+$./zappy_gui –help
 ```
 
 
@@ -52,19 +53,22 @@ $ ./zappy_server –help
 ```shell
 Zappy/
 │
-├── Server/               # Server code
-    ├── Docs/
-    │   └── README.md 
-    ├── src/
-    │   ├── commands/
-    │   ├── network/
-    │   ├── game_logic/
-    │   ├── thread_management/
-    │   └── main.c
-    ├── include/
-    ├── tests/
-    │   └── main_tests.c
-    └── Makefile
+├── GUI                   # GUI code
+│   ├── Docs
+│   ├── includes
+│   ├── Install
+│   ├── obj
+│   ├── Script
+│   ├── src
+│   │   ├── Core
+│   │   ├── Engine
+│   │   ├── Interface
+│   │   ├── Manager
+│   │   └── Utils
+│   │       ├── Math
+│   │       ├── Parser
+│   │       └── String
+│   └── tests
 ```
 
 <div id='license'/>
@@ -91,8 +95,8 @@ Copyright © 2022-2023 :
 
 ## :mailbox_with_mail: **CONTACTS**
 
-[![GitHub M7T5M3P](https://img.shields.io/github/followers/M7T5M3P?label=MathysT&style=social)](https://github.com/M7T5M3P)
-[![GitHub Tristan](https://img.shields.io/github/followers/Tristan?label=Tristan&style=social)](https://github.com/Tristan)
+[![GitHub Master_Laplace](https://img.shields.io/github/followers/MasterLaplace?label=MasterLaplace&style=social)](https://github.com/MasterLaplace)
+[![GitHub RaphaelLecoq](https://img.shields.io/github/followers/RaphaelLecoq?label=RaphaelLecoq&style=social)](https://github.com/RaphaelLecoq)
 
 ---
 <p align="center">ME.inc</p>

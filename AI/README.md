@@ -1,17 +1,10 @@
-# ME : <p align="center">Zappyno (GUI)</p>
+# ME : <p align="center">Zappyno (AI)</p>
 
 <p align="center">
-    <a href="https://github.com/EpitechPromo2026/B-OOP-400-REN-4-1-raytracer-guillaume.papineau/blob/main/LICENSE">
+    <a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License: MIT">
-    </a>
-    <a>
-        <img src="https://img.shields.io/badge/C++-17-blue?style=for-the-badge" alt="C++: 17">
-    </a>    
-    <a>
+    </a><a>
         <img src="https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge" alt="OS: Linux">
-    </a>
-    <a>
-        <img src="https://img.shields.io/badge/SFML-2.5-blue?style=for-the-badge" alt="SFML: 2.5">
     </a>
 </p>
 
@@ -44,8 +37,8 @@ $ cd B-YEP-400-REN-4-1-zappy-tristan.bros
 # Dependencies
 $ make
 
-#Run Zappy Gui
-$./zappy_gui –help
+#Run Zappy AI
+$./zappy_ai –help
 ```
 
 
@@ -56,15 +49,14 @@ $./zappy_gui –help
 ```shell
 Zappy/
 │
-├── GUI/                  # GUI code 
+├── Client/               # AI client code
     ├── Docs/
-    │   └── README.md  
+    │   └── README.md
     ├── src/
     ├── include/
     ├── tests/
     │   └── main_tests.cpp
-    └──  Makefile
-    
+    └── Makefile
 ```
 
 <div id='license'/>
@@ -74,7 +66,7 @@ Zappy/
 This project is licensed under the terms of the [MIT License](./LICENSE).
 
 Copyright © 2022-2023 :
-    
+
 [Master_Laplace](https://github.com/MasterLaplace),
 
 [M7T5M3P](https://github.com/M7T5M3P),
@@ -91,8 +83,8 @@ Copyright © 2022-2023 :
 
 ## :mailbox_with_mail: **CONTACTS**
 
-[![GitHub Master_Laplace](https://img.shields.io/github/followers/MasterLaplace?label=MasterLaplace&style=social)](https://github.com/MasterLaplace)
-[![GitHub RaphaelLecoq](https://img.shields.io/github/followers/RaphaelLecoq?label=RaphaelLecoq&style=social)](https://github.com/RaphaelLecoq)
+[![GitHub MathieuCouronne](https://img.shields.io/github/followers/MathieuCouronne?label=MathieuCouronne&style=social)](https://github.com/MathieuCouronne)
+[![GitHub mlbonniec](https://img.shields.io/github/followers/mlbonniec?label=mlbonniec&style=social)](https://github.com/mlbonniec)
 
 ---
 <p align="center">ME.inc</p>

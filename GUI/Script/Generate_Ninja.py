@@ -22,7 +22,7 @@ cuda_flags = --compiler-options -fPIC -Xcompiler -rdynamic
 #! RULES
 #
 rule compile
- command = $cxx -DCUDA_ENABLED $gpp_cflags $opti -I$includes -c $in -o $out
+ command = $cxx -DCUDA_ENABLED $gpp_cflags $opti -I $includes -c $in -o $out
  description = Compiling $out
 
 rule compile_cuda

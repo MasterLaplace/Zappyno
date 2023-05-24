@@ -25,17 +25,10 @@ ifeq ($(shell uname), Darwin)
 endif
 
 # Targets
-.PHONY: all clean
-
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	@$(COMPILER) -o $(NAME) $(OBJ) $(CXX_FLAGS) $(FAST_FLAGS) $(INCLUDE) $(LIBS)
-	@ninja zappy_gui
-
-gen:
-	@-./install/install_ninja_fedora.sh 2> /dev/null
-	@./Script/Generate_Ninja.py
 
 clean:
 	@rm -rf $(OBJ)
@@ -47,7 +40,8 @@ ninja_clean:
 	@ninja -t clean
 
 gen_ninja:
-	@-./scripts/gen_ninja.py
+	@-./Install/install_ninja_ubuntu.sh 2> /dev/null
+	@./Script/Generate_Ninja.py
 
 fclean: clean
 	@rm -rf $(NAME)
@@ -71,3 +65,5 @@ tests_run: gen
 	@ninja test
 	@mv test zappy_gui_tests
 	@mv zappy_gui_tests ../
+
+.PHONY: all clean

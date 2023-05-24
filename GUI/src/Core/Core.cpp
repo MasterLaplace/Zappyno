@@ -33,6 +33,7 @@ bool Core::parseArgs(const int ac, const char *av[])
 {
     auto port = 0;
     auto machine = "localhost";
+    (void) machine;
 
     if (ac < 3)
         return showUsage(std::cerr), false;

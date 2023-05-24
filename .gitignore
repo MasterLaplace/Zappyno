@@ -1,3 +1,5 @@
+# Python config.ini
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -162,8 +164,27 @@ cython_debug/
 #Git config.ini
 src/**/config.ini
 
+# C/C++ config.ini
+
+# others
+*.o
+*.gcno
+*.gcda
+.ninja_log
+.idea
+CMakeLists.txt
+cmake-build-debug/
+test
+*.gif
+*.ninja
+
 # Prerequisites
 *.d
+
+# Linker output
+*.ilk
+*.map
+*.exp
 
 # Object files
 *.o
@@ -173,10 +194,11 @@ src/**/config.ini
 *#
 *.tmp
 
-# Linker output
-*.ilk
-*.map
-*.exp
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
 
 # Precompiled Headers
 *.gch
@@ -188,11 +210,26 @@ src/**/config.ini
 *.la
 *.lo
 
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so
 *.so.*
 *.dylib
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
 
 # Executables
 *.exe
@@ -233,15 +270,3 @@ vgcore.*
 *.log
 *.txt
 test
-
-# others
-*.o
-*.gcno
-*.gcda
-.ninja_log
-.idea
-CMakeLists.txt
-cmake-build-debug/
-test
-*.gif
-*.ninja
