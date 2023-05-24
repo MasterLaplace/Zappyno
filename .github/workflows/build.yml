@@ -14,11 +14,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Update package list
-      run: sudo apt-get update
+    - name: Update package list and install SFML
+      run: |
+        sudo apt-get update
+        sudo apt-get install libsfml-dev
+
     - name: Run build
       run: |
         make
+
     - name: Check
       run: |
         if [ -f zappy_server ] && [ -f zappy_ai ] && [ -f zappy_gui ] ; then
