@@ -22,7 +22,7 @@ jobs:
             keyword_regex="^\[[A-Za-z][@_A-Za-z]+\] : "
 
             if [[ ! $commit_msg =~ $keyword_regex ]]; then
-                if [[ $commit_msg =~ ^Merge\ branch\ .* ]]; then
+                if [[ $commit_msg =~ ^Merge\ (branch\ .*|pull\ request\ .*)$ ]]; then
                     echo "Skipping merge commit"
                 else
                     echo $commit_msg
