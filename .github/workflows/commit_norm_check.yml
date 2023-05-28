@@ -22,7 +22,11 @@ jobs:
             keyword_regex="^\[[A-Za-z][@_A-Za-z]+\] : "
 
             if [[ ! $commit_msg =~ $keyword_regex ]]; then
-                echo $commit_msg
-                echo "Commit message does not match expected format. Please use the following format:\" [Keyword] : comment \""
-                exit 1
+                if [[ $commit_msg =~ ^Merge\ branch\ .* ]]; then
+                    echo "Skipping merge commit"
+                else
+                    echo $commit_msg
+                    echo "Commit message does not match expected format. Please use the following format:\" [Keyword] : comment \""
+                    exit 1
+                fi
             fi
