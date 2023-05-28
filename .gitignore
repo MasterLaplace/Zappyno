@@ -270,3 +270,4 @@ vgcore.*
 *.log
 *.txt
 test
+.Test/
