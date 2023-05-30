@@ -269,4 +269,5 @@ vgcore.*
 *.yxy
 *.log
 *.txt
+!requirements.txt
 test
