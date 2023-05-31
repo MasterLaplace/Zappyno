@@ -7,4 +7,3 @@ class CollectorPlayer(Player):
     """
     Player that collects the most resources
     """
-    pass

@@ -7,4 +7,3 @@ class CenterPlayer(Player):
     """
     Player that plays in the center of the board.
     """
-    pass

@@ -66,9 +66,14 @@ class Player:
         """
         return self.__inventory
 
-    def add_inventory(self, object: str) -> None:
+    def add_inventory(self, inventory: str) -> None:
         """
         Add an item to the inventory of the player.
         """
-        self.__inventory[object] += 1
+        self.__inventory[inventory] += 1
 
+    def get_position(self) -> str:
+        """
+        Get the position of the player.
+        """
+        return self.__position

@@ -7,4 +7,3 @@ class PathfinderPlayer(Player):
     """
     Player that uses the pathfinder to find the best move.
     """
-    pass
