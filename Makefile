@@ -17,10 +17,10 @@ LIGHT_BLUE = "\e[94m"
 WHITE = "\e[1;37m"
 
 all: ai gui server
-	@echo $(BOLD) $(GREEN)"► ALL 👷 !\n"$(DEFAULT)
 
 ai:
 	@$(MAKE) all -C ./AI $(NO_PRINT)
+	ln -sf ./AI/src/main.py ./zappy_ai
 	@echo $(BOLD) $(GREEN)"► AI ⛽ !\n"$(DEFAULT)
 clean_AI:
 	@$(MAKE) clean -C ./AI $(NO_PRINT)
