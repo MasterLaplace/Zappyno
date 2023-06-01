@@ -3,7 +3,6 @@ Player class is used to store information about the player.
 """
 
 from communication import Communication
-
 class Player:
     """
     This class is used to store information about the player.
