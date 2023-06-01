@@ -73,6 +73,12 @@ int main() {
     char *buffer = calloc(MAX_BUFFER_SIZE, sizeof(char));
     char response[MAX_BUFFER_SIZE] = {0};
     while (1) {
+        // Receive and display the response from the server
+        if (recv(sockfd, response, MAX_BUFFER_SIZE - 1, 0) == -1) {
+            perror("Receive failed");
+            exit(EXIT_FAILURE);
+        }
+        printf("Response: %s\n", response);
         // Read user input
         printf("Enter your command: ");
         numChars = getline(&buffer, &bufferSize, stdin);
@@ -86,12 +92,6 @@ int main() {
             exit(EXIT_FAILURE);
         }
 
-        // Receive and display the response from the server
-        if (recv(sockfd, response, MAX_BUFFER_SIZE - 1, 0) == -1) {
-            perror("Receive failed");
-            exit(EXIT_FAILURE);
-        }
-        printf("Response: %s\n", response);
     }
 
     // Free the buffer
