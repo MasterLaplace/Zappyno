@@ -4,15 +4,22 @@
 This program is an AI for the Zappy project.
 You can find more information with ./zappy_ai -h
 """
-from communication import Communication
+from sys import argv
 
-communication: Communication = Communication('localhost', 3030)
+from communication import Communication
+from creation_player import creation_player
+
+communication: Communication = Communication('localhost', 4242)
 
 if __name__ == '__main__':
     communication.connect()
+    communication.receive()
+    communication.send(argv[2])
+    creation_player(communication)
     while True:
         text: str = input('Enter text: ')
         if text == 'exit':
             break
         communication.send(text)
+        print(communication.receive())
     communication.disconnect()

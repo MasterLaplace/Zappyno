@@ -3,18 +3,18 @@ Player class is used to store information about the player.
 """
 
 from communication import Communication
-
 class Player:
     """
     This class is used to store information about the player.
     It is used to store the team name, the communication object, the level of the player.
     """
-    def __init__(self, communication: Communication, team: str, position: str):
+    def __init__(self, communication: Communication, team: str, position: str, number: int):
+        self.__id = number
         self.__team = team
         self.__communication = communication
         self.__level = 1
         self.__inventory = {
-            'food': 0,
+            'food': 10,
             'linemate': 0,
             'deraumere': 0,
             'sibur': 0,
@@ -77,3 +77,15 @@ class Player:
         Get the position of the player.
         """
         return self.__position
+
+    def set_position(self, position: str) -> None:
+        """
+        Set the position of the player.
+        """
+        self.__position = position
+
+    def get_id(self) -> int:
+        """
+        Get the id of the player.
+        """
+        return self.__id
