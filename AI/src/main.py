@@ -7,7 +7,8 @@ You can find more information with ./zappy_ai -h
 import sys
 
 from communication import Communication
-from player import Player
+from pathfinder_player import PathfinderPlayer
+from collector_player import CollectorPlayer
 
 communication: Communication = Communication('localhost', 4242)
 
@@ -19,7 +20,10 @@ if __name__ == '__main__':
     if player_info == 'ko':
         print('Invalid team name')
         sys.exit(84)
-    Player(communication, sys.argv[2], player_info[1], player_info[0])
+    if int(player_info[0]) > 6:
+        PathfinderPlayer(communication, sys.argv[2], player_info[1], player_info[0])
+    else:
+        CollectorPlayer(communication, sys.argv[2], player_info[1], player_info[0])
     while True:
         text: str = input('Enter text: ')
         if text == 'exit':
