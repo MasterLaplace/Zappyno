@@ -9,28 +9,27 @@
 #define GAME_H_
 
 //Include all the libraries you need here
-#include "server_package.h"
-#include <stdio.h>
-#include <string.h>
-
-typedef struct s_client t_client;
-typedef struct s_server t_server;
-
-typedef struct s_teams {
-    char *name;
-    t_client *players;
-    int nb_players;
-} t_teams;
+#include "client.h"
+#include "params.h"
+#include "server.h"
 
 typedef struct s_game {
-    t_teams *teams;
-    t_client *current_client;
+    t_params params;
+    int client_count;
+    int map_width;
+    int map_height;
     // TODO: Add more structures as needed...
 } t_game;
 
+typedef void (*t_command_func)(t_game *, char *);
+
 typedef struct s_command {
-    uint8_t command_id;
-    void (*function)(t_server *, uint8_t *);
+    char *name;
+    t_command_func function;
 } t_command;
+
+// Declare commands here
+// msz : map size
+void msz(t_game *game, char *args);
 
 #endif /* !GAME_H_ */
