@@ -38,6 +38,7 @@ static void add_to_team(t_server *server, char **message, int i)
  * @param i
  */
 static void remove_from_team(t_server *server, char **message, int i)
+{
     if (server->game.teams[i].nb_players >= server->params->clientsNb) {
         printf("Team is full\n");
         send_error_to_all(&server->clients[server->id], 1);
@@ -60,7 +61,7 @@ void recv_check_to_add_to_team(t_server *server, char **message)
 {
     printf("An AI is trying to join the team : \"%s\"\n", message[5]);
     for (int i = 0; i < server->params->num_teams; i++) {
-        if (!strcmp(message[5], server->params->team_names[i]) &&
+        if (!strcmp(message[0], server->params->team_names[i]) &&
             server->game.teams[i].nb_players < server->params->clientsNb) {
             add_to_team(server, message, i);
             return;

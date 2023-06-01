@@ -17,6 +17,7 @@
 void send_to_client(t_client *client, char *message)
 {
     int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
+    printf("Message sent to client %d: %s\n", client->socket_fd, message);
     if (bytes_sent == -1) {
         perror("send");
         exit(EXIT_FAILURE);

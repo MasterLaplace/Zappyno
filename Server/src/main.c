@@ -78,6 +78,7 @@ void add_client(t_server *server, int new_socket, fd_set *readfds)
             server->clients[i].read_fds = *readfds;
             FD_SET(new_socket, readfds);
             printf("New client connected : %d\n", new_socket);
+            send_to_client(&server->clients[i], "WELCOME");
             break;
         }
     }

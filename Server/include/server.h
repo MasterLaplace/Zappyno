@@ -11,8 +11,6 @@
     #define EXIT_ERROR 84
     #define MAX_CLIENTS 65  // Maximum number of clients that can connect to the server
     #define BUFFER_SIZE 1024  // Define the buffer size constant
-    #define JOIN_GUI "gnw"
-    #define JOIN_AI "pnw"
     #define MAP_SIZE "msz"
     #define ERROR "Error"
 

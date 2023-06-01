@@ -13,4 +13,5 @@ void recv_check_to_add_gui(t_server *server, char **message)
     printf("A gui joined the server\n");
     server->clients[server->id].is_connected = true;
     server->clients[server->id].is_gui = true;
+    send_to_client(&server->clients[server->id], "WELCOME GUI");
 }
