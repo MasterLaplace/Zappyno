@@ -37,9 +37,9 @@ void send_team_is_full(t_client *client);
 
 //------------------ \\
 // Send to all the client join is impossible
-void send_error_to_all(t_client *clients, u_int8_t error_id);
+void send_error_to_all(t_client *clients, int id_error);
 // Send to the client join is impossible
-void send_error(t_client *client, u_int8_t error_id);
+void send_error(t_client *client, int id_error);
 // CONNECTION DIRECTORY
 
 

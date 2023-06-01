@@ -14,7 +14,6 @@
 #include "params.h"
 #include "client.h"
 #include "game.h"
-#include "server_package.h"
 
 static const char HELP[] = "USAGE: ./zappy_server -p port -x width -y height -n name1 name2 ... -c clientsNb -f freq\n\n"
                            "\tport \tis the port number\n"

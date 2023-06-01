@@ -8,6 +8,22 @@
 #include "../../include/main.h"
 
 /**
+ * Display the parameters
+ * @param params
+ */
+void display_params(t_params params)
+{
+    printf("port: %d\n", params.port);
+    printf("width: %d\n", params.width);
+    printf("height: %d\n", params.height);
+    printf("clientsNb: %d\n", params.clientsNb);
+    printf("freq: %d\n", params.freq);
+    printf("num_teams: %d\n", params.num_teams);
+    for (int i = 0; i < params.num_teams; i++)
+        printf("team_names[%d]: %s\n", i, params.team_names[i]);
+}
+
+/**
  * Check if the parameters are valid
  * @param params
  */

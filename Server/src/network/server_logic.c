@@ -9,16 +9,26 @@
 #include "../../include/send_package.h"
 #include "../../include/game.h"
 
-t_command not_connected_client[] = {
-        {JOIN_AI, recv_check_to_add_to_team},
-        {JOIN_GUI, recv_check_to_add_gui},
-        {0, NULL}
-};
-
 t_command connected_client[] = {
     {MAP_SIZE, recv_map_size},
     {0, NULL}
 };
+
+//join client
+void join_client(t_server *server, char **message, int i)
+{
+    if (!strcmp(message[0], "GRAPHIC")) {
+        server->clients[server->id].is_gui = true;
+        recv_check_to_add_gui(server, message);
+        return;
+    }
+    for (int j = 0; server->params->team_names[j]; j++) {
+        if (!strcmp(server->params->team_names[j], message[0])) {
+            recv_check_to_add_to_team(server, message);
+            return;
+        }
+    }
+}
 
 /**
  * Handle the data received from a client
@@ -26,19 +36,23 @@ t_command connected_client[] = {
  * @param fd
  */
 void handle_client_data(t_server *server, int fd) {
-    printf("ID client: %d\n", server->id);
-    u_int8_t *buffer = receive_from_client(fd);
-    Package_t *package = (Package_t *) buffer;
+    char *buffer = receive_from_client(fd);
+    if (!buffer)
+        return;
+    printf("Received: %s\n", buffer);
+    char **message = stwa(buffer, " \n");
+    for (int i = 0; message[i]; i++)
+        printf("message[%d] = %s\n", i, message[i]);
 
-    for (int i = 0; not_connected_client[i].command_id > 0; i++) {
-        if (not_connected_client[i].command_id == package->command_id &&
-            !server->clients[server->id].is_connected) {
-            not_connected_client[i].function(server, buffer);
-            return;
-        } else if (connected_client[i].command_id == package->command_id &&
-                    server->clients[server->id].is_connected) {
-            connected_client[i].function(server, buffer);
-            return;
+    if (!server->clients[server->id].is_connected) {
+        join_client(server, message, 0);
+        return;
+    } else {
+        for (int i = 0; connected_client[i].command_id > 0; i++) {
+            if (!strcmp(connected_client[i].command_id, message[0])) {
+                connected_client[i].function(server, message);
+                return;
+            }
         }
     }
     send_error(&server->clients[server->id], 0);

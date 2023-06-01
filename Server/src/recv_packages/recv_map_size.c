@@ -7,11 +7,10 @@
 
 #include "../../include/send_package.h"
 
-void recv_map_size(t_server *server, u_int8_t *buffer)
+void recv_map_size(t_server *server, char **message)
 {
-    MapSize mapsize_t = *(MapSize *) &buffer[sizeof(Package_t)];
-    server->params->width = mapsize_t.x;
-    server->params->height = mapsize_t.y;
-    if (server->params->width != mapsize_t.x || server->params->height != mapsize_t.y)
+    server->params->width = atoi(message[1]);
+    server->params->height = atoi(message[2]);
+    if (server->params->width != atoi(message[1]) || server->params->height != atoi(message[2]))
         send_map_size_to_all(server);
 }
