@@ -13,9 +13,9 @@
 // CONNECTION DIRECTORY
 //------------------ \\
 // Send to all the clients gui joined the clients
-void send_join_gui_to_all(t_client *clients);
+void send_join_gui_to_all(t_server *server);
 // Send to the client gui joined the clients
-void send_join_gui(t_client *client);
+void send_join_gui(t_server *server);
 
 //------------------ \\
 // Send to all the Ai she joined the clients
