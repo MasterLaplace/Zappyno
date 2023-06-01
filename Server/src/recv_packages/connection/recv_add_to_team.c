@@ -24,10 +24,6 @@ static void add_to_team(t_server *server, char **message, int i)
     }
     server->clients[server->id].is_connected = true;
     server->clients[server->id].is_gui = false;
-    server->clients[server->id].x = atoi(message[1]);
-    server->clients[server->id].y = atoi(message[2]);
-    server->clients[server->id].orientation = atoi(message[3]);
-    server->clients[server->id].level = atoi(message[4]);
     server->index_team = i;
 }
 
@@ -41,11 +37,11 @@ static void remove_from_team(t_server *server, char **message, int i)
 {
     if (server->game.teams[i].nb_players >= server->params->clientsNb) {
         printf("Team is full\n");
-        send_error_to_all(&server->clients[server->id], 1);
+        send_error_to_all(server, 1);
         remove_client(server, server->id);
     } else {
         printf("Team name not found\n");
-        send_error_to_all(&server->clients[server->id], 2);
+        send_error_to_all(server, 2);
         remove_client(server, server->id);
     }
 }
@@ -59,11 +55,12 @@ static void remove_from_team(t_server *server, char **message, int i)
  */
 void recv_check_to_add_to_team(t_server *server, char **message)
 {
-    printf("An AI is trying to join the team : \"%s\"\n", message[5]);
+    printf("An AI is trying to join the team : \"%s\"\n", message[0]);
     for (int i = 0; i < server->params->num_teams; i++) {
         if (!strcmp(message[0], server->params->team_names[i]) &&
             server->game.teams[i].nb_players < server->params->clientsNb) {
             add_to_team(server, message, i);
+            send_to_client(server, "WELCOME IA");
             return;
         } else {
             remove_from_team(server, message, i);

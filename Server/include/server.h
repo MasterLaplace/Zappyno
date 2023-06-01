@@ -46,9 +46,9 @@ void handle_client_data(t_server *server, int fd);
 // remove_client will remove a client from the server
 void remove_client(t_server *server, int id);
 // send_to_client will send a message to a specific client
-void send_to_client(t_client *client, char *);
+void send_to_client(t_server *, char *);
 // send_to_all_clients will send a message to all clients
-void send_to_all_clients(t_client *clients, char *);
+void send_to_all_clients(t_server *, char *);
 // receive_from_client will receive a message from a specific client
 u_int8_t *receive_from_client(int fd);
 // Prototypes src/network/ | function made to handle the server

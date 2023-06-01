@@ -36,26 +36,52 @@ void join_client(t_server *server, char **message, int i)
  * @param fd
  */
 void handle_client_data(t_server *server, int fd) {
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (server->clients[i].socket_fd == fd) {
+            server->id = i;
+            break;
+        }
+    }
+    printf("Handling client data : %d\n", fd);
     char *buffer = receive_from_client(fd);
-    if (!buffer)
+    if (buffer == NULL) {
+        remove_client(server, server->id);
         return;
-    printf("Received: %s\n", buffer);
-    char **message = stwa(buffer, " \n");
-    for (int i = 0; message[i]; i++)
-        printf("message[%d] = %s\n", i, message[i]);
-
+    }
+    printf("Received: |%s|\n", buffer);
+    char **message = NULL;
+    if (buffer != NULL) {
+        message = stwa(buffer, " \n");
+        if (message == NULL) {
+            free(buffer);
+            remove_client(server, server->id);
+            send_error(server, 0);
+            return;
+        }
+        for (int i = 0; message[i]; i++)
+            printf("message[%d] = %s\n", i, message[i]);
+    } else {
+        send_error(server, 0);
+        return;
+    }
+    if (!message) {
+        free(buffer);
+        return;
+    }
     if (!server->clients[server->id].is_connected) {
         join_client(server, message, 0);
+        free(buffer);
         return;
     } else {
         for (int i = 0; connected_client[i].command_id > 0; i++) {
             if (!strcmp(connected_client[i].command_id, message[0])) {
                 connected_client[i].function(server, message);
+                free(buffer);
                 return;
             }
         }
     }
-    send_error(&server->clients[server->id], 0);
+    send_error(server, 0);
     free(buffer);
 }
 
@@ -69,4 +95,10 @@ void remove_client(t_server *server, int id)
     close(server->clients[id].socket_fd);
     FD_CLR(server->clients[id].socket_fd, &server->readfds);
     memset(&server->clients[id], 0, sizeof(t_client));
+    server->max_fd = server->sockfd;
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (server->clients[i].socket_fd > server->max_fd) {
+            server->max_fd = server->clients[i].socket_fd;
+        }
+    }
 }

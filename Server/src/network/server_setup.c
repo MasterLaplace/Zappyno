@@ -52,7 +52,7 @@ int bind_socket(t_server *server, t_params *params) {
  * @return
  */
 int listen_socket(t_server *server, t_params *params) {
-    if (listen(server->sockfd, params->clientsNb) < 0) {
+    if (listen(server->sockfd, MAX_CLIENTS) < 0) {
         perror("Cannot listen on socket");
         return -1;
     }

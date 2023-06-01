@@ -9,10 +9,10 @@
 
 void send_join_ai(t_server *server)
 {
-    send_to_client(&server->clients[server->id], "WELCOME");
+    send_to_client(server, "WELCOME");
 }
 
 void send_join_ai_to_all(t_server *server)
 {
-    send_to_all_clients(server->clients, "WELCOME");
+    send_to_all_clients(server, "WELCOME");
 }

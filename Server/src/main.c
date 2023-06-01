@@ -6,6 +6,7 @@
 */
 
 #include "../include/main.h"
+#include "signal.h"
 
 /**
  * Set the params struct to 0
@@ -70,18 +71,62 @@ t_server *set_server_struct(t_params *params)
  * @param new_socket
  * @param readfds
  */
-void add_client(t_server *server, int new_socket, fd_set *readfds)
+void add_client(t_server *server, int new_socket)
 {
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (server->clients[i].socket_fd == 0) {
             server->clients[i].socket_fd = new_socket;
-            server->clients[i].read_fds = *readfds;
-            FD_SET(new_socket, readfds);
+            server->id = i;
             printf("New client connected : %d\n", new_socket);
-            send_to_client(&server->clients[i], "WELCOME");
             break;
         }
     }
+}
+
+void read_data_from_server(t_server *svr)
+{
+    char buffer[1025];
+    int valread;
+
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        int sd = svr->clients[i].socket_fd;
+
+        if (sd == 0)
+            continue;
+        if (FD_ISSET(sd, &svr->readfds)) {
+            handle_client_data(svr, sd);
+        }
+    }
+}
+
+void handle_new_connection(t_server *svr)
+{
+    int new_socket;
+
+    if (FD_ISSET(svr->sockfd, &svr->readfds)) {
+        if ((new_socket = accept(svr->sockfd, NULL, NULL)) >= 0) {
+            add_client(svr, new_socket);
+            send_to_client(svr, "WELCOME\n");
+        }
+    }
+}
+
+int set_fds(t_server *svr)
+{
+    FD_ZERO(&svr->readfds);
+    svr->max_fd = svr->sockfd;
+
+    FD_SET(svr->sockfd, &svr->readfds);
+
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        int sd = svr->clients[i].socket_fd;
+        if (sd > 0) {
+            FD_SET(sd, &svr->readfds);
+        }
+        if (sd > svr->max_fd)
+            svr->max_fd = sd;
+    }
+    return svr->max_fd;
 }
 
 int main(int ac, char **av)
@@ -97,41 +142,14 @@ int main(int ac, char **av)
 
     setup_server(server, &params);
     while (true) {
-        fd_set readfds;
-        server->readfds = readfds;
-        FD_ZERO(&readfds);
-        FD_SET(server->sockfd, &readfds);
-        for (int i = 0; i < MAX_CLIENTS; i++) {
-            if (server->clients[i].socket_fd > 0)
-                FD_SET(server->clients[i].socket_fd, &readfds);
-        }
-
-        // Wait for activity on one of the sockets
-        int activity = select(server->max_fd + 1, &readfds, NULL, NULL, NULL);
+        signal(SIGPIPE, SIG_IGN);
+        int activity = select(set_fds(server) + 1, &server->readfds, NULL, NULL, NULL);
         if (activity < 0) {
             perror("select");
             exit(EXIT_FAILURE);
         }
-
-        // If something happened on the server socket, it's an incoming connection
-        if (FD_ISSET(server->sockfd, &readfds)) {
-            int new_socket = accept(server->sockfd, NULL, NULL);
-            if (new_socket < 0) {
-                perror("accept");
-                exit(EXIT_FAILURE);
-            }
-            // Add the new socket to the array of sockets
-            add_client(server, new_socket, &readfds);
-        }
-
-        // Else, it's some IO operation on one of the client sockets
-        for (int i = 0; i < MAX_CLIENTS; i++) {
-            if (server->clients[i].socket_fd > 0 && FD_ISSET(server->clients[i].socket_fd, &readfds)) {
-                server->id = i;
-                server->game.current_client = &server->clients[i];
-                handle_client_data(server, server->clients[i].socket_fd);
-            }
-        }
+        handle_new_connection(server);
+        read_data_from_server(server);
     }
 
     return EXIT_SUCCESS;
