@@ -45,5 +45,6 @@ void handle_x(char *optarg, t_params *params);
 void handle_p(char *optarg, t_params *params);
 void parse_args(int argc, char *argv[], t_params *params);
 void check_params(t_params *params);
+void display_params(t_params params);
 
 #endif //PARAMS_H

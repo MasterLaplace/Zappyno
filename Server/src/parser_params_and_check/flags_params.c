@@ -5,7 +5,7 @@
 ** flags_params_next.c
 */
 
-#include "../../include/main.h"
+#include "../../include/params.h"
 
 /**
  * Handle the -p flag

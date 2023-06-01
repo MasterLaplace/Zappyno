@@ -9,16 +9,21 @@
     #define CLIENT_H
 
 #include <stdbool.h>
+#include <stddef.h>
 
 typedef struct s_client {
+    bool is_gui;             // Whether the client is a gui or not
     int socket_fd;           // The socket file descriptor for the client
-    char *buffer;            // Buffer for incoming data
+    fd_set read_fds;          // The buffer for the read file descriptor
     bool active;             // Whether the client is active or not
+    bool is_connected;      // Whether the client is connected or not
+    int x;
+    int y;
+    int orientation;
+    int level;
     // TODO: add more client-specific data (player info, team info, etc.)
-    struct s_client *next;  // Add a 'next' member for linked list
 } t_client;
 
 void client_init(t_client *client, int socket_fd);
 void client_destroy(t_client *client);
-
 #endif //CLIENT_H

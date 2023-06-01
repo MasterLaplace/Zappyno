@@ -12,11 +12,14 @@
  * @return the socket fd if success, -1 if error
  */
 int create_socket(void) {
+
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         perror("Cannot open socket");
         return -1;
     }
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, "\001", 4) < 0)
+        perror("setsockopt(SO_REUSEADDR) failed");
     return sockfd;
 }
 
@@ -58,16 +61,6 @@ int listen_socket(t_server *server, t_params *params) {
 }
 
 /**
- * Initialize the server
- * @param server
- */
-void initialize_server(t_server *server) {
-    for (int i = 0; i < MAX_CLIENTS; i++) {
-        server->client_sockets[i] = 0;
-    }
-}
-
-/**
  * Setup the server
  * @param server
  * @param params
@@ -83,8 +76,6 @@ int setup_server(t_server *server, t_params *params) {
 
     if (listen_socket(server, params) < 0)
         return -1;
-
-    initialize_server(server);
 
     server->max_fd = server->sockfd;
 
