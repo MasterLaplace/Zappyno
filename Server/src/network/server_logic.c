@@ -9,9 +9,25 @@
 #include "../../include/send_package.h"
 #include "../../include/game.h"
 
-t_command connected_client[] = {
-    {MAP_SIZE, recv_map_size},
+t_command ia_client[] = {
+    /*{"Forward", recv_forward},
+    {"Right", recv_right},
+    {"Left", recv_left},
+    {"Look", recv_look},
+    {"Inventory", recv_inventory},
+    {"Broadcast text", recv_broadcast},
+    {"Connect_nbr", recv_connect_nbr},
+    {"Fork", recv_fork},
+    {"Eject", recv_eject},
+    {"Take object", recv_take},
+    {"Set object", recv_set},
+    {"Incantation", recv_incantation},*/
     {0, NULL}
+};
+
+t_command gui_client[] = {
+        {MAP_SIZE, recv_map_size},
+        {0, NULL}
 };
 
 //join client
@@ -22,7 +38,7 @@ void join_client(t_server *server, char **message, int i)
         recv_check_to_add_gui(server, message);
         return;
     }
-    for (int j = 0; server->params->team_names[j]; j++) {
+    for (int j = 0; server->params->team_names[j] != NULL; j++) {
         if (!strcmp(server->params->team_names[j], message[0])) {
             recv_check_to_add_to_team(server, message);
             return;
@@ -44,40 +60,32 @@ void handle_client_data(t_server *server, int fd) {
     }
     printf("Handling client data : %d\n", fd);
     char *buffer = receive_from_client(fd);
-    if (buffer == NULL) {
+    if (buffer == NULL || strlen(buffer) == 0) {
         remove_client(server, server->id);
         return;
     }
     printf("Received: |%s|\n", buffer);
-    char **message = NULL;
-    if (buffer != NULL) {
-        message = stwa(buffer, " \n");
-        if (message == NULL) {
-            free(buffer);
-            remove_client(server, server->id);
-            send_error(server, 0);
-            return;
-        }
-        for (int i = 0; message[i]; i++)
-            printf("message[%d] = %s\n", i, message[i]);
-    } else {
-        send_error(server, 0);
-        return;
-    }
-    if (!message) {
-        free(buffer);
-        return;
-    }
+    char **message = stwa(buffer, "\n\t");
+    for (int i = 0; message[i]; i++)
+        printf("message[%d] = %s\n", i, message[i]);
     if (!server->clients[server->id].is_connected) {
         join_client(server, message, 0);
-        free(buffer);
-        return;
     } else {
-        for (int i = 0; connected_client[i].command_id > 0; i++) {
-            if (!strcmp(connected_client[i].command_id, message[0])) {
-                connected_client[i].function(server, message);
-                free(buffer);
-                return;
+        if (server->clients[server->id].is_gui) {
+            for (int i = 0; gui_client[i].command_id > 0; i++) {
+                if (!strcmp(gui_client[i].command_id, message[0])) {
+                    gui_client[i].function(server, message);
+                    free(buffer);
+                    return;
+                }
+            }
+        } else {
+            for (int i = 0; ia_client[i].command_id > 0; i++) {
+                if (!strcmp(ia_client[i].command_id, message[0])) {
+                    ia_client[i].function(server, message);
+                    free(buffer);
+                    return;
+                }
             }
         }
     }

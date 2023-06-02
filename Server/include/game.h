@@ -21,9 +21,26 @@ typedef struct s_teams {
     int nb_players;
 } t_teams;
 
+typedef struct s_inventory {
+    int food;
+    int linemate;
+    int deraumere;
+    int sibur;
+    int mendiane;
+    int phiras;
+    int thystame;
+} t_inventory;
+
+typedef struct s_tiles {
+    int x;
+    int y;
+    t_inventory *inventory;
+} t_tiles;
+
 typedef struct s_game {
     t_teams *teams;
     t_client *current_client;
+    t_tiles **tiles;
     // TODO: Add more structures as needed...
 } t_game;
 

@@ -41,12 +41,23 @@ void send_to_all_clients(t_server *server, char * message)
     }
 }
 
-u_int8_t *receive_from_client(int fd)
+char *receive_from_client(int fd)
 {
     char *message = calloc(1024, sizeof(char));
-    if (recv(fd, message, 1024, 0) == -1) {
-        perror("recv");
-        exit(EXIT_FAILURE);
+    ssize_t recv_result = recv(fd, message, 1024, 0);
+    if (recv_result == -1) {
+        if (errno == ECONNRESET) {
+            // Connection was reset by the client
+            free(message);
+            return NULL;
+        } else {
+            perror("recv");
+            exit(EXIT_FAILURE);
+        }
+    } else if (recv_result == 0) {
+        // The peer has performed an orderly shutdown
+        free(message);
+        return NULL;
     }
     return message;
 }

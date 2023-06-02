@@ -5,7 +5,7 @@
 ** recv_map_size.c
 */
 
-#include "../../include/send_package.h"
+#include "../../../include/send_package.h"
 
 void recv_map_size(t_server *server, char **message)
 {

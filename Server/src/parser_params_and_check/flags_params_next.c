@@ -26,7 +26,8 @@ t_opt opts[] = {
  * @param argc
  * @param params
  */
-void handle_n(char **argv, int optind, int argc, t_params *params) {
+void handle_n(char **argv, int optind, int argc, t_params *params)
+{
     for (int i = optind - 1; i < argc; i++) {
         if (argv[i][0] == '-')
             break;
@@ -35,6 +36,9 @@ void handle_n(char **argv, int optind, int argc, t_params *params) {
         params->team_names[params->num_teams] = strdup(argv[i]);
         params->num_teams++;
     }
+    params->team_names = realloc(params->team_names,
+                                 sizeof(char*) * (params->num_teams + 1));
+    params->team_names[params->num_teams] = NULL;
 }
 
 /**

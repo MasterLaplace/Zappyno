@@ -17,6 +17,10 @@ typedef struct s_client {
     fd_set read_fds;          // The buffer for the read file descriptor
     bool active;             // Whether the client is active or not
     bool is_connected;      // Whether the client is connected or not
+    int x;
+    int y;
+    int level;
+    int orientation;
     // TODO: add more client-specific data (player info, team info, etc.)
 } t_client;
 

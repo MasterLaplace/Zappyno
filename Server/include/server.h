@@ -50,7 +50,7 @@ void send_to_client(t_server *, char *);
 // send_to_all_clients will send a message to all clients
 void send_to_all_clients(t_server *, char *);
 // receive_from_client will receive a message from a specific client
-u_int8_t *receive_from_client(int fd);
+char *receive_from_client(int fd);
 // Prototypes src/network/ | function made to handle the server
 void remove_client(t_server *server, int id);
 

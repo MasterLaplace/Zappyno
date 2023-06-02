@@ -41,7 +41,7 @@ static void remove_from_team(t_server *server, char **message, int i)
         remove_client(server, server->id);
     } else {
         printf("Team name not found\n");
-        send_error_to_all(server, 2);
+        send_error_to_all(server, 0);
         remove_client(server, server->id);
     }
 }
@@ -55,12 +55,14 @@ static void remove_from_team(t_server *server, char **message, int i)
  */
 void recv_check_to_add_to_team(t_server *server, char **message)
 {
+    char response[1024] = {0};
     printf("An AI is trying to join the team : \"%s\"\n", message[0]);
     for (int i = 0; i < server->params->num_teams; i++) {
         if (!strcmp(message[0], server->params->team_names[i]) &&
             server->game.teams[i].nb_players < server->params->clientsNb) {
             add_to_team(server, message, i);
-            send_to_client(server, "WELCOME IA");
+            sprintf(response, "%d\n%d %d\n", (server->params->clientsNb - server->game.teams[i].nb_players), server->params->width, server->params->height);
+            send_to_client(server, response);
             return;
         } else {
             remove_from_team(server, message, i);

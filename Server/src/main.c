@@ -41,6 +41,20 @@ t_game set_game_struct(t_params *params)
         perror("Failed to allocate memory for players");
         exit(EXIT_FAILURE);
     }
+    memset(game.tiles, 0, sizeof(t_tiles *) * params->width * params->height);
+    for (int i = 0; i < params->width; i++) {
+        game.tiles[i] = malloc(sizeof(t_tiles *) * params->height);
+        if (game.tiles[i] == NULL) {
+            perror("Failed to allocate memory for tiles");
+            exit(EXIT_FAILURE);
+        }
+    }
+    for (int i = 0; i < params->width; i++) {
+        game.tiles[i]->x = i;
+        for (int j = 0; j < params->height; j++) {
+            game.tiles[i][j].y = j;
+        }
+    }
     memset(game.teams->players, 0, params->clientsNb * sizeof(t_client));
     return game;
 }
