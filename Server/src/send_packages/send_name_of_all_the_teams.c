@@ -1,0 +1,75 @@
+/*
+** EPITECH PROJECT, 2023
+** B-YEP-400-REN-4-1-zappy-tristan.bros
+** File description:
+** send_name_of_all_the_teams
+*/
+
+#include "../../include/send_package.h"
+
+// count array line for number of spaces betwen each words
+size_t count_array_line(char **array)
+{
+    size_t count = 0;
+
+    for(size_t i = 0; array[i] != NULL; i++)
+        count++;
+    return count;
+}
+
+// count all words size for number of char in all team names
+size_t count_all_words_size(char **array)
+{
+    size_t count = 0;
+
+    for(size_t i = 0; array[i] != NULL; i++)
+        for (size_t y = 0; array[i][y] != '\0'; y++)
+            count++;
+    return count;
+}
+
+// return the size of the final mesage + 1 for \0
+size_t count_message_size(char **array)
+{
+    size_t res = count_array_line(array) + count_all_words_size(array) + 1;
+    return res;
+}
+
+void send_name_of_all_the_teams_to_client(t_server *server)
+{
+    size_t z = 0;
+    char *message = malloc(sizeof(char) *
+    count_message_size(server->params->team_names));
+
+    for (size_t i = 0; server->params->team_names[i] != NULL; i++) {
+        for (size_t y = 0; server->params->team_names[i][y] != '\0'; i++) {
+            message[z] = server->params->team_names[i][y];
+            z++;
+        }
+        message[z] = ' ';
+        z++;
+    }
+    message[z] = '\0';
+    sprintf(message, "tna %s\n", message);
+    send_to_client(server, message);
+}
+
+void send_name_of_all_the_teams_to_all(t_server *server)
+{
+    size_t z = 0;
+    char *message = malloc(sizeof(char) *
+    count_message_size(server->params->team_names));
+
+    for (size_t i = 0; server->params->team_names[i] != NULL; i++) {
+        for (size_t y = 0; server->params->team_names[i][y] != '\0'; i++) {
+            message[z] = server->params->team_names[i][y];
+            z++;
+        }
+        message[z] = ' ';
+        z++;
+    }
+    message[z] = '\0';
+    sprintf(message, "tna %s\n", message);
+    send_to_client(server, message);
+    send_to_all_clients(server, message);
+}
