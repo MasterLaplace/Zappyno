@@ -5,12 +5,12 @@
 ** Math Library
 */
 
-#include "Matrix.hpp"
+#include "../../../includes/Matrix.hpp"
 
 namespace Math {
     Matrix &Matrix::operator=(const std::vector<std::vector<double>> &mat) {
-        for(std::size_t i = 0; i < 4; i++) {
-            for(std::size_t j = 0; j < 4; j++) {
+        for(unsigned i = 0; i < 4; i++) {
+            for(unsigned j = 0; j < 4; j++) {
                 m[i][j] = mat[i][j];
             }
         }
@@ -77,16 +77,16 @@ namespace Math {
         m = sca_matrix;
     }
 
-    Math::Vector Matrix::MultiplyVector(Math::Vector v, Math::Vector w) const {
-        v.e[0] = w.x() * m[0][0] + w.y() * m[1][0] + w.z() * m[2][0];
-        v.e[1] = w.x() * m[0][1] + w.y() * m[1][1] + w.z() * m[2][1];
-        v.e[2] = w.x() * m[0][2] + w.y() * m[1][2] + w.z() * m[2][2];
-        return v;
+    void Matrix::MultiplyVector(Vector &v, Vector w) const {
+        v.e[0] = w.x() * m[0][0] + w.y() * m[1][0] + w.z() * m[2][0] + w.w() * m[3][0];
+        v.e[1] = w.x() * m[0][1] + w.y() * m[1][1] + w.z() * m[2][1] + w.w() * m[3][1];
+        v.e[2] = w.x() * m[0][2] + w.y() * m[1][2] + w.z() * m[2][2] + w.w() * m[3][2];
+        v.e[3] = w.x() * m[0][3] + w.y() * m[1][3] + w.z() * m[2][3] + w.w() * m[3][3];
     }
 
     void Matrix::Multiply(Matrix m1, Matrix m2) {
-        for(std::size_t i = 0; i < 4; i++) {
-            for (std::size_t j = 0; j < 4; j++) {
+        for(unsigned i = 0; i < 4; i++) {
+            for (unsigned j = 0; j < 4; j++) {
                 m[j][i] = m1[j][0] * m2[0][i]
                         + m1[j][1] * m2[1][i]
                         + m1[j][2] * m2[2][i]
@@ -98,8 +98,8 @@ namespace Math {
     Matrix Matrix::QuickInverse() const {
         Matrix inv;
 
-        for(std::size_t i = 0; i < 3; i++) {
-            for(std::size_t j = 0; j < 3; j++) {
+    for(unsigned i = 0; i < 3; i++) {
+        for(unsigned j = 0; j < 3; j++) {
                 inv.m[i][j] = m[j][i];
             }
         }
