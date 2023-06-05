@@ -10,6 +10,17 @@
     #include <SFML/Graphics.hpp>
     #include <iostream>
 
+/**
+ * @brief Text_s struct
+ *
+ * @namespace Sf_text
+ * @example in SFML:
+ * sf::Font font = Sf_text::createFont("GUI/assets/OpenSans-ExtraBoldItalic.ttf");
+ * Sf_text::Text_s tt = Sf_text::Text_s("", {0, 0}, font, sf::Color::Red);
+ * while (_window.isOpen()) {
+ *      Sf_text::DrawText(window, tt)
+ * }
+ */
 namespace Sf_text {
     struct Text_s {
         sf::Font font;
