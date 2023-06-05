@@ -34,6 +34,14 @@ namespace GUI {
                 for (auto &panel : _panels)
                     panel.updatePanel(mousePos, key, mousePressed);
             }
+            std::vector<Interface::CALLBACK> getCallback() {
+                std::vector<Interface::CALLBACK> callback;
+                for (auto &panel : _panels) {
+                    std::vector<Interface::CALLBACK> tmp = panel.getCallback();
+                    callback.insert(callback.end(), tmp.begin(), tmp.end());
+                }
+                return callback;
+            }
             template<typename T>
             void drawScene(T &win) {
                 for (auto &panel : _panels)
@@ -48,8 +56,8 @@ namespace GUI {
     class SceneManager {
         public:
             enum SceneType {
-                GAME,
                 MENU,
+                GAME,
                 SETTING,
                 CREATE,
                 PAUSE,
@@ -58,8 +66,7 @@ namespace GUI {
             };
         public:
             SceneManager() {
-                _xml = std::make_shared<Parser::Xml>();
-                _xml->loadFile("GUI/assets/scene.xml");
+                _xml.loadFile("GUI/assets/scene.xml");
             }
             ~SceneManager() = default;
             SceneManager(SceneManager&) = default;
@@ -70,17 +77,19 @@ namespace GUI {
             static void switchPanel(std::vector<Interface::Panel> &panels, const std::string &panelName);
             static void switchScene(SceneType &actualScene, const SceneType &nextScene);
             static std::string SceneTypeToString(const SceneType &sceneType);
+            static std::string CallbackToString(const Interface::CALLBACK &callback);
+            static Interface::CALLBACK StringToCallback(const std::string &callback);
             static std::string findInTiles(std::vector<std::map<std::string, std::string>> tile, std::string compare, std::string key = "path");
             template<typename Win, typename Sprite>
             std::shared_ptr<Scene> create_scene(const SceneType &sceneType, std::shared_ptr<Win> window) {
                 std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-                std::vector<std::map<std::string, std::string>> image = _xml->getTiles("GUI/assets/scene.xml", "Images");
-                std::vector<std::map<std::string, std::string>> font = _xml->getTiles("GUI/assets/scene.xml", "Fonts");
-                std::vector<std::map<std::string, std::string>> button = _xml->getTiles("GUI/assets/scene.xml", "Buttons");
-                std::vector<std::map<std::string, std::string>> input = _xml->getTiles("GUI/assets/scene.xml", "Inputs");
-                std::vector<std::map<std::string, std::string>> bar = _xml->getTiles("GUI/assets/scene.xml", "Bars");
-                std::vector<std::map<std::string, std::string>> panel = _xml->getTiles("GUI/assets/scene.xml", "Panels");
-                std::vector<std::map<std::string, std::string>> scenes = _xml->getTiles("GUI/assets/scene.xml", "Scenes");
+                std::vector<std::map<std::string, std::string>> image = _xml.getTiles("GUI/assets/scene.xml", "Images");
+                std::vector<std::map<std::string, std::string>> font = _xml.getTiles("GUI/assets/scene.xml", "Fonts");
+                std::vector<std::map<std::string, std::string>> button = _xml.getTiles("GUI/assets/scene.xml", "Buttons");
+                std::vector<std::map<std::string, std::string>> input = _xml.getTiles("GUI/assets/scene.xml", "Inputs");
+                std::vector<std::map<std::string, std::string>> bar = _xml.getTiles("GUI/assets/scene.xml", "Bars");
+                std::vector<std::map<std::string, std::string>> panel = _xml.getTiles("GUI/assets/scene.xml", "Panels");
+                std::vector<std::map<std::string, std::string>> scenes = _xml.getTiles("GUI/assets/scene.xml", "Scenes");
                 // loop on scene
                 for (auto it : scenes) {
                     std::cout << "name scene: " << it["name"] << std::endl;
@@ -112,6 +121,7 @@ namespace GUI {
                                                 std::vector<std::string> offsetComponents = String::string_to_string_vector(findInTiles(image, it5["img"], "offset"), ", \t");
                                                 sprite->setOffset(Math::Vector(std::stof(offsetComponents[0]), std::stof(offsetComponents[1])));
                                                 sprite->setMaxOffsetX(std::stoi(findInTiles(image, it5["img"], "max")));
+                                                _button.setCallback(SceneManager::StringToCallback(it5["callback"]));
                                                 _panel.addButton(_button);
                                             }
                                         }
@@ -126,9 +136,41 @@ namespace GUI {
                 return scene;
             }
 
+            template <typename Win, typename Sprite>
+            void switchScene(std::shared_ptr<Win> window, std::shared_ptr<Scene> &scene) {
+                std::vector<Interface::CALLBACK> list_callback = scene->getCallback();
+                for (auto it : list_callback) {
+                    switch (it) {
+                        case Interface::CALLBACK::EXIT:
+                            window->close();
+                            return;
+                        case Interface::CALLBACK::GOTO_MENU:
+                            scene = create_scene<Win, Sprite>(SceneType::MENU, window);
+                            return;
+                        case Interface::CALLBACK::GOTO_CREATE:
+                            scene = create_scene<Win, Sprite>(SceneType::CREATE, window);
+                            return;
+                        case Interface::CALLBACK::GOTO_GAME:
+                            scene = create_scene<Win, Sprite>(SceneType::GAME, window);
+                            return;
+                        case Interface::CALLBACK::GOTO_SETTING:
+                            scene = create_scene<Win, Sprite>(SceneType::SETTING, window);
+                            return;
+                        case Interface::CALLBACK::GOTO_RESULT:
+                            scene = create_scene<Win, Sprite>(SceneType::RESULT, window);
+                            return;
+                        case Interface::CALLBACK::GOTO_CREDIT:
+                            scene = create_scene<Win, Sprite>(SceneType::CREDIT, window);
+                            return;
+                        default:
+                            break;
+                    }
+                }
+            }
+
         protected:
         private:
-            std::shared_ptr<Parser::Xml> _xml;
+            Parser::Xml _xml;
     };
 }
 

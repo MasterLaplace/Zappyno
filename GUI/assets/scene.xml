@@ -11,7 +11,9 @@
         <Image name="health_bar" path="GUI/assets/health_bar.png"/>
     </Images>
     <Buttons>
-        <Button name="play" img="play_button" pos="0, 0" scale="1, 1"/>
+        <!-- CALLBACK: -->
+        <!-- "NONE", "goto_create", "goto_game", "goto_setting", "goto_credit", "goto_result", "goto_menu", "resize", "mute_sound", "exit" -->
+        <Button name="play" img="play_button" pos="0, 0" scale="1, 1" callback="goto_create"/>
     </Buttons>
     <Inputs>
         <Input name="ip" img="table_panel" pos="0, 0" size="100, 100" scale="1, 1" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
@@ -21,10 +23,10 @@
     </Bars>
     <Panels>
         <Panel name="table" img="table_panel" pos="0, 0" scale="0.75, 0.75" buttons="play" inputs="ip" bars="healh"/>
-        <Panel name="table_game" img="table_panel" pos="500, 500" scale="0.50, 0.50" buttons="play" inputs="ip" bars="healh"/>
+        <Panel name="table_create" img="table_panel" pos="500, 500" scale="0.50, 0.50" buttons="play" inputs="ip" bars="healh"/>
     </Panels>
     <Scenes>
         <Scene name="menu" panels="table"/>
-        <Scene name="game" panels="table_game"/>
+        <Scene name="create" panels="table_create"/>
     </Scenes>
 </sbml>
