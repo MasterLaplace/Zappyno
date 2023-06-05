@@ -270,3 +270,5 @@ vgcore.*
 *.log
 *.txt
 test
+.Test/
+openvr/
