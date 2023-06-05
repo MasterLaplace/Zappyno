@@ -11,6 +11,22 @@
     #include "Input.hpp"
     #include "Bar.hpp"
 
+/**
+ * @brief Panel class
+ *
+ * @namespace Interface
+ * @example in SFML:
+ * Interface::Panel _panel = Interface::Panel(std::make_shared<Sf_sprite::SfSprite>(_window, "GUI/assets/table.png", Math::Vector(0, 0), Math::Vector(0.75, 0.75)));
+ * auto _button = Interface::Button(std::make_shared<Sf_sprite::SfSprite>(_window, "GUI/assets/play_button-removebg-preview.png", Math::Vector(0, 0), Math::Vector(1, 1)));
+ * auto sprite = _button.getSprite();
+ * sprite->setOffset(Math::Vector(251, 249));
+ * sprite->setMaxOffsetX(1);
+ * _panel.addButton(_button);
+ * while (_window.isOpen()) {
+ *      _button.updatePanel(sf::Mouse::getPosition(window), event.key.code, sf::Mouse::isButtonPressed(sf::Mouse::Left));
+ *      _button.drawPanel<sf::RenderWindow>(window);
+ * }
+ */
 namespace Interface {
     class Panel {
         public:
