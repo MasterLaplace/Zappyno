@@ -11,8 +11,8 @@
     #include <string>
 
 namespace String {
-    std::vector<std::string> stwa(const std::string &str_to_cut, const std::string &delimiters);
+    std::vector<std::string> string_to_string_vector(const std::string &str_to_cut, const std::string &delimiters);
     bool compareStringsIgnoreCase(const std::string &str1, const std::string &str2);
-};
+} // namespace String
 
 #endif /* !STRINGMANAGER_HPP_ */

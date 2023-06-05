@@ -5,7 +5,7 @@
 ** StringManager
 */
 
-#include "StringManager.hpp"
+#include "../../../includes/StringManager.hpp"
 
 
 namespace String {
@@ -16,7 +16,7 @@ namespace String {
      * @param delimiters  The delimiters
      * @return std::vector<std::string>  The vector of strings
      */
-    std::vector<std::string> stwa(const std::string &str_to_cut, const std::string &delimiters) {
+    std::vector<std::string> string_to_string_vector(const std::string &str_to_cut, const std::string &delimiters) {
         std::vector<std::string> words;
         std::string current_word;
 
@@ -59,4 +59,4 @@ namespace String {
         }
         return true;
     }
-}
+} // namespace String
