@@ -22,28 +22,31 @@ namespace Math {
                 e[0] = std::stof(str, &sz);
                 e[1] = std::stof(str.substr(sz));
                 e[2] = std::stof(str.substr(sz));
-                e[3] = std::stof(str.substr(sz));
+                e[3] = 1;
             }
 
             double x() const { return e[0]; }
             double y() const { return e[1]; }
             double z() const { return e[2]; }
             double w() const { return e[3]; }
+            void x(double x) { e[0] = x; }
+            void y(double y) { e[1] = y; }
+            void z(double z) { e[2] = z; }
+            void w(double w) { e[3] = w; }
 
-            Vector &operator=(const Vector &mat) = default;
-            bool operator==(const Vector &other) const {
-                return (e[0] == other.e[0] && e[1] == other.e[1] && e[2] == other.e[2] && e[3] == other.e[3]);
-            }
+            Vector &operator=(const Vector &vec) = default;
+            template <typename T> // 3D to 2D
+            T &operator=(const Math::Vector &vec) { return T(vec.x, vec.y); }
+            template <typename T> // 3D to 2D
+            Math::Vector operator=(const T &vec) { return Math::Vector(vec.x(), vec.y()); }
+            bool operator==(const Vector &other) const { return (e[0] == other.e[0] && e[1] == other.e[1] && e[2] == other.e[2] && e[3] == other.e[3]); }
             Vector operator-() const { return Vector(-e[0], -e[1], -e[2], -e[3]); }
             double operator[](int i) const { return e[i]; }
             double &operator[](int i) { return e[i]; }
-            Vector min(const Vector &other) const {
-                return Vector(std::min(x(), other.x()), std::min(y(), other.y()), std::min(z(), other.z()), std::min(w(), other.w()));
-            }
 
-            Vector max(const Vector &other) const {
-                return Vector(std::max(x(), other.x()), std::max(y(), other.y()), std::max(z(), other.z()), std::max(w(), other.w()));
-            }
+            Vector min(const Vector &other) const { return Vector(std::min(x(), other.x()), std::min(y(), other.y()), std::min(z(), other.z()), std::min(w(), other.w())); }
+            Vector max(const Vector &other) const { return Vector(std::max(x(), other.x()), std::max(y(), other.y()), std::max(z(), other.z()), std::max(w(), other.w())); }
+
             Vector &operator+=(const Vector &v) {
                 e[0] += v.e[0];
                 e[1] += v.e[1];
@@ -106,17 +109,17 @@ namespace Math {
     Vector operator/(Vector lhs, const Vector &rhs);
     Vector operator/(Vector vec, double scalar);
     Vector operator-(const Vector lhs, const Vector rhs);
-    Vector operator*(double scalar, const Vector &vec);
-    Vector operator*(const Vector &vec, double scalar);
+    Vector operator*(const double &scalar, const Vector &vec);
+    Vector operator*(const Vector &vec, const double &scalar);
     Vector cross(const Vector &lhs, const Vector &rhs);
     double dot(const Vector &lhs, const Vector &rhs);
     std::ostream &operator<<(std::ostream &os, const Vector &vector);
 
     double radians(double degrees);
     template <typename T>
-    inline T clamp(T x, T min, T max) {
-        return x < min ? min : (x > max ? max : x);
-    }
-}
+    inline T clamp(T x, T min, T max) { return x < min ? min : (x > max ? max : x); }
+
+    using Rect = Vector;
+} // namespace Math
 
 #endif /* !MATH_HPP_ */

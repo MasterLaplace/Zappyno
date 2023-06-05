@@ -24,11 +24,6 @@ namespace Math {
         return lhs;
     };
 
-    Vector operator*(Vector vec, double scalar) {
-        vec *= scalar;
-        return vec;
-    };
-
     Vector operator/(Vector vec, double scalar) {
         vec /= scalar;
         return vec;
@@ -37,11 +32,11 @@ namespace Math {
         return Vector(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
     };
 
-    Vector operator*(double scalar, const Vector &vec) {
+    Vector operator*(const double &scalar, const Vector &vec) {
         return Vector(scalar * vec.x(), scalar * vec.y(), scalar * vec.z());
     };
 
-    Vector operator*(const Vector &vec, double scalar) {
+    Vector operator*(const Vector &vec, const double &scalar) {
         return Vector(vec.x() * scalar, vec.y() * scalar, vec.z() * scalar);
     };
 
@@ -67,9 +62,7 @@ namespace Math {
         return *this / length();
     };
 
-    double radians(double degrees)  {
-        return degrees * M_PI / 180.0;
-    };
+    double radians(double degrees) { return degrees * M_PI / 180.0; };
 
     std::ostream &operator<<(std::ostream &os, const Vector &vector) {
         os << "Vector content:" << std::endl;
