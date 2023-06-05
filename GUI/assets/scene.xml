@@ -13,10 +13,10 @@
     <Buttons>
         <!-- CALLBACK: -->
         <!-- "NONE", "goto_create", "goto_game", "goto_setting", "goto_credit", "goto_result", "goto_menu", "resize", "mute_sound", "exit" -->
-        <Button name="play" img="play_button" pos="0, 0" scale="1, 1" callback="goto_create"/>
+        <Button name="play" img="play_button" pos="50, 50" scale="1, 1" callback="goto_create"/>
     </Buttons>
     <Inputs>
-        <Input name="ip" img="table_panel" pos="0, 0" size="100, 100" scale="1, 1" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
+        <Input name="ip" img="table_panel" pos="0, 0" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
     </Inputs>
     <Bars>
         <Bar name="healh" img="health_bar" pos="0, 0" scale="1, 1" vertical="true"/>

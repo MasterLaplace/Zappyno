@@ -79,6 +79,7 @@ namespace GUI {
             static std::string SceneTypeToString(const SceneType &sceneType);
             static std::string CallbackToString(const Interface::CALLBACK &callback);
             static Interface::CALLBACK StringToCallback(const std::string &callback);
+            static sf::Color StringToSfColor(const std::string &color);
             static std::string findInTiles(std::vector<std::map<std::string, std::string>> tile, std::string compare, std::string key = "path");
             template<typename Win, typename Sprite>
             std::shared_ptr<Scene> create_scene(const SceneType &sceneType, std::shared_ptr<Win> window) {
@@ -100,10 +101,8 @@ namespace GUI {
                             for (auto it3 : panel) {
                                 if (it3["name"] == it2) {
                                     std::cout << "name panel: " << it3["name"] << std::endl;
-                                    std::vector<std::string> posComponents = String::string_to_string_vector(it3["pos"], ", \t");
-                                    std::vector<std::string> scaleComponents = String::string_to_string_vector(it3["scale"], ", \t");
-                                    Math::Vector pos(std::stof(posComponents[0]), std::stof(posComponents[1]));
-                                    Math::Vector scale(std::stof(scaleComponents[0]), std::stof(scaleComponents[1]));
+                                    Math::Vector pos(String::string_to_string_vector(it3["pos"], ", \t"));
+                                    Math::Vector scale(String::string_to_string_vector(it3["scale"], ", \t"));
                                     Interface::Panel _panel = Interface::Panel(std::make_shared<Sprite>(window, findInTiles(image, it3["img"]), pos, scale));
                                     // loop on button
                                     auto buttons = String::string_to_string_vector(it3["buttons"], ", \t");
@@ -112,10 +111,8 @@ namespace GUI {
                                         for (auto it5 : button) {
                                             if (it5["name"] == it4) {
                                                 std::cout << "name button: " << it5["name"] << std::endl;
-                                                std::vector<std::string> posComponents = String::string_to_string_vector(it5["pos"], ", \t");
-                                                std::vector<std::string> scaleComponents = String::string_to_string_vector(it5["scale"], ", \t");
-                                                Math::Vector pos(std::stof(posComponents[0]), std::stof(posComponents[1]));
-                                                Math::Vector scale(std::stof(scaleComponents[0]), std::stof(scaleComponents[1]));
+                                                Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
+                                                Math::Vector scale(String::string_to_string_vector(it5["scale"], ", \t"));
                                                 Interface::Button _button = Interface::Button(std::make_shared<Sprite>(window, findInTiles(image, it5["img"]), pos, scale));
                                                 auto sprite = _button.getSprite();
                                                 std::vector<std::string> offsetComponents = String::string_to_string_vector(findInTiles(image, it5["img"], "offset"), ", \t");
@@ -123,6 +120,22 @@ namespace GUI {
                                                 sprite->setMaxOffsetX(std::stoi(findInTiles(image, it5["img"], "max")));
                                                 _button.setCallback(SceneManager::StringToCallback(it5["callback"]));
                                                 _panel.addButton(_button);
+                                            }
+                                        }
+                                    }
+                                    // loop on input
+                                    auto inputs = String::string_to_string_vector(it3["inputs"], ", \t");
+                                    std::cout << "inputs: " << it3["input"] << std::endl;
+                                    for (auto it4 : inputs) {
+                                        for (auto it5 : input) {
+                                            if (it5["name"] == it4) {
+                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
+                                                auto fsize = std::stoi(it5["fsize"]);
+                                                auto limit = std::stoi(it5["limit"]);
+                                                Sf_text::Text_s tt("", {float(pos.x()), float(pos.y())}, Sf_text::createFont(findInTiles(font, it5["font"])), SceneManager::StringToSfColor(it5["color"]), fsize);
+                                                Interface::Input _input = Interface::Input(pos, Math::Vector(fsize * limit, fsize), limit, tt);
+                                                _panel.addInput(_input);
                                             }
                                         }
                                     }

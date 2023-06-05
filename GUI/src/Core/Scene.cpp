@@ -62,6 +62,27 @@ namespace GUI {
         }
         return Interface::CALLBACK::NONE;
     }
+    sf::Color SceneManager::StringToSfColor(const std::string &color) {
+        if (color == "red")
+            return sf::Color::Red;
+        if (color == "green")
+            return sf::Color::Green;
+        if (color == "blue")
+            return sf::Color::Blue;
+        if (color == "yellow")
+            return sf::Color::Yellow;
+        if (color == "magenta")
+            return sf::Color::Magenta;
+        if (color == "cyan")
+            return sf::Color::Cyan;
+        if (color == "transparent")
+            return sf::Color::Transparent;
+        if (color == "white")
+            return sf::Color::White;
+        if (color == "black")
+            return sf::Color::Black;
+        return sf::Color::White;
+    }
     std::string SceneManager::findInTiles(std::vector<std::map<std::string, std::string>> tile, std::string compare, std::string key) {
         for (auto &it : tile) {
             if (compare == it["name"]) {
