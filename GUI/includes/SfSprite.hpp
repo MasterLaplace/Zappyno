@@ -11,6 +11,16 @@
     #include "ISprite.hpp"
     #include <memory>
 
+/**
+ * @brief SfSprite class
+ *
+ * @namespace Interface
+ * @example in SFML:
+ * Sf_sprite::SfSprite sprite = Sf_sprite::SfSprite(window, "pathname.png", Math::Vector(0, 0), Math::Vector(1, 1));
+ * while (_window.isOpen()) {
+ *      sprite.drawSprite();
+ * }
+ */
 namespace Sf_sprite {
     class SfSprite : public ISprite {
         public:
