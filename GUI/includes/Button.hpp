@@ -12,7 +12,7 @@
     #include <memory>
 
 /**
- * @brief Input class
+ * @brief Button class
  *
  * @namespace Interface
  * @example in SFML:
