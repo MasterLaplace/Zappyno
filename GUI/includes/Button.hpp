@@ -11,6 +11,20 @@
     #include <chrono>
     #include <memory>
 
+/**
+ * @brief Input class
+ *
+ * @namespace Interface
+ * @example in SFML:
+ * Interface::Button _button = Interface::Button(std::make_shared<Sprite>(window, "GUI/assets/button.png", {0, 0}, {1, 1}));
+ * auto sprite = _button.getSprite();
+ * sprite->setOffset(Math::Vector(100, 100));
+ * sprite->setMaxOffsetX(1);
+ * while (_window.isOpen()) {
+ *      _button.animate(sf::Mouse::getPosition(_window), sf::Mouse::isButtonPressed(sf::Mouse::Left));
+ *      _button.drawButton();
+ * }
+ */
 namespace Interface {
     class Button {
         public:
