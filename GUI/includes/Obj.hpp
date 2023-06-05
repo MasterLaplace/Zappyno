@@ -13,18 +13,17 @@
     #include <cstring>
     #include <vector>
     #include <map>
-    #include <memory>
     #include "Mesh.hpp"
     #include "StringManager.hpp"
 
 namespace Parser {
     class Obj {
         public:
-            static std::shared_ptr<Engine::Mesh> loadFile(const std::string &filename);
+            static Engine::Mesh loadFile(const std::string &filename);
 
         protected:
         private:
     };
-}
+} // namespace Parser
 
 #endif /* !OBJ_HPP_ */
