@@ -40,8 +40,8 @@ ninja_clean:
 	@ninja -t clean
 
 gen_ninja:
-	@-./Install/install_ninja_ubuntu.sh 2> /dev/null
-	@./Script/Generate_Ninja.py
+	@-./GUI/Script/Install/install_ninja_ubuntu.sh 2> /dev/null
+	@./GUI/Script/Generate_Ninja.py
 
 fclean: clean
 	@rm -rf $(NAME)

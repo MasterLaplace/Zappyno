@@ -271,3 +271,4 @@ vgcore.*
 *.txt
 test
 .Test/
+openvr/
