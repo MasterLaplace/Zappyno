@@ -64,7 +64,8 @@ ai_command ia_client[] = {
 
 gui_command gui_client[] = {
     {MAP_SIZE, recv_map_size},
-    {0, NULL}
+    {0, NULL},
+    {TNA, send_name_of_all_the_teams},
 };
 
 //join client

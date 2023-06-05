@@ -15,6 +15,7 @@
     #define INDEX_IN_TEAM server->clients[server->id].index_in_team
     #define RANDINT(min, max) (rand() % (max - min + 1) + min)
     #define MAP_SIZE "msz"
+    #define TNA "tna"
     #define ERROR "Error"
     #define NORTH 0
     #define EAST 1

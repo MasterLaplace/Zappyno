@@ -88,6 +88,11 @@ void send_eject_to_all(t_server *server);
 void send_incantation(t_server *server);
 //
 void send_dead(t_server *server);
+// Send to all clients all teams names
+void send_name_of_all_the_teams_to_all(t_server *server, char** array);
+// Send to the client all teams names
+void send_name_of_all_the_teams(t_server *server, char** array);
+
 
 
 //OTHERS
