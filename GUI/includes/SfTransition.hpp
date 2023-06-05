@@ -14,6 +14,17 @@
     #include <chrono>
     #include "SfPrimitive.hpp"
 
+/**
+ * @brief Star class
+ *
+ * @namespace Sf_transition
+ * @example in SFML:
+ * Sf_transition::Transition star = Sf_transition::Transition(Sf_transition::Transition::TransitionType::STARFIELD, 5000);
+ * while (_window.isOpen()) {
+ *      if (!star.isFinished())
+ *          star.DoTransition(window);
+ * }
+ */
 namespace Sf_transition {
     template<typename T, typename U, typename V>
     inline U map(T value, T start1, T end1, U start2, U end2);
