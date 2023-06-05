@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-#define MAX_BUFFER_SIZE 1024
+#define MAX_BUFFER_SIZE 20000
 
 // pour uint8_t, uint16_t, uint32_t, etc.
 #include <stdint.h>

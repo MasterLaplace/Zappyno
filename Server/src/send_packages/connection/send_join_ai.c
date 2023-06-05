@@ -9,10 +9,14 @@
 
 void send_join_ai(t_server *server)
 {
-    send_to_client(server, "WELCOME");
+    char response[1024] = {0};
+    sprintf(response, "%d\n%d %d\n", (server->game.teams[TEAM_INDEX].max_players - server->game.teams[TEAM_INDEX].nb_players), server->params->width, server->params->height);
+    send_to_client(server, response, server->id);
 }
 
 void send_join_ai_to_all(t_server *server)
 {
-    send_to_all_clients(server, "WELCOME");
+    char response[1024] = {0};
+    sprintf(response, "%d\n%d %d\n", (server->game.teams[TEAM_INDEX].max_players - server->game.teams[TEAM_INDEX].nb_players), server->params->width, server->params->height);
+    send_to_all_clients(server, response);
 }

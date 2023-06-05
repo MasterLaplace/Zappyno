@@ -51,7 +51,7 @@ void send_name_of_all_the_teams_to_client(t_server *server)
     }
     message[z] = '\0';
     sprintf(message, "tna %s\n", message);
-    send_to_client(server, message);
+    send_to_client(server, message, server->id);
 }
 
 void send_name_of_all_the_teams_to_all(t_server *server)
@@ -70,6 +70,6 @@ void send_name_of_all_the_teams_to_all(t_server *server)
     }
     message[z] = '\0';
     sprintf(message, "tna %s\n", message);
-    send_to_client(server, message);
+    send_to_client(server, message, server->id);
     send_to_all_clients(server, message);
 }

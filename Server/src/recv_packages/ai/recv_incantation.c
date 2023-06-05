@@ -6,3 +6,10 @@
 */
 
 #include "../../../include/send_package.h"
+
+void recv_incantation(t_server *server, char **command)
+{
+    printf("recv incantation\n");
+    (void)command;
+    send_incantation(server);
+}

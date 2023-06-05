@@ -7,6 +7,7 @@
 
 #ifndef SEND_PACKAGE_H_
 #define SEND_PACKAGE_H_
+#define min(a,b) ((a) < (b) ? (a) : (b))
 
 #include "server.h"
 
@@ -44,13 +45,49 @@ void send_error(t_server *server, int id_error);
 
 
 
-//SEND DIRECTORY
+//SEND DIRECTORY AI
 //------------------ \\
 // Send to all the clients the map size
 void send_map_size_to_all(t_server *server);
 // Send to the client the map size
 void send_map_size(t_server *server);
-
+//
+void send_look(t_server *server);
+void send_look_to_all(t_server *server);
+//
+void send_forward(t_server *server);
+void send_forward_to_all(t_server *server);
+//
+void send_left(t_server *server);
+void send_left_to_all(t_server *server);
+//
+void send_right(t_server *server);
+void send_right_to_all(t_server *server);
+//
+void send_inventory(t_server *server);
+void send_inventory_to_all(t_server *server);
+//
+void send_connect_nbr(t_server *server);
+void send_connect_nbr_to_all(t_server *server);
+//
+void send_take_object(t_server *server, char **message);
+void send_take_object_to_all(t_server *server, char **message);
+//
+void send_set_object(t_server *server, char **message);
+void send_set_object_to_all(t_server *server, char **message);
+//
+void send_broadcast(t_server *server, char *message);
+void send_broadcast_to_all(t_server *server, char *message);
+//
+void send_fork(t_server *server);
+void send_fork_to_all(t_server *server);
+//
+void send_eject(t_server *server);
+void send_eject_to_all(t_server *server);
+//
+void send_incantation(t_server *server);
+//
+void send_dead(t_server *server);
 
 
 //OTHERS

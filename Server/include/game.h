@@ -19,33 +19,29 @@ typedef struct s_teams {
     char *name;
     t_client *players;
     int nb_players;
+    int max_players;
 } t_teams;
 
-typedef struct s_inventory {
-    int food;
-    int linemate;
-    int deraumere;
-    int sibur;
-    int mendiane;
-    int phiras;
-    int thystame;
-} t_inventory;
-
-typedef struct s_tiles {
+typedef struct t_map {
     int x;
     int y;
-    t_inventory *inventory;
-} t_tiles;
+    int resources[TOTAL_RESOURCES];
+    int player;
+    int egg;
+} t_map;
 
 typedef struct s_game {
     t_teams *teams;
-    t_client *current_client;
-    t_tiles **tiles;
-    // TODO: Add more structures as needed...
+    t_map *tiles;
 } t_game;
 
-typedef struct s_command {
+typedef struct gui_command {
     char *command_id;
     void (*function)(t_server *, char **);
-} t_command;
+} gui_command;
+
+typedef struct ai_command {
+    char *command_id;
+    void (*function_ai)(t_server *, char **);
+} ai_command;
 #endif /* !GAME_H_ */

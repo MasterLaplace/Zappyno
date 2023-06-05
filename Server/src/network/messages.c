@@ -15,9 +15,9 @@
  * @param structure
  * @param size
  */
-void send_to_client(t_server *server, char *message)
+void send_to_client(t_server *server, char *message, int id)
 {
-    t_client *client = &server->clients[server->id];
+    t_client *client = &server->clients[id];
     if (client->socket_fd == 0)
         return;
     int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
@@ -26,7 +26,7 @@ void send_to_client(t_server *server, char *message)
         exit(EXIT_FAILURE);
     }
     if (errno == EPIPE) {
-        remove_client(server, server->id);
+        remove_client(server, id);
     }
 }
 
@@ -34,9 +34,15 @@ void send_to_client(t_server *server, char *message)
 void send_to_all_clients(t_server *server, char * message)
 {
     t_client *clients = server->clients;
+    bool tmp = false;
+
     for (int i = 0; i < MAX_CLIENTS; i++) {
-        if (clients[i].socket_fd != 0 && FD_ISSET(clients[i].socket_fd, &clients[i].read_fds)) {
-            send_to_client(server, message);
+        if (i == server->id)
+            send_to_client(server, "ok\n", server->id);
+        if (clients[i].socket_fd != 0) {
+            printf("Send to client %d\n", i);
+            send_to_client(server, message, i);
+            tmp = true;
         }
     }
 }

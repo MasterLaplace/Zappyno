@@ -9,49 +9,67 @@
 #include "../../include/send_package.h"
 #include "../../include/game.h"
 
-t_command ia_client[] = {
-    /*{"Forward", recv_forward},
+ai_command ia_client[] = {
+    {"Look", recv_look},
+    {"Forward", recv_forward},
     {"Right", recv_right},
     {"Left", recv_left},
-    {"Look", recv_look},
     {"Inventory", recv_inventory},
-    {"Broadcast text", recv_broadcast},
     {"Connect_nbr", recv_connect_nbr},
+    {"Take", recv_take},
+    {"Set", recv_set},
+    {"Broadcast", recv_broadcast},
     {"Fork", recv_fork},
     {"Eject", recv_eject},
-    {"Take object", recv_take},
-    {"Set object", recv_set},
-    {"Incantation", recv_incantation},*/
+    {"Incantation", recv_incantation},
     {0, NULL}
 };
 
-t_command gui_client[] = {
-        {MAP_SIZE, recv_map_size},
-        {0, NULL}
+gui_command gui_client[] = {
+    {MAP_SIZE, recv_map_size},
+    {0, NULL}
 };
 
 //join client
-void join_client(t_server *server, char **message, int i)
+bool join_client(t_server *server, char **message, int i)
 {
     if (!strcmp(message[0], "GRAPHIC")) {
         server->clients[server->id].is_gui = true;
         recv_check_to_add_gui(server, message);
-        return;
+        return true;
     }
-    for (int j = 0; server->params->team_names[j] != NULL; j++) {
-        if (!strcmp(server->params->team_names[j], message[0])) {
-            recv_check_to_add_to_team(server, message);
-            return;
-        }
-    }
+    return recv_check_to_add_to_team(server, message);
 }
 
+bool check_command_ai(t_server *server, char **message)
+{
+    for (int i = 0; ia_client[i].command_id > 0; i++) {
+        if (!strncmp(ia_client[i].command_id, message[0],
+                     strlen(ia_client[i].command_id)) && !server->clients[server->id].is_freezed) {
+            ia_client[i].function_ai(server, message);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool check_command_gui(t_server *server, char **message)
+{
+    for (int i = 0; gui_client[i].command_id > 0; i++) {
+        if (!strcmp(gui_client[i].command_id, message[0])) {
+            gui_client[i].function(server, message);
+            return true;
+        }
+    }
+    return false;
+}
 /**
  * Handle the data received from a client
  * @param server
  * @param fd
  */
 void handle_client_data(t_server *server, int fd) {
+    bool ret = false;
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (server->clients[i].socket_fd == fd) {
             server->id = i;
@@ -65,31 +83,22 @@ void handle_client_data(t_server *server, int fd) {
         return;
     }
     printf("Received: |%s|\n", buffer);
-    char **message = stwa(buffer, "\n\t");
+    char **message = stwa(buffer, " \n\t");
     for (int i = 0; message[i]; i++)
         printf("message[%d] = %s\n", i, message[i]);
     if (!server->clients[server->id].is_connected) {
-        join_client(server, message, 0);
+        if (!join_client(server, message, 0))
+            free(buffer);
+        return;
     } else {
         if (server->clients[server->id].is_gui) {
-            for (int i = 0; gui_client[i].command_id > 0; i++) {
-                if (!strcmp(gui_client[i].command_id, message[0])) {
-                    gui_client[i].function(server, message);
-                    free(buffer);
-                    return;
-                }
-            }
+            ret = check_command_gui(server, message);
         } else {
-            for (int i = 0; ia_client[i].command_id > 0; i++) {
-                if (!strcmp(ia_client[i].command_id, message[0])) {
-                    ia_client[i].function(server, message);
-                    free(buffer);
-                    return;
-                }
-            }
+            ret = check_command_ai(server, message);
         }
     }
-    send_error(server, 0);
+    if (!ret)
+        send_error(server, 0);
     free(buffer);
 }
 

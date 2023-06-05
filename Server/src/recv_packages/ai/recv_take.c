@@ -6,3 +6,12 @@
 */
 
 #include "../../../include/send_package.h"
+
+void recv_take(t_server *server, char **message)
+{
+    if (!message[1]) {
+        send_error(server, 0);
+        return;
+    }
+    send_take_object(server, message);
+}

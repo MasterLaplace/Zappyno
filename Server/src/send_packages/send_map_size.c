@@ -11,7 +11,7 @@ void send_map_size(t_server *server)
 {
     char *message = calloc(9, sizeof(char));
     sprintf(message, "msz %d %d\n", server->params->width, server->params->height);
-    send_to_client(server, message);
+    send_to_client(server, message, server->id);
 }
 
 void send_map_size_to_all(t_server *server)

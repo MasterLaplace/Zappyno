@@ -6,3 +6,9 @@
 */
 
 #include "../../../include/send_package.h"
+
+void recv_inventory(t_server *server, char **message)
+{
+    (void)message;
+    send_inventory(server);
+}

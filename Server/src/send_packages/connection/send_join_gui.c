@@ -15,10 +15,10 @@
 
 void send_join_gui(t_server *server)
 {
-    send_to_client(server, "WELCOME");
+    send_to_client(server, "WELCOME\n", server->id);
 }
 
 void send_join_gui_to_all(t_server *server)
 {
-    send_to_all_clients(server, "WELCOME");
+    send_to_all_clients(server, "WELCOME\n");
 }
