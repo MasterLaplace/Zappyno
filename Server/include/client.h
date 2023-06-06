@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+typedef struct s_server t_server;
+
 typedef enum {
     FOOD,
     LINEMATE,
@@ -37,6 +39,10 @@ typedef struct s_client {
     int index_team;
     int resources[TOTAL_RESOURCES];
     int index_in_team;
+    void (*command_to_execute)(t_server *, char **);
+    char **command_args;
+    bool timer_set;
+    clock_t delay;
     // TODO: add more client-specific data (player info, team info, etc.)
 } t_client;
 

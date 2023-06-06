@@ -70,4 +70,8 @@ int find_tile(t_server *server, int x, int y);
 int wrap_x(int x, int width);
 //
 int wrap_y(int y, int height);
+//
+int has_timed_out();
+//
+int set_timer();
 #endif //SERVER_H

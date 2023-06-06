@@ -20,6 +20,7 @@ int required_ressources[8][8] = {
 
 void freeze_participating_players(t_server *server, t_client* player)
 {
+    int level = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     // Get the tile where the player is located
     int x = player->pos_x;
     int y = player->pos_y;
@@ -29,7 +30,8 @@ void freeze_participating_players(t_server *server, t_client* player)
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < server->game.teams[j].max_players; i++) {
             if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y) {
+                server->game.teams[j].players[i].pos_y == y &&
+                (level + 1) == server->game.teams[j].players[i].level) {
                 server->game.teams[j].players[i].is_freezed = true;
             }
         }
@@ -38,6 +40,7 @@ void freeze_participating_players(t_server *server, t_client* player)
 
 void perform_elevation(t_server *server)
 {
+    int level = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     // Get the current player initiating the incantation
     t_client* player = &server->clients[server->id];
 
@@ -49,7 +52,8 @@ void perform_elevation(t_server *server)
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < server->game.teams[j].max_players; i++) {
             if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y) {
+                server->game.teams[j].players[i].pos_y == y &&
+                (level + 1) == server->game.teams[j].players[i].level) {
                 server->game.teams[j].players[i].level++;
                 server->game.teams[j].players[i].is_freezed = false;
             }
@@ -60,7 +64,8 @@ void perform_elevation(t_server *server)
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < server->game.teams[j].max_players; i++) {
             if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y) {
+                server->game.teams[j].players[i].pos_y == y &&
+                (level + 1) == server->game.teams[j].players[i].level) {
                 send_to_client(server, "Current level: ++", server->game.teams[j].players[i].id);
             }
         }
@@ -76,6 +81,7 @@ void remove_required_resources(t_server *server)
     // Get the tile where the player is located
     int x = player->pos_x;
     int y = player->pos_y;
+    int pos = find_tile(server, x, y);
 
     // Remove the required resources from the tile
     for (int j = 0; j < server->params->num_teams; j++) {
@@ -84,8 +90,8 @@ void remove_required_resources(t_server *server)
                 server->game.teams[j].players[i].pos_y == y &&
                 (level + 1) == server->game.teams[j].players[i].level) {
                 for (int k = 1; k < TOTAL_RESOURCES; k++) {
-                    if (server->game.teams[j].players[i].resources[k] >= required_ressources[level][k + 1]) {
-                        server->game.teams[j].players[i].resources[k] -= required_ressources[level][k + 1];
+                    if (server->game.tiles[pos].resources[k] >= required_ressources[level][k + 1]) {
+                        server->game.tiles[pos].resources[k] -= required_ressources[level][k + 1];
                     }
                 }
             }
@@ -100,6 +106,7 @@ bool verify_elevation_conditions(t_server *server)
     int nb_players = 0;
     int x = server->clients[server->id].pos_x;
     int y = server->clients[server->id].pos_y;
+    int pos = find_tile(server, x, y);
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < server->game.teams[j].max_players; i++) {
             if (server->game.teams[j].players[i].pos_x == x &&
@@ -121,7 +128,7 @@ bool verify_elevation_conditions(t_server *server)
                 server->game.teams[j].players[i].pos_y == y &&
                 (level + 1) == server->game.teams[j].players[i].level) {
                 for (int k = 1; k < TOTAL_RESOURCES; k++) {
-                    if (server->game.teams[j].players[i].resources[k] < required_ressources[level][k + 1]) {
+                    if (server->game.tiles[pos].resources[k] < required_ressources[level][k + 1]) {
                         return false;
                     }
                 }

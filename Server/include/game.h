@@ -43,5 +43,6 @@ typedef struct gui_command {
 typedef struct ai_command {
     char *command_id;
     void (*function_ai)(t_server *, char **);
+    int time;
 } ai_command;
 #endif /* !GAME_H_ */

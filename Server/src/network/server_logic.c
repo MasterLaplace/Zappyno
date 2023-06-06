@@ -9,20 +9,57 @@
 #include "../../include/send_package.h"
 #include "../../include/game.h"
 
+char **copy_message_args(char **message) {
+    // First count how many elements in message
+    int count = 0;
+    while (message[count] != NULL) {
+        count++;
+    }
+
+    // Allocate new array
+    char **copy = malloc((count + 1) * sizeof(char *));
+    if (copy == NULL) {
+        // Handle error
+        fprintf(stderr, "Failed to allocate memory for command arguments.\n");
+        return NULL;
+    }
+
+    // Copy each string
+    for (int i = 0; i < count; i++) {
+        copy[i] = strdup(message[i]);
+        if (copy[i] == NULL) {
+            // Handle error
+            fprintf(stderr, "Failed to duplicate command argument.\n");
+            // Cleanup already allocated memory
+            for (int j = 0; j < i; j++) {
+                free(copy[j]);
+            }
+            free(copy);
+            return NULL;
+        }
+    }
+
+    // Null terminate
+    copy[count] = NULL;
+
+    return copy;
+}
+
+
 ai_command ia_client[] = {
-    {"Look", recv_look},
-    {"Forward", recv_forward},
-    {"Right", recv_right},
-    {"Left", recv_left},
-    {"Inventory", recv_inventory},
-    {"Connect_nbr", recv_connect_nbr},
-    {"Take", recv_take},
-    {"Set", recv_set},
-    {"Broadcast", recv_broadcast},
-    {"Fork", recv_fork},
-    {"Eject", recv_eject},
-    {"Incantation", recv_incantation},
-    {0, NULL}
+    {"Look", recv_look, 7},
+    {"Forward", recv_forward, 7},
+    {"Right", recv_right, 7},
+    {"Left", recv_left, 7},
+    {"Inventory", recv_inventory, 1},
+    {"Connect_nbr", recv_connect_nbr, 0},
+    {"Take", recv_take, 7},
+    {"Set", recv_set, 7},
+    {"Broadcast", recv_broadcast, 7},
+    {"Fork", recv_fork, 42},
+    {"Eject", recv_eject, 7},
+    {"Incantation", recv_incantation, 300},
+    {NULL, NULL, 0}
 };
 
 gui_command gui_client[] = {
@@ -43,10 +80,14 @@ bool join_client(t_server *server, char **message, int i)
 
 bool check_command_ai(t_server *server, char **message)
 {
-    for (int i = 0; ia_client[i].command_id > 0; i++) {
+    for (int i = 0; ia_client[i].command_id; i++) {
         if (!strncmp(ia_client[i].command_id, message[0],
                      strlen(ia_client[i].command_id)) && !server->clients[server->id].is_freezed) {
-            ia_client[i].function_ai(server, message);
+            printf("Command %s matched, setting cooldown...\n", ia_client[i].command_id);
+            server->clients[server->id].timer_set = true;
+            server->clients[server->id].command_to_execute = ia_client[i].function_ai;
+            server->clients[server->id].command_args = copy_message_args(message);
+            server->clients[server->id].delay = clock();
             return true;
         }
     }

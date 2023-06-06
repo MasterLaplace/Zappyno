@@ -211,6 +211,7 @@ void read_data_from_server(t_server *svr)
 
 void handle_new_connection(t_server *svr)
 {
+    printf("New connection\n");
     int new_socket;
 
     if (FD_ISSET(svr->sockfd, &svr->readfds)) {
@@ -239,6 +240,17 @@ int set_fds(t_server *svr)
     return svr->max_fd;
 }
 
+void free_message_args(char **message) {
+    // Iterate over each string in the array
+    for (int i = 0; message[i] != NULL; i++) {
+        // Free the string
+        free(message[i]);
+    }
+
+    // Free the array itself
+    free(message);
+}
+
 int main(int ac, char **av)
 {
     if (ac == 2 && (!strcmp(av[1], "-h") || !strcmp(av[1], "-help"))) {
@@ -252,15 +264,32 @@ int main(int ac, char **av)
     t_server *server = set_server_struct(&params);
 
     setup_server(server, &params);
+
     while (true) {
         signal(SIGPIPE, SIG_IGN);
+        printf("Waiting for activity...\n");
         int activity = select(set_fds(server) + 1, &server->readfds, NULL, NULL, NULL);
+        printf("Activity : %d\n", activity);
         if (activity < 0) {
             perror("select");
             exit(EXIT_FAILURE);
         }
         handle_new_connection(server);
-        read_data_from_server(server);
+        for (int i = 0; i < MAX_CLIENTS; i++) {
+            if (!server->clients[i].timer_set)
+                read_data_from_server(server);
+        }
+        for (int i = 0; i < MAX_CLIENTS; i++) {
+            printf("timer_set = %d\n", server->clients[i].timer_set);
+            printf("delay = %ld\n", server->clients[i].delay);
+            if (server->clients[i].timer_set && has_timed_out(server->clients[i].delay)) {
+                printf("8 seconds have passed since the command was received.\n");
+                server->clients[i].command_to_execute(server, server->clients[i].command_args);  // Call your function here.
+                free_message_args(server->clients[i].command_args);  // You'll need to implement this function.
+                server->clients[i].timer_set = false;  // Reset timer flag
+                server->clients[i].command_to_execute = NULL;  // Clear the function pointer
+            }
+        }
     }
     return EXIT_SUCCESS;
 }

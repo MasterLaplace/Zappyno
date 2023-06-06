@@ -109,7 +109,8 @@ int *get_pos_tiles_seen(t_server *server, int x, int y, int orientation, int lev
 
 void send_look(t_server *server)
 {
-    printf("x: %d, y: %d\n", server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x, server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y);
+    printf("x: %d, y: %d\n", server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x,
+           server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y);
     char *message = calloc(1, sizeof(char));
     printf("TEAM_INDEX: %d, INDEX_IN_TEAM: %d\n", TEAM_INDEX, INDEX_IN_TEAM);
     int x = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
