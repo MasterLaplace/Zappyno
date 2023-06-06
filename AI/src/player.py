@@ -13,16 +13,9 @@ class Player:
         self.__team = team
         self.__communication = communication
         self.__level = 1
-        self.__inventory = {
-            'food': 10,
-            'linemate': 0,
-            'deraumere': 0,
-            'sibur': 0,
-            'mendiane': 0,
-            'phiras': 0,
-            'thystame': 0
-        }
+        self.__inventory = ""
         self.__position = position
+        self.__object = [""]
 
     def get_team(self) -> str:
         """
@@ -36,17 +29,17 @@ class Player:
         """
         return self.__communication
 
-    def send_message(self) -> None:
+    def send_message(self, message: str) -> None:
         """
         Send a message to the server.
         """
-        self.__communication.send('test')
+        self.__communication.send(message)
 
-    def receive_message(self) -> None:
+    def receive_message(self) -> str:
         """
         Receive a message from the server.
         """
-        self.__communication.receive()
+        return self.__communication.receive()
 
     def get_level(self) -> int:
         """
@@ -60,17 +53,18 @@ class Player:
         """
         self.__level += 1
 
-    def get_inventory(self) -> dict:
+    def get_inventory(self) -> str:
         """
         Get the inventory of the player.
         """
         return self.__inventory
 
-    def add_inventory(self, inventory: str) -> None:
+    def add_inventory(self) -> None:
         """
         Add an item to the inventory of the player.
         """
-        self.__inventory[inventory] += 1
+        self.send_message("Inventory")
+        self.__inventory = self.receive_message()
 
     def get_position(self) -> str:
         """
@@ -89,3 +83,19 @@ class Player:
         Get the id of the player.
         """
         return self.__id
+
+    def look(self) -> None:
+        """
+        Look around the player.
+        """
+        self.send_message("Look")
+        self.__object = self.receive_message().split(',')
+
+    def take_object(self) -> None:
+        """
+        Take an object.
+        """
+        first_slot = self.__object[0].split(' ')
+        self.send_message("Take " + first_slot[2])
+        self.receive_message()
+        self.look()
