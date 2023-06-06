@@ -62,9 +62,5 @@ void send_name_of_all_the_teams_to_all(t_server *server, char** array)
     }
     message[z] = '\0';
     sprintf(message, "tna %s\n", message);
-<<<<<<< Updated upstream
-    send_to_client(server, message, server->id);
-=======
->>>>>>> Stashed changes
     send_to_all_clients(server, message);
 }

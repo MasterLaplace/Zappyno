@@ -9,7 +9,7 @@
 
 char *itoa(int nb)
 {
-    int len = my_nblen(nb);
+    int len; //my_nblen(nb);
     int tmp = 0;
     int place = 0;
     char *nb_str = malloc(sizeof(char) * len + 1);
