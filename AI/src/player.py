@@ -2,7 +2,9 @@
 Player class is used to store information about the player.
 """
 
+from typing import Dict
 from communication import Communication
+
 class Player:
     """
     This class is used to store information about the player.
@@ -15,7 +17,8 @@ class Player:
         self.__level = 1
         self.__inventory = ""
         self.__position = position
-        self.__object: dict[int, str] = {}
+        self.__object: Dict[int, str] = {}
+        self.__empty = True
 
     def get_team(self) -> str:
         """
