@@ -15,7 +15,7 @@ class Player:
         self.__level = 1
         self.__inventory = ""
         self.__position = position
-        self.__object = [""]
+        self.__object: dict[int, str] = {}
 
     def get_team(self) -> str:
         """
@@ -89,13 +89,20 @@ class Player:
         Look around the player.
         """
         self.send_message("Look")
-        self.__object = self.receive_message().split(',')
+        object_string: str = self.receive_message()
+        characters_to_remove = "[]\n"
+        modified_string = "".join(char for char in
+        object_string if char not in characters_to_remove)
+        object_list: list = modified_string.split(',')
+        for i, item in enumerate(object_list):
+            self.__object[i+1] = item
+
 
     def take_object(self) -> None:
         """
         Take an object.
         """
-        first_slot = self.__object[0].split(' ')
-        self.send_message("Take " + first_slot[2])
+        object_take: str = self.__object[1].split(' ')[2]
+        self.send_message("Take " + object_take)
         self.receive_message()
         self.look()
