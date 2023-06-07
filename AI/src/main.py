@@ -8,6 +8,7 @@ from sys import argv
 
 from communication import Communication
 from creation_player import creation_player
+from player import Player
 
 communication: Communication = Communication('localhost', 4242)
 
@@ -15,11 +16,15 @@ if __name__ == '__main__':
     communication.connect()
     communication.receive()
     communication.send(argv[2])
-    creation_player(communication)
+    player: Player = creation_player(communication)
     while True:
         text: str = input('Enter text: ')
         if text == 'exit':
             break
         communication.send(text)
-        print(communication.receive())
+        player.add_inventory()
+        player.look()
+        player.take_object()
+        player.add_inventory()
+
     communication.disconnect()
