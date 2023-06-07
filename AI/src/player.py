@@ -18,7 +18,6 @@ class Player:
         self.__inventory = ""
         self.__position = position
         self.__object: Dict[int, str] = {}
-        self.__empty = True
 
     def get_team(self) -> str:
         """
