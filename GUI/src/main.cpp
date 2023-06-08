@@ -5,7 +5,7 @@
 ** core
 */
 
-#include "Core.hpp"
+#include "../includes/Core.hpp"
 
 int main(const int ac, const char *av[])
 {
