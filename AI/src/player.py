@@ -2,34 +2,35 @@
 Player class is used to store information about the player.
 """
 
-from typing import Dict
+from typing import Dict, List
 from communication import Communication
+
+lvls: List[Dict[str, int]] = [
+        {"linemate": 1},
+        {"linemate": 1, "deraumere": 1, "sibur": 1},
+        {"linemate": 2, "sibur": 1, "phiras": 2},
+        {"linemate": 1, "deraumere": 1, "sibur": 2, "phiras": 1},
+        {"linemate": 1, "deraumere": 2, "sibur": 1, "mendiane": 3},
+        {"linemate": 1, "deraumere": 2, "sibur": 3, "phiras": 1},
+        {"linemate": 2, "deraumere": 2, "sibur": 2, "mendiane": 2, "phiras": 2, "thystame": 1},
+]
 
 class Player:
     """
     This class is used to store information about the player.
     It is used to store the team name, the communication object, the level of the player.
     """
-    def __init__(self, communication: Communication, team: str, position: str, number: int):
-        self.__id = number
-        self.__team = team
+    def __init__(self, communication: Communication, team: str, number: int):
+        self._id = number
+        self._team = team
         self.__communication = communication
-        self.__level = 1
+        #self.__level = 1
         self.__inventory = ""
-        self.__position = position
         self.__object: Dict[int, str] = {}
-
-    def get_team(self) -> str:
-        """
-        Get the team name of the player.
-        """
-        return self.__team
-
-    def get_communication(self) -> Communication:
-        """
-        Get the communication object of the player.
-        """
-        return self.__communication
+        #self.__incantation: bool = False
+        self.__shared_inventory: Dict[str, int] = {}
+        #self.__player_ready_to_incantation: bool = False
+        #self.__players_in_incantation: int = 0
 
     def send_message(self, message: str) -> None:
         """
@@ -43,48 +44,13 @@ class Player:
         """
         return self.__communication.receive()
 
-    def get_level(self) -> int:
-        """
-        Get the level of the player.
-        """
-        return self.__level
-
-    def set_level(self):
-        """
-        Set the level of the player.
-        """
-        self.__level += 1
-
-    def get_inventory(self) -> str:
-        """
-        Get the inventory of the player.
-        """
-        return self.__inventory
-
     def add_inventory(self) -> None:
         """
         Add an item to the inventory of the player.
         """
         self.send_message("Inventory")
         self.__inventory = self.receive_message()
-
-    def get_position(self) -> str:
-        """
-        Get the position of the player.
-        """
-        return self.__position
-
-    def set_position(self, position: str) -> None:
-        """
-        Set the position of the player.
-        """
-        self.__position = position
-
-    def get_id(self) -> int:
-        """
-        Get the id of the player.
-        """
-        return self.__id
+        print(self.__inventory)
 
     def look(self) -> None:
         """
@@ -99,7 +65,6 @@ class Player:
         for i, item in enumerate(object_list):
             self.__object[i+1] = item
 
-
     def take_object(self) -> None:
         """
         Take an object.
@@ -108,3 +73,28 @@ class Player:
         self.send_message("Take " + object_take)
         self.receive_message()
         self.look()
+
+    def fill_shared_inventory(self, message: str) -> None:
+        """
+        Fill the shared inventory.
+        """
+        object_take: str = message.split(' ')[1]
+        if object_take in self.__shared_inventory:
+            self.__shared_inventory[object_take] += 1
+        else:
+            self.__shared_inventory[object_take] = 1
+
+    def parse_brodcast(self, message: str) -> None:
+        """
+        Parse the broadcast message.
+        :param message:
+        """
+        if message == "Inventory":
+            return self.send_message("Inventory")
+        if message == "Incantation":
+            return self.send_message("Incantation")
+        if message == "Ready":
+            return self.send_message("Ready")
+        if message == "moving":
+            return self.send_message("Forward")
+        return None
