@@ -95,6 +95,6 @@ class Player:
             return self.send_message("Incantation")
         if message == "Ready":
             return self.send_message("Ready")
-        if message == "moving":
-            return self.send_message("Forward")
+        if message == "Moving":
+            return self.send_message("Moving")
         return None
