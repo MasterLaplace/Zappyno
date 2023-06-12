@@ -48,7 +48,7 @@ class Communication:
         """
         return self.__socket.recv(1024).decode()
 
-    def select(self):
+    def select(self) -> list:
         """
         Select the socket.
         This method is used to check if the socket is ready to be read or written.

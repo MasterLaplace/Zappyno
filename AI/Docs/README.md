@@ -16,9 +16,11 @@ USAGE: ./zappy_ai -p port -n name -h machine
 The AI is written in Python. It uses the [socket](https://docs.python.org/3/library/socket.html) library to communicate with the server.  
 The protocol used to communicate with the server is described in the [Protocol.pdf](./Protocol.pdf) file.
 
-There'll be 3 AI types:
-- An AI that'll be the center of the map and will provide the central vision of the map to the other AIs.
-- An AI that'll look for resources and inform the third AI type of the resources location.
-- An AI that'll collect the resources and build elevations.
+All AI will be able to communicate (broadcast) with each other to share information by sending them through the server. 
+There's 3 broadcast type:
+* Moving sent by an AI when moving to an other tile: `moving`
+* Ready sent by an AI when once ready to incantate: `ready`
+* Incantation sent by an AI when there's enough players on its tile and ready to incantate
+* Inventory: all AIs will know each other's inventory status by sharing them: `inventory {'linemate': 0, 'deraumere': 0, 'sibur': 0, 'mendiane': 0, 'phiras': 0, "thystame": 0}`
 
-All AI will be able to communicate with each other to share information by sending them through the server.
+Broadcasts will have the following format: `Broadcast PLAYER_TEAM|PLAYER_ID|PLAYER_LEVEL|MESSAGE`
