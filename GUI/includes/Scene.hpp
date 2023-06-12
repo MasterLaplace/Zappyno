@@ -65,9 +65,7 @@ namespace GUI {
                 RESULT
             };
         public:
-            SceneManager() {
-                _xml.loadFile("GUI/assets/scene.xml");
-            }
+            SceneManager() { _xml.loadFile("GUI/assets/scene.xml"); }
             ~SceneManager() = default;
             SceneManager(SceneManager&) = default;
             SceneManager(SceneManager&&) = default;
@@ -115,8 +113,7 @@ namespace GUI {
                                                 Math::Vector scale(String::string_to_string_vector(it5["scale"], ", \t"));
                                                 Interface::Button _button = Interface::Button(std::make_shared<Sprite>(window, findInTiles(image, it5["img"]), pos, scale));
                                                 auto sprite = _button.getSprite();
-                                                std::vector<std::string> offsetComponents = String::string_to_string_vector(findInTiles(image, it5["img"], "offset"), ", \t");
-                                                sprite->setOffset(Math::Vector(std::stof(offsetComponents[0]), std::stof(offsetComponents[1])));
+                                                sprite->setOffset(Math::Vector(String::string_to_string_vector(findInTiles(image, it5["img"], "offset"), ", \t")));
                                                 sprite->setMaxOffsetX(std::stoi(findInTiles(image, it5["img"], "max")));
                                                 _button.setCallback(SceneManager::StringToCallback(it5["callback"]));
                                                 _panel.addButton(_button);

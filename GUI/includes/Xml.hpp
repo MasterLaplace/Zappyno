@@ -21,9 +21,7 @@ namespace Parser {
             ~Xml() = default;
 
             void loadFile(std::string path);
-            void clear() {
-                _attributes.clear();
-            }
+            void clear() { _attributes.clear(); }
 
             std::string getAttribute(std::string pathname, std::string className, std::string tileName, std::string key) const;
             std::vector<std::string> getAttributes(std::string pathname, std::string tileName) const;

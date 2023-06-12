@@ -105,4 +105,4 @@ namespace Sf_transition {
                 break;
         }
     }
-}
+} // namespace Sf_transition

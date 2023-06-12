@@ -12,7 +12,7 @@
 Test(MainTest, main)
 {
     int ac = 2;
-    char *av[2] = {(char *) "./zappy_gui", (char *) "-h"};
+    const char *av[2] = {(char *) "./zappy_gui", (char *) "-h"};
 
     cr_assert(main(ac, av) == EXIT_SUCCESS, "\033[1;31mmain should return EXIT_SUCCESS.\033[0m");
 }

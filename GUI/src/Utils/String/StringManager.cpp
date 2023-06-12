@@ -7,7 +7,6 @@
 
 #include "../../../includes/StringManager.hpp"
 
-
 namespace String {
     /**
      * @brief Split a string into a vector of strings

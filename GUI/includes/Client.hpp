@@ -16,7 +16,8 @@
 namespace Manager {
     class Client {
         public:
-            Client(const std::string &ip, const unsigned short port);
+            Client() = default;
+            Client(const std::string &ip, const unsigned short port) { this->setSocket(ip, port); }
             ~Client() = default;
 
             void resetBuffer() { memset(buffer, 0, BUFFER_SIZE); }
@@ -25,6 +26,20 @@ namespace Manager {
 
             void setFramerate(unsigned framerate) { this->_framerate = framerate; }
             unsigned getFramerate() const { return this->_framerate; }
+
+            /**
+             * @brief Set the Socket object and reset buffer, readfds and timeout
+             *
+             * @param ip  IP address
+             * @param port  Port
+             */
+            void setSocket(const std::string &ip, const unsigned short port);
+
+            /**
+             * @brief Reset socket, buffer, readfds and timeout
+             *
+             */
+            void resetSocket();
 
             /**
              * @brief Send message to server
@@ -44,10 +59,10 @@ namespace Manager {
 
         protected:
         private:
-            std::unique_ptr<Network::Socket> socket;
-            fd_set readfds;
+            std::unique_ptr<Network::Socket> socket = nullptr;
+            fd_set readfds = {0};
             timeval timeout;
-            char buffer[BUFFER_SIZE];
+            char buffer[BUFFER_SIZE] = {0};
             unsigned _framerate = 60;
     };
 } // namespace Manager
