@@ -9,7 +9,6 @@
     #define CORE_HPP_
     #define	EXIT_ERROR	84	/* Failing exit status.  */
     #define FRAMERATE 60
-    #include <iostream>
     #include "Client.hpp"
     #include "SfTransition.hpp"
     #include "Scene.hpp"
@@ -17,7 +16,7 @@
 class Core {
     public:
         Core(const unsigned ac, const char *av[]);
-        ~Core() { _window->close(); }
+        ~Core() { if (_window->isOpen()) _window->close(); }
 
         void showUsage(std::ostream &output);
         bool parseArgs(const unsigned ac, const char *av[]);

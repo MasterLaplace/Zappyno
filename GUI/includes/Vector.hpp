@@ -10,6 +10,7 @@
     #include "cmath"
     #include <string>
     #include <iostream>
+    #include <vector>
 
 namespace Math {
     class Vector {
@@ -24,6 +25,14 @@ namespace Math {
                 e[2] = std::stof(str.substr(sz));
                 e[3] = 1;
             }
+            Vector(const std::vector<std::string> &str) {
+                e[0] = std::stof(str[0]);
+                e[1] = std::stof(str[1]);
+                e[2] = (str.size() > 2 ) ? std::stof(str[2]) : 0;
+                e[3] = 1;
+            }
+            Vector(const Vector &vec) = default;
+            ~Vector() = default;
 
             double x() const { return e[0]; }
             double y() const { return e[1]; }

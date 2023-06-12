@@ -7,8 +7,8 @@
 
 #ifndef SF_TRANSITION_HPP_
     #define SF_TRANSITION_HPP_
-    #define WIN_X 800
-    #define WIN_Y 800
+    #define WIN_X 1920
+    #define WIN_Y 1080
     #define RANDINT(min, max) (rand() % (max - min + 1) + min)
     #include <random>
     #include <chrono>

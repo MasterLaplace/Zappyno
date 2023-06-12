@@ -6,25 +6,45 @@
         <Font name="open_sans_bold_italic" path="GUI/assets/OpenSans-ExtraBoldItalic.ttf"/>
     </Fonts>
     <Images>
-        <Image name="play_button" path="GUI/assets/play_button-removebg-preview.png" offset="251, 249" max="1"/>
-        <Image name="table_panel" path="GUI/assets/table.png"/>
+        <!-- <Image name="play_button" path="GUI/assets/play_button-removebg-preview.png" offset="251, 249" max="1"/> -->
+        <Image name="home_menu" path="GUI/assets/home_menu_panel.png"/>
+        <Image name="settings_menu" path="GUI/assets/settings_menu_panel.png"/>
+        <Image name="create_game_menu" path="GUI/assets/create_game_panel.png"/>
+        <Image name="space_background" path="GUI/assets/space_back.jpg"/>
         <Image name="health_bar" path="GUI/assets/health_bar.png"/>
+        <Image name="create_game_img_button" path="GUI/assets/button_create_game.png" offset="500, 80" max="1"/>
+        <Image name="settings_img_button" path="GUI/assets/button_settings.png" offset="500, 80" max="1"/>
+        <Image name="credits_img_button" path="GUI/assets/button_credits.png" offset="500, 80" max="1"/>
+        <Image name="exit_img_button" path="GUI/assets/button_exit.png" offset="500, 80" max="1"/>
+        <Image name="back_img_button" path="GUI/assets/back_button.png" offset="128, 128" max="1"/>
     </Images>
     <Buttons>
-        <Button name="play" img="play_button" pos="0, 0" scale="1, 1"/>
+        <!-- CALLBACK: -->
+        <!-- "NONE", "goto_create", "goto_game", "goto_setting", "goto_credit", "goto_result", "goto_menu", "resize", "mute_sound", "exit" -->
+        <Button name="create_game_button" img="create_game_img_button" pos="710, 401" scale="1, 1" callback="goto_create"/>
+        <Button name="settings_button" img="settings_img_button" pos="710, 518" scale="1, 1" callback="goto_setting"/>
+        <Button name="credits_button" img="credits_img_button" pos="710, 634" scale="1, 1" callback="goto_credit"/>
+        <Button name="exit_button" img="exit_img_button" pos="710, 745" scale="1, 1" callback="goto_create"/>
+        <Button name="back_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_menu"/>
     </Buttons>
     <Inputs>
-        <Input name="ip" img="table_panel" pos="0, 0" size="100, 100" scale="1, 1" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
+        <Input name="ip" img="table_panel" pos="0, 0" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
     </Inputs>
     <Bars>
         <Bar name="healh" img="health_bar" pos="0, 0" scale="1, 1" vertical="true"/>
     </Bars>
     <Panels>
-        <Panel name="table" img="table_panel" pos="0, 0" scale="0.75, 0.75" buttons="play" inputs="ip" bars="healh"/>
-        <Panel name="table_game" img="table_panel" pos="500, 500" scale="0.50, 0.50" buttons="play" inputs="ip" bars="healh"/>
+        <Panel name="background" img="space_background" pos="0, 0" scale="1, 1" inputs="ip" bars="healh"/>
+        <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" inputs="ip" bars="healh"/>
+        <Panel name="settings_panel" img="settings_menu" pos="426, 216" scale="1, 1" buttons="back_button" inputs="ip" bars="healh"/>
+        <Panel name="create_game_panel" img="create_game_menu" pos="426, 216" scale="1, 1" buttons="back_button" inputs="ip" bars="healh"/>
+        <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" inputs="ip" bars="healh"/>
+        <Panel name="table_create" img="table_panel" pos="500, 500" scale="0.50, 0.50" buttons="play" inputs="ip" bars="healh"/>
     </Panels>
     <Scenes>
-        <Scene name="menu" panels="table"/>
-        <Scene name="game" panels="table_game"/>
+        <Scene name="menu" panels="background, home_panel"/>
+        <Scene name="create" panels="background, create_game_panel"/>
+        <Scene name="setting" panels="background, settings_panel"/>
+        <Scene name="credit" panels="background, credits_panel"/>
     </Scenes>
 </sbml>

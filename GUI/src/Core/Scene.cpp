@@ -31,6 +31,58 @@ namespace GUI {
                 return "NONE";
         }
     }
+    std::string SceneManager::CallbackToString(const Interface::CALLBACK &callback) {
+        switch (callback) {
+            case Interface::CALLBACK::GOTO_CREATE:
+                return "goto_create";
+            case Interface::CALLBACK::GOTO_GAME:
+                return "goto_game";
+            case Interface::CALLBACK::GOTO_SETTING:
+                return "goto_setting";
+            case Interface::CALLBACK::GOTO_CREDIT:
+                return "goto_credit";
+            case Interface::CALLBACK::GOTO_RESULT:
+                return "goto_result";
+            case Interface::CALLBACK::GOTO_MENU:
+                return "goto_menu";
+            case Interface::CALLBACK::RESIZE:
+                return "resize";
+            case Interface::CALLBACK::MUTE_SOUND:
+                return "mute_sound";
+            case Interface::CALLBACK::EXIT:
+                return "exit";
+        default:
+            return "NONE";
+        }
+    }
+    Interface::CALLBACK SceneManager::StringToCallback(const std::string &callback) {
+        for (int i = 0; i < Interface::CALLBACK::EXIT; i++) {
+            if (callback == CallbackToString(static_cast<Interface::CALLBACK>(i)))
+                return static_cast<Interface::CALLBACK>(i);
+        }
+        return Interface::CALLBACK::NONE;
+    }
+    sf::Color SceneManager::StringToSfColor(const std::string &color) {
+        if (color == "red")
+            return sf::Color::Red;
+        if (color == "green")
+            return sf::Color::Green;
+        if (color == "blue")
+            return sf::Color::Blue;
+        if (color == "yellow")
+            return sf::Color::Yellow;
+        if (color == "magenta")
+            return sf::Color::Magenta;
+        if (color == "cyan")
+            return sf::Color::Cyan;
+        if (color == "transparent")
+            return sf::Color::Transparent;
+        if (color == "white")
+            return sf::Color::White;
+        if (color == "black")
+            return sf::Color::Black;
+        return sf::Color::White;
+    }
     std::string SceneManager::findInTiles(std::vector<std::map<std::string, std::string>> tile, std::string compare, std::string key) {
         for (auto &it : tile) {
             if (compare == it["name"]) {
