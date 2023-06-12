@@ -34,10 +34,8 @@ Core::Core(const unsigned ac, const char *av[])
 void Core::run()
 {
     std::cout << "Core: Running..." << std::endl;
-    while (_window->isOpen()) {
-        sf::Event event;
+    sf::Event event;
     std::string message;
-
 
     while (_window->isOpen()) {
 
