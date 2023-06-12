@@ -16,16 +16,30 @@
  *
  * @namespace Interface
  * @example in SFML:
- * Interface::Button _button = Interface::Button(std::make_shared<Sprite>(window, "GUI/assets/button.png", {0, 0}, {1, 1}));
- * auto sprite = _button.getSprite();
+ * Interface::Button button = Interface::Button(std::make_shared<Sprite>(window, "GUI/assets/button.png", {0, 0}, {1, 1}));
+ * auto sprite = button.getSprite();
  * sprite->setOffset(Math::Vector(100, 100));
  * sprite->setMaxOffsetX(1);
+ * button.setCallback(Interface::CALLBACK::EXIT);
  * while (_window.isOpen()) {
- *      _button.animate(sf::Mouse::getPosition(_window), sf::Mouse::isButtonPressed(sf::Mouse::Left));
- *      _button.drawButton();
+ *      button.animate(sf::Mouse::getPosition(_window), sf::Mouse::isButtonPressed(sf::Mouse::Left));
+ *      button.drawButton();
  * }
  */
 namespace Interface {
+    enum CALLBACK {
+        NONE = -1,
+        GOTO_CREATE,
+        GOTO_GAME,
+        GOTO_SETTING,
+        GOTO_CREDIT,
+        GOTO_RESULT,
+        GOTO_MENU,
+        RESIZE,
+        MUTE_SOUND,
+        EXIT,
+        OPEN_INVENTORY,
+    };
     class Button {
         public:
             enum State {
@@ -47,7 +61,10 @@ namespace Interface {
             void setPos(const Math::Vector &pos) { _pos = pos; }
             void setSize(const Math::Vector &size) { _size = size; }
             void setScale(const Math::Vector &scale) { _scale = scale; }
+            void setCallback(const CALLBACK &callback) { _callback = callback; }
             std::shared_ptr<ISprite> getSprite() const { return _sprite; }
+            CALLBACK getCallback() const { return _callback; }
+            State getState() const { return _state; }
             void updateState(const Math::Vector &mousePos, const bool &mousePressed = false);
             void animate(const Math::Vector &mousePos, const bool &mousePressed = false);
             void drawButton() const { _sprite->drawSprite(); }
@@ -59,6 +76,7 @@ namespace Interface {
             Math::Vector _scale;
             std::shared_ptr<ISprite> _sprite;
             State _state = IDLE;
+            CALLBACK _callback = NONE;
     };
 } // namespace Interface
 

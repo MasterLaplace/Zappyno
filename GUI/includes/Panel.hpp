@@ -60,11 +60,9 @@ namespace Interface {
             }
             void updatePanel(const Math::Vector &mousePos, const bool &mousePressed = false);
             void updatePanel(const Math::Vector &mousePos, int key, const bool &mousePressed = false);
+            std::vector<CALLBACK> getCallback();
 
-            Panel &operator=(const bool &displayed) {
-                _isDisplayed = displayed;
-                return *this;
-            }
+            Panel &operator=(const bool &displayed) { _isDisplayed = displayed; return *this; }
 
         protected:
         private:

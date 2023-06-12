@@ -22,4 +22,11 @@ namespace Interface {
         for (auto &bar : _bars)
             bar.updateState();
     }
+    std::vector<CALLBACK> Panel::getCallback() {
+        std::vector<CALLBACK> callback;
+        for (auto &button : _buttons)
+            if (button.getState() == Interface::Button::RELEASED)
+                callback.push_back(button.getCallback());
+        return callback;
+    }
 }
