@@ -6,6 +6,7 @@ the host, the port, the IA, the team name, the communication object…
 from selectors import EVENT_READ, EVENT_WRITE
 from sys import exit as sys_exit
 from communication import Communication
+from player import Player
 
 class Client:
     """
@@ -15,9 +16,9 @@ class Client:
         self.__host = host
         self.__port = port
         self.__team = team
-        self.__communication = Communication(host, port)
-        self.__player = None
         self.__id: int = 0
+        self.__communication = Communication(host, port)
+        self.__player = Player(self.__communication, self.__team, self.__id)
         self.__has_logged: bool = False
 
     def loop(self) -> None:
