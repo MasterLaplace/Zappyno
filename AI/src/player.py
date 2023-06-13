@@ -50,6 +50,7 @@ class Player:
         #self.__player_ready_to_incantation: bool = False
         #self.__players_in_incantation: int = 0
         self.__map: List[List[int]] = [[]]
+        self.response: str = ''
 
     def send_message(self, message: str) -> None:
         """

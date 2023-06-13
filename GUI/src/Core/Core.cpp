@@ -5,9 +5,12 @@
 ** Core
 */
 
-#include "Core.hpp"
+#include "../../includes/Core.hpp"
+#include "../../includes/SfSprite.hpp"
+#include <algorithm>
+#include <list>
 
-Core::Core(const int ac, const char *av[])
+Core::Core(const unsigned ac, const char *av[])
 {
     if (ac == 2 && (std::string(av[1]) == "-h" || std::string(av[1]) == "-help")) {
         this->showUsage(std::cout);
@@ -15,11 +18,44 @@ Core::Core(const int ac, const char *av[])
     }
     if (!this->parseArgs(ac, av))
         throw std::invalid_argument("Core: Invalid arguments, run with -h or -help for more informations");
-    _window = std::make_unique<sf::RenderWindow>();
-    _window->create(sf::VideoMode(1280, 960, 32), "GUI");
+    _window = std::make_shared<sf::RenderWindow>();
+    _window->create(sf::VideoMode(WIN_X, WIN_Y), "GUI", sf::Style::Default);
     _window->setFramerateLimit(FRAMERATE);
+    _window->setVerticalSyncEnabled(true);
 
+    /* LOAD MAP */
+    _scene = _sceneManager.create_scene<sf::RenderWindow, Sf_sprite::SfSprite>(GUI::SceneManager::MENU, _window);
+
+    /* RUN */
     this->run();
+}
+
+void Core::run()
+{
+    std::cout << "Core: Running..." << std::endl;
+    while (_window->isOpen()) {
+        sf::Event event;
+
+        while (_window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+                _window->close();
+        }
+
+        _window->clear();
+        // get the mouse position in the window
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(*_window);
+        Math::Vector mousePos = {double(pixelPos.x), double(pixelPos.y)};
+
+        if (event.type == sf::Event::KeyReleased || sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            _scene->updateScene(mousePos, event.key.code, sf::Mouse::isButtonPressed(sf::Mouse::Left));
+        } else {
+            _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
+        }
+        _scene->drawScene<sf::RenderWindow>(*_window);
+
+        _window->display();
+
+    }
 }
 
 void Core::showUsage(std::ostream &output)
@@ -29,7 +65,7 @@ void Core::showUsage(std::ostream &output)
     output << "\tmachine\tis the name of the machine; localhost by default" << std::endl;
 }
 
-bool Core::parseArgs(const int ac, const char *av[])
+bool Core::parseArgs(const unsigned ac, const char *av[])
 {
     auto port = 0;
     auto machine = "localhost";
@@ -55,29 +91,4 @@ bool Core::parseArgs(const int ac, const char *av[])
 
     /* RUN */
     return true;
-}
-
-void Core::run()
-{
-    static std::chrono::steady_clock::time_point clock = std::chrono::steady_clock::now();
-    std::cout << "Core: Running..." << std::endl;
-
-    while (_window->isOpen()) {
-        auto now = std::chrono::steady_clock::now();
-        auto elapsed_time = now - clock;
-
-        sf::Event event;
-
-        if (elapsed_time >= std::chrono::milliseconds(FRAMERATE)) {
-            while (_window->pollEvent(event)) {
-                if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-                    _window->close();
-            }
-            _window->clear();
-            _window->display();
-
-            clock = std::chrono::steady_clock::now();
-            elapsed_time -= std::chrono::milliseconds(FRAMERATE);
-        }
-    }
 }

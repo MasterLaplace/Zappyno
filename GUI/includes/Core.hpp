@@ -10,34 +10,29 @@
     #define	EXIT_ERROR	84	/* Failing exit status.  */
     #define FRAMERATE 60
     #include <iostream>
-    #include <memory>
-    #include <chrono>
-    #include <SFML/Graphics.hpp>
     #include "Client.hpp"
+    #include "SfTransition.hpp"
+    #include "Scene.hpp"
 
 class Core {
     public:
-        Core(const int ac, const char *av[]);
+        Core(const unsigned ac, const char *av[]);
         ~Core() { _window->close(); }
 
         void showUsage(std::ostream &output);
-        bool parseArgs(const int ac, const char *av[]);
+        bool parseArgs(const unsigned ac, const char *av[]);
         void run();
 
     protected:
     private:
-        std::unique_ptr<sf::RenderWindow> _window;
+        std::shared_ptr<sf::RenderWindow> _window;
+        std::shared_ptr<GUI::Scene> _scene;
+        GUI::SceneManager _sceneManager;
 };
 
 template<typename T>
-std::ostream &operator<<(std::ostream &os, const std::unique_ptr<T> &obj) {
-    os << *obj;
-    return os;
-}
+std::ostream &operator<<(std::ostream &os, const std::unique_ptr<T> &obj) { return os << *obj; }
 template<typename T>
-std::ostream &operator<<(std::ostream &os, const std::shared_ptr<T> &obj) {
-    os << *obj;
-    return os;
-}
+std::ostream &operator<<(std::ostream &os, const std::shared_ptr<T> &obj) { return os << *obj; }
 
 #endif /* !CORE_HPP_ */

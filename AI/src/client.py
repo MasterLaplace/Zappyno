@@ -4,7 +4,9 @@ the host, the port, the IA, the team name, the communication object…
 """
 
 from selectors import EVENT_READ, EVENT_WRITE
+from sys import exit as sys_exit
 from communication import Communication
+from player import Player
 
 class Client:
     """
@@ -14,8 +16,10 @@ class Client:
         self.__host = host
         self.__port = port
         self.__team = team
+        self.__id: int = 0
         self.__communication = Communication(host, port)
-        self.__player = None
+        self.__player = Player(self.__communication, self.__team, self.__id)
+        self.__has_logged: bool = False
 
 
     def loop(self) -> None:
@@ -43,12 +47,33 @@ class Client:
         print(self.__player)
 
     def __handle_read(self) -> None:
-        message: str = self.__communication.receive()
-        tmp = message.split("\n")
-        for string in tmp[:1]:
-            if "WELCOME" in string:
-                print("WELCOME")
-                # print(self.__communication.receive())
+        message: str = ''
+        received: str = self.__communication.receive()
+
+        if received:
+            message += received
+        else:
+            self.__communication.disconnect()
+
+        splitted: list = message.split('\n')
+        for line in splitted[:-1]:
+            self.__handle_line(line)
 
     def __handle_write(self) -> None:
         pass
+
+    def __handle_line(self, line: str) -> None:
+        if "dead" in line:
+            self.__handle_death()
+        elif "WELCOME" in line and not self.__has_logged:
+            self.__handle_welcome()
+        else:
+            print('Received: ' + line)
+
+    def __handle_death(self) -> None:
+        print(f'IA n°{self.__id} is dead.')
+        self.__communication.disconnect()
+        sys_exit(0)
+
+    def __handle_welcome(self) -> None:
+        self.__player.response = self.__team + '\n'
