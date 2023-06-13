@@ -46,9 +46,16 @@ gen_ninja:
 fclean: clean
 	@rm -rf $(NAME)
 	@-rm -rf .ninja_log
+# If Macos
+ifeq ($(shell uname), Darwin)
+	@find . -type f -name "*.gcda" -exec rm {} +
+	@find . -type f -name "*.gcno" -exec rm {} +
+	@find . -type f -name "*.gcov" -exec rm {} +
+else
 	@find -type f -name "*.gcda" -delete
 	@find -type f -name "*.gcno" -delete
 	@find -type f -name "*.gcov" -delete
+endif
 	@-rm -rf obj/src
 	@rm -rf vgcore.*
 
