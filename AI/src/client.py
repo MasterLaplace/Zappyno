@@ -4,6 +4,7 @@ the host, the port, the IA, the team name, the communication object…
 """
 
 from selectors import EVENT_READ, EVENT_WRITE
+from sys import exit as sys_exit
 from communication import Communication
 
 class Client:
@@ -50,8 +51,8 @@ class Client:
         if received:
             message += received
         else:
-            self.__communication.close()
-        
+            self.__communication.disconnect()
+
         splitted: list = message.split('\n')
         for line in splitted[:-1]:
             self.__handle_line(line)
@@ -69,8 +70,8 @@ class Client:
 
     def __handle_death(self) -> None:
         print(f'IA n°{self.__id} is dead.')
-        self.__communication.close()
-        exit(0)
+        self.__communication.disconnect()
+        sys_exit(0)
 
     def __handle_welcome(self) -> None:
         self.__player.response = self.__team + '\n'
