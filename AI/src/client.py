@@ -17,6 +17,7 @@ class Client:
         self.__communication = Communication(host, port)
         self.__player = None
 
+
     def loop(self) -> None:
         """
         The main loop of the client.
@@ -42,7 +43,12 @@ class Client:
         print(self.__player)
 
     def __handle_read(self) -> None:
-        pass
+        message: str = self.__communication.receive()
+        tmp = message.split("\n")
+        for string in tmp[:1]:
+            if "WELCOME" in string:
+                print("WELCOME")
+                # print(self.__communication.receive())
 
     def __handle_write(self) -> None:
         pass

@@ -1,8 +1,11 @@
 """
 Player class is used to store information about the player.
 """
-
+import math
 from typing import Dict, List
+from enum import Enum
+import random
+import re
 from communication import Communication
 
 lvls: List[Dict[str, int]] = [
@@ -15,6 +18,21 @@ lvls: List[Dict[str, int]] = [
         {"linemate": 2, "deraumere": 2, "sibur": 2, "mendiane": 2, "phiras": 2, "thystame": 1},
 ]
 
+class Movement(Enum):
+    """
+    This class is used to store the different movement of the player.
+    """
+    FORWARD = "Forward\n"
+    LEFT = "Left\n"
+    RIGHT = "Right\n"
+
+class Command(Enum):
+    """
+    This class is used to store the different command of the player.
+    """
+    INVENTORY = "Inventory\n"
+    LOOK = "Look\n"
+    TAKE = "Take "
 class Player:
     """
     This class is used to store information about the player.
@@ -31,6 +49,7 @@ class Player:
         self.__shared_inventory: Dict[str, int] = {}
         #self.__player_ready_to_incantation: bool = False
         #self.__players_in_incantation: int = 0
+        self.__map: List[List[int]] = [[]]
 
     def send_message(self, message: str) -> None:
         """
@@ -58,12 +77,8 @@ class Player:
         """
         self.send_message("Look")
         object_string: str = self.receive_message()
-        characters_to_remove = "[]\n"
-        modified_string = "".join(char for char in
-        object_string if char not in characters_to_remove)
-        object_list: list = modified_string.split(',')
-        for i, item in enumerate(object_list):
-            self.__object[i+1] = item
+        self.create_map(object_string)
+        print(self.__object)
 
     def take_object(self) -> None:
         """
@@ -98,3 +113,134 @@ class Player:
         if message == "Moving":
             return self.send_message("Moving")
         return None
+
+    def create_map(self, look: str) -> None:
+        """
+        Create a map of the look.
+        :param look:
+        """
+        row_increment = 1
+        vertical_offset = 8
+        horizontal_offset = 0
+
+        data: list = []
+        separated_look: list = look.split(',')
+        look_lenght: int = len(separated_look)
+        for i in range(look_lenght):
+            data.append(' '.join(re.split(r'\'\W+', separated_look[i])[1:]))
+        lenght: int = len(data)
+        nb_line: int = int(math.sqrt(lenght))
+        for i in range(nb_line):
+            target_row = vertical_offset - horizontal_offset
+            column = 0
+            while column < row_increment:
+                self.__map[target_row][horizontal_offset] += data[i]
+                target_row += 1
+                i += 1
+                column += 1
+            row_increment += 2
+            horizontal_offset += 1
+
+    def array_size(self, array: list) -> int:
+        """
+        Get the size of the array.
+        :param array:
+        """
+        number = 0
+        for elem in array:
+            if not bool(elem):
+                return number
+            number += 1
+        return number
+
+    def search_object(self, obj: str) -> List:
+        """
+        Search an object in the map.
+        :param self:
+        :param obj:
+        """
+        vertical_offset = 8
+        horizontal_offset = 0
+
+        while horizontal_offset < self.array_size(self.__map[vertical_offset]):
+            if obj == self.__map[vertical_offset][horizontal_offset]:
+                return [vertical_offset, horizontal_offset]
+            horizontal_offset += 1
+            tmp = vertical_offset
+            while tmp >= vertical_offset - horizontal_offset:
+                if obj == self.__map[tmp][horizontal_offset]:
+                    return [tmp, horizontal_offset]
+                tmp -= 1
+            tmp = vertical_offset
+            while tmp <= vertical_offset + horizontal_offset:
+                if obj == self.__map[tmp][horizontal_offset]:
+                    return [tmp, horizontal_offset]
+                tmp += 1
+            horizontal_offset += 1
+        return []
+
+    def movement_left(self, object_coord: List[int], obj: str, command: List) -> None:
+        """
+        Move the player to the left.
+        :param object_coord:
+        :param obj:
+        :param command:
+        """
+        command.append(Movement.LEFT)
+        while range(8 - object_coord[0]):
+            command.append(Movement.FORWARD)
+        command.append(str(Command.TAKE) + obj + "\n")
+        command.append(Command.INVENTORY)
+
+    def movement_right(self, object_coord: List[int], obj: str, command: List):
+        """
+        Move the player to the right.
+        :param object_coord:
+        :param obj
+        :param command:
+        """
+        command.append(Movement.RIGHT)
+        while range(8 - object_coord[0]):
+            command.append(Movement.FORWARD)
+        command.append(str(Command.TAKE) + obj + "\n")
+        command.append(Command.INVENTORY)
+
+    def movement_foreward(self, object_coord: List[int], obj: str, command: List):
+        """
+        Move the player forward.
+        :param object_coord:
+        :param obj:
+        :param command:
+        """
+        while range(8 - object_coord[1]):
+            command.append(Movement.FORWARD)
+        command.append(str(Command.TAKE) + obj + "\n")
+        command.append(Command.INVENTORY)
+
+    def movement_player(self, look: str, obj: str) -> List:
+        """
+        Move the player.
+        :param look:
+        :param obj:
+        """
+        self.create_map(look)
+        object_coord: List[int] = self.search_object(obj)
+        command: List = []
+        if not bool(object_coord):
+            command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
+            command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
+            command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
+            return command
+        if object_coord[0] == 8 and object_coord[1] == 0:
+            return [str(Command.TAKE) + obj + '\n']
+        while range(object_coord[0] - 8):
+            command.append(Movement.FORWARD)
+        if object_coord[0] == 0:
+            self.movement_foreward(object_coord, obj, command)
+        if object_coord[1] == 0:
+            command.append(str(Command.TAKE) + obj + "\n")
+        if object_coord[0] < 8:
+            self.movement_left(object_coord, obj, command)
+        if object_coord[0] > 8:
+            self.movement_right(object_coord, obj, command)
+        return command
