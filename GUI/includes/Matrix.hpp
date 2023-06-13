@@ -16,8 +16,8 @@ namespace Math {
             Matrix() = default;
             Matrix(const std::vector<std::vector<double>> &mat)
             {
-                for(std::size_t i = 0; i < 4; i++) {
-                    for(std::size_t j = 0; j < 4; j++) {
+                for(unsigned i = 0; i < 4; i++) {
+                    for(unsigned j = 0; j < 4; j++) {
                         m[i][j] = mat[i][j];
                     }
                 }
@@ -26,8 +26,8 @@ namespace Math {
 
             Matrix &operator=(const Matrix &mat) = default;
             Matrix &operator=(const std::vector<std::vector<double>> &mat);
-            std::vector<double> &operator[](std::size_t i) { return m[i]; };
-            const std::vector<double> &operator[](std::size_t i) const { return m[i]; };
+            std::vector<double> &operator[](unsigned i) { return m[i]; };
+            const std::vector<double> &operator[](unsigned i) const { return m[i]; };
 
             void SetRotateXMatrix(double angle);
 
@@ -39,7 +39,7 @@ namespace Math {
 
             void SetScaleMatrix(double x, double y, double z);
 
-            Math::Vector MultiplyVector(Math::Vector v, Math::Vector w) const;
+            void MultiplyVector(Vector &v, Vector w) const;
 
             void Multiply(Matrix m1, Matrix m2);
 
@@ -54,6 +54,6 @@ namespace Math {
             };
     };
     std::ostream &operator<<(std::ostream &os, const Matrix &matrix);
-}
+} // namespace Math
 
 #endif /* !MATRIX_HPP_ */

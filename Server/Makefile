@@ -13,7 +13,7 @@ SRC          = $(shell find $(SRC_DIR) -name '*.c')
 
 OBJ          = $(SRC:.c=.o)
 INCLUDE      = -I./include/ -I./include/**/
-C_FLAGS    = -Wall -Wextra -std=c99
+C_FLAGS    = -Wall -Wextra -std=c99 -g
 FAST_FLAGS   = -O3 -march=native -flto -funroll-loops -fomit-frame-pointer
 LIB_THREADS  = -lpthread
 TEST_FLAGS   = -lpthread -lcriterion --coverage
