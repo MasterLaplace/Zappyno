@@ -16,6 +16,8 @@ class Client:
         self.__team = team
         self.__communication = Communication(host, port)
         self.__player = None
+        self.__id: int = 0
+        self.__has_logged: bool = False
 
     def loop(self) -> None:
         """
@@ -42,7 +44,33 @@ class Client:
         print(self.__player)
 
     def __handle_read(self) -> None:
-        pass
+        message: str = ''
+        received: str = self.__communication.receive()
+
+        if received:
+            message += received
+        else:
+            self.__communication.close()
+        
+        splitted: list = message.split('\n')
+        for line in splitted[:-1]:
+            self.__handle_line(line)
 
     def __handle_write(self) -> None:
         pass
+
+    def __handle_line(self, line: str) -> None:
+        if "dead" in line:
+            self.__handle_death()
+        elif "WELCOME" in line and not self.__has_logged:
+            self.__handle_welcome()
+        else:
+            print('Received: ' + line)
+
+    def __handle_death(self) -> None:
+        print(f'IA n°{self.__id} is dead.')
+        self.__communication.close()
+        exit(0)
+
+    def __handle_welcome(self) -> None:
+        self.__player.response = self.__team + '\n'
