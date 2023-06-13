@@ -31,6 +31,7 @@ class Player:
         self.__shared_inventory: Dict[str, int] = {}
         #self.__player_ready_to_incantation: bool = False
         #self.__players_in_incantation: int = 0
+        self.response: str = ''
 
     def send_message(self, message: str) -> None:
         """
