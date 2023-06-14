@@ -66,4 +66,20 @@ namespace Manager {
             _teams.push_back(args[1]);
     }
 
+    void Protocol::pnw(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " #"); // Can generate bug if team name contains #
+        unsigned id = std::stoi(args[1]);
+        GUI::Trantorian player;
+
+        player.setId(id);
+        player.setPos({std::stod(args[2]), std::stod(args[3])});
+        player.setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
+        player.setLevel(std::stoi(args[5]));
+        player.setTeam(args[6]);
+        for (auto &tile : _tiles) {
+            if (tile.getPos().x() == player.getPos().x() && tile.getPos().y() == player.getPos().y())
+                return tile.addTrantorian(player);
+        }
+    }
 }

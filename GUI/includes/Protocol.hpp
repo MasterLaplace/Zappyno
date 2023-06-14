@@ -24,6 +24,7 @@ namespace Manager {
                 commands["msz"] = [this](std::string &str) { msz(str); };
                 commands["bct"] = [this](std::string &str) { bct(str); };
                 commands["tna"] = [this](std::string &str) { tna(str); };
+                commands["pnw"] = [this](std::string &str) { pnw(str); };
             }
             ~Protocol() = default;
 
@@ -49,6 +50,13 @@ namespace Manager {
              * @param str  tna N\n * nbr_teams
              */
             void tna(std::string &str);
+
+            /**
+             * @brief connection of a new player (id, x, y, orientation, level, team name) // DONE
+             *
+             * @param str  pnw n X Y O L N\n
+             */
+            void pnw(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
