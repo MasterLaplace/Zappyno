@@ -98,6 +98,21 @@ namespace Manager {
         }
         throw std::runtime_error("[ppo] Player not found in map (id: " + std::to_string(id) + ")");
     }
+
+    void Protocol::plv(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                player.setLevel(std::stoi(args[2]));
+                return;
+            }
+        }
+        throw std::runtime_error("[plv] Player not found in map (id: " + std::to_string(id) + ")");
+    }
+
         }
     }
 }
