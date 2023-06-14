@@ -9,6 +9,7 @@
 #ifndef PROTOCOL_HPP_
     #define PROTOCOL_HPP_
     #include "Tiles.hpp"
+    #include "Trantorian.hpp"
     #include "StringManager.hpp"
     #include "Client.hpp"
     #include <functional>
@@ -25,6 +26,7 @@ namespace Manager {
                 commands["bct"] = [this](std::string &str) { bct(str); };
                 commands["tna"] = [this](std::string &str) { tna(str); };
                 commands["pnw"] = [this](std::string &str) { pnw(str); };
+                commands["ppo"] = [this](std::string &str) { ppo(str); };
             }
             ~Protocol() = default;
 
@@ -52,18 +54,31 @@ namespace Manager {
             void tna(std::string &str);
 
             /**
-             * @brief connection of a new player (id, x, y, orientation, level, team name) // DONE
+             * @brief connection of a new player (id, x, y, orientation, level, team name)
              *
              * @param str  pnw n X Y O L N\n
              */
             void pnw(std::string &str);
 
+            /**
+             * @brief player’s position and orientation (id, x, y, orientation)
+             *
+             * @param str  ppo n X Y O\n
+             */
+            void ppo(std::string &str);
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
+
+            void setTrantorians(std::vector<GUI::Trantorian> trantorians) { _trantorians = trantorians; }
+
+            std::vector<GUI::Trantorian> getTrantorians() const { return _trantorians; }
+
+            void addTrantorian(GUI::Trantorian trantorian) { _trantorians.push_back(trantorian); }
 
         protected:
         private:
             std::vector<GUI::Tiles> _tiles;
+            std::vector<GUI::Trantorian> _trantorians;
             Math::Vector _mapSize = {10, 10};
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
             std::vector<std::string /*name*/> _teams;

@@ -56,6 +56,7 @@ namespace Manager {
             if (tile.getPos().x() == x && tile.getPos().y() == y)
                 return tile.setInventory(resources);
         }
+        throw std::runtime_error("[bct] Tile not found in map (x: " + std::to_string(x) + ", y: " + std::to_string(y) + ")");
     }
 
     void Protocol::tna(std::string &str)
@@ -77,9 +78,53 @@ namespace Manager {
         player.setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
         player.setLevel(std::stoi(args[5]));
         player.setTeam(args[6]);
-        for (auto &tile : _tiles) {
-            if (tile.getPos().x() == player.getPos().x() && tile.getPos().y() == player.getPos().y())
-                return tile.addTrantorian(player);
+        if (_tiles.size() >= player.getPos().x() * player.getPos().y())
+            return addTrantorian(player);
+        throw std::runtime_error("[pnw] Player pos not found in map (id: " + std::to_string(id) + ")");
+    }
+
+    void Protocol::ppo(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+        Math::Vector pos = {std::stod(args[2]), std::stod(args[3])};
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                player.setPos({std::stod(args[2]), std::stod(args[3])});
+                player.setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
+                return;
+            }
+        }
+        throw std::runtime_error("[ppo] Player not found in map (id: " + std::to_string(id) + ")");
+    }
         }
     }
 }
+
+    GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
+        for (auto &trantorian : _trantorians) {
+            if (trantorian.getId() == id)
+                return trantorian;
+        }
+        throw std::runtime_error("[Protocol] Trantorian not found");
+    }
+
+    void Protocol::deleteTrantorian(unsigned id) {
+        for (auto it = _trantorians.begin(); it != _trantorians.end(); it++) {
+            if (it->getId() == id) {
+                _trantorians.erase(it);
+                break;
+            }
+        }
+    }
+
+    void Protocol::deleteEgg(unsigned id) {
+        for (auto it = _eggs.begin(); it != _eggs.end(); it++) {
+            if (it->getId() == id) {
+                _eggs.erase(it);
+                break;
+            }
+        }
+    }
+} // namespace GUI
