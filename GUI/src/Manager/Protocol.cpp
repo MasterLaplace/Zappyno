@@ -113,10 +113,6 @@ namespace Manager {
         throw std::runtime_error("[plv] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
-        }
-    }
-}
-
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
