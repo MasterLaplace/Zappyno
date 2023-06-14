@@ -58,4 +58,12 @@ namespace Manager {
         }
     }
 
+    void Protocol::tna(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+
+        if (std::find(_teams.begin(), _teams.end(), args[1]) == _teams.end())
+            _teams.push_back(args[1]);
+    }
+
 }

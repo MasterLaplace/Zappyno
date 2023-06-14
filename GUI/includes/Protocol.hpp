@@ -23,6 +23,7 @@ namespace Manager {
             Protocol() {
                 commands["msz"] = [this](std::string &str) { msz(str); };
                 commands["bct"] = [this](std::string &str) { bct(str); };
+                commands["tna"] = [this](std::string &str) { tna(str); };
             }
             ~Protocol() = default;
 
@@ -42,14 +43,22 @@ namespace Manager {
              */
             void bct(std::string &str);
 
+            /**
+             * @brief name of all the teams
+             *
+             * @param str  tna N\n * nbr_teams
+             */
+            void tna(std::string &str);
+
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
 
         protected:
         private:
+            std::vector<GUI::Tiles> _tiles;
             Math::Vector _mapSize = {10, 10};
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
-            std::vector<std::string> _teams;
+            std::vector<std::string /*name*/> _teams;
             unsigned _timeUnit = 100;
     };
 } // namespace Manager
