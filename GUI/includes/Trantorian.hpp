@@ -55,7 +55,7 @@ namespace GUI {
 
             double DirToRandian();
 
-            static inline std::string intToFoodString(unsigned type);
+            std::string intToFoodString(unsigned type);
 
             void addFood(unsigned food, unsigned quantity) { _inventory[intToFoodString(food)] += quantity; }
             void removeFood(unsigned food, unsigned quantity) { _inventory[intToFoodString(food)] -= quantity; }

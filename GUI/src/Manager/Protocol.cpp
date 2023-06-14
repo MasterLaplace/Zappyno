@@ -113,6 +113,26 @@ namespace Manager {
         throw std::runtime_error("[plv] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
+    void Protocol::pin(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+        std::map<std::string, unsigned> inventory;
+        inventory["food"] = std::stoi(args[4]);
+        inventory["linemate"] = std::stoi(args[5]);
+        inventory["deraumere"] = std::stoi(args[6]);
+        inventory["sibur"] = std::stoi(args[7]);
+        inventory["mendiane"] = std::stoi(args[8]);
+        inventory["phiras"] = std::stoi(args[9]);
+        inventory["thystame"] = std::stoi(args[10]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id)
+                return player.setInventory(inventory);
+        }
+        throw std::runtime_error("[pin] Player not found in map (id: " + std::to_string(id) + ")");
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
