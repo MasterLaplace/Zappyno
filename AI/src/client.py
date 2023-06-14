@@ -21,7 +21,6 @@ class Client:
         self.__player = Player(self.__communication, self.__team, self.__id)
         self.__has_logged: bool = False
 
-
     def loop(self) -> None:
         """
         The main loop of the client.
