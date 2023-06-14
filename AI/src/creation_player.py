@@ -16,4 +16,4 @@ def creation_player(communication: Communication) -> Player:
     if player_info == 'ko':
         print('Invalid team name')
         sys.exit(84)
-    return Player(communication, argv[2], int(player_info[0]))
+    return Player(communication, argv[3], int(player_info[0]))

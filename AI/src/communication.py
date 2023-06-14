@@ -27,7 +27,7 @@ class Communication:
 
     def connect(self) -> None:
         """Connect to the server using the host and port previously provided."""
-        self.__socket.connect((self.__host, self.__port))
+        self.__socket.connect_ex((self.__host, self.__port))
         self.__selector.register(self.__socket, EVENT_READ | EVENT_WRITE)
 
     def disconnect(self) -> None:
