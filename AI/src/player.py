@@ -22,17 +22,18 @@ class Movement(Enum):
     """
     This class is used to store the different movement of the player.
     """
-    FORWARD = "Forward\n"
-    LEFT = "Left\n"
-    RIGHT = "Right\n"
+    FORWARD = "Forward"
+    LEFT = "Left"
+    RIGHT = "Right"
 
 class Command(Enum):
     """
     This class is used to store the different command of the player.
     """
-    INVENTORY = "Inventory\n"
-    LOOK = "Look\n"
+    INVENTORY = "Inventory"
+    LOOK = "Look"
     TAKE = "Take "
+
 class Player:
     """
     This class is used to store information about the player.
