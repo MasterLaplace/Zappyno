@@ -12,8 +12,8 @@ namespace Interface {
         auto size = _sprite->getSize();
         if (mousePos.x() >= _pos.x() && mousePos.x() <= _pos.x() + size.x() &&
             mousePos.y() >= _pos.y() && mousePos.y() <= _pos.y() + size.y()) {
-            // if (_state == IDLE)
-            //     _state = HOVER;
+            if (_state == IDLE)
+                _state = HOVER;
             if (_state == CLICKED)
                 _state = RELEASED;
             if (mousePressed)
