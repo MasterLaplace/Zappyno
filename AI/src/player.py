@@ -224,6 +224,7 @@ class Player:
         :param look:
         :param obj:
         """
+        self.__map = [[]]
         self.create_map(look)
         object_coord: List[int] = self.search_object(obj)
         command: List = []
