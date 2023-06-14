@@ -34,6 +34,12 @@ class Command(Enum):
     LOOK = "Look"
     TAKE = "Take "
 
+class Brodcaste(Enum):
+    """
+    This class is used to store the different broadcast of the player.
+    """
+    READY = "Brodcast Ready"
+
 class Player:
     """
     This class is used to store information about the player.
@@ -46,12 +52,18 @@ class Player:
         #self.__level = 1
         self.__inventory = ""
         self.__object: Dict[int, str] = {}
-        #self.__incantation: bool = False
         self.__shared_inventory: Dict[str, int] = {}
-        #self.__player_ready_to_incantation: bool = False
-        #self.__players_in_incantation: int = 0
         self.__map: List[List[int]] = [[]]
         self.response: str = ''
+        self.__incantation: bool = False
+        self.__clear: bool = False
+        self.__number_incantation = 0
+        self.__player_incantation = 0
+        self.command: List = []
+        self.__step = -2
+        self.__ready: bool = False
+        self.__direction = 0
+        self.__message = ''
 
     def send_message(self, message: str) -> None:
         """
@@ -100,21 +112,6 @@ class Player:
             self.__shared_inventory[object_take] += 1
         else:
             self.__shared_inventory[object_take] = 1
-
-    def parse_brodcast(self, message: str) -> None:
-        """
-        Parse the broadcast message.
-        :param message:
-        """
-        if message == "Inventory":
-            return self.send_message("Inventory")
-        if message == "Incantation":
-            return self.send_message("Incantation")
-        if message == "Ready":
-            return self.send_message("Ready")
-        if message == "Moving":
-            return self.send_message("Moving")
-        return None
 
     def create_map(self, look: str) -> None:
         """
@@ -181,33 +178,33 @@ class Player:
             horizontal_offset += 1
         return []
 
-    def movement_left(self, object_coord: List[int], obj: str, command: List) -> None:
+    def movement_left(self, object_coord: List[int], obj: str) -> None:
         """
         Move the player to the left.
         :param object_coord:
         :param obj:
         :param command:
         """
-        command.append(Movement.LEFT)
+        self.command.append(Movement.LEFT)
         for _ in range(8 - object_coord[0]):
-            command.append(Movement.FORWARD)
-        command.append(str(Command.TAKE) + obj + "\n")
-        command.append(Command.INVENTORY)
+            self.command.append(Movement.FORWARD)
+        self.command.append(str(Command.TAKE) + obj + "\n")
+        self.command.append(Command.INVENTORY)
 
-    def movement_right(self, object_coord: List[int], obj: str, command: List):
+    def movement_right(self, object_coord: List[int], obj: str):
         """
         Move the player to the right.
         :param object_coord:
         :param obj
         :param command:
         """
-        command.append(Movement.RIGHT)
+        self.command.append(Movement.RIGHT)
         for _ in range(8 - object_coord[0]):
-            command.append(Movement.FORWARD)
-        command.append(str(Command.TAKE) + obj + "\n")
-        command.append(Command.INVENTORY)
+            self.command.append(Movement.FORWARD)
+        self.command.append(str(Command.TAKE) + obj + "\n")
+        self.command.append(Command.INVENTORY)
 
-    def movement_forward(self, object_coord: List[int], obj: str, command: List):
+    def movement_forward(self, object_coord: List[int], obj: str):
         """
         Move the player forward.
         :param object_coord:
@@ -215,9 +212,9 @@ class Player:
         :param command:
         """
         for _ in range(8 - object_coord[1]):
-            command.append(Movement.FORWARD)
-        command.append(str(Command.TAKE) + obj + "\n")
-        command.append(Command.INVENTORY)
+            self.command.append(Movement.FORWARD)
+        self.command.append(str(Command.TAKE) + obj + "\n")
+        self.command.append(Command.INVENTORY)
 
     def movement_player(self, look: str, obj: str) -> List:
         """
@@ -228,22 +225,66 @@ class Player:
         self.__map = [[]]
         self.create_map(look)
         object_coord: List[int] = self.search_object(obj)
-        command: List = []
         if not bool(object_coord):
-            command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
-            command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
-            command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
-            return command
+            self.command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
+            self.command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
+            self.command.append(random.choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]))
+            return self.command
         if object_coord[0] == 8 and object_coord[1] == 0:
             return [str(Command.TAKE) + obj + '\n']
         for _ in range(object_coord[0] - 8):
-            command.append(Movement.FORWARD)
+            self.command.append(Movement.FORWARD)
         if object_coord[0] == 0:
-            self.movement_forward(object_coord, obj, command)
+            self.movement_forward(object_coord, obj)
         if object_coord[1] == 0:
-            command.append(str(Command.TAKE) + obj + "\n")
+            self.command.append(str(Command.TAKE) + obj + "\n")
         if object_coord[0] < 8:
-            self.movement_left(object_coord, obj, command)
+            self.movement_left(object_coord, obj)
         if object_coord[0] > 8:
-            self.movement_right(object_coord, obj, command)
-        return command
+            self.movement_right(object_coord, obj)
+        return self.command
+
+    def send_movement(self) -> None:
+        """
+        Send the movement to the server.
+        """
+        if self.__ready:
+            return
+        self.command = []
+        if self.__direction == 0:
+            self.__message = str(Brodcaste.READY)
+            self.__ready = True
+        if self.__direction in (2, 1, 8):
+            self.command.append("Forward\n")
+        elif self.__direction in (5, 6, 7):
+            self.command.append("Right\n")
+        else:
+            self.command.append("Left\n")
+
+    def brodcast(self, messages_list: List[str]) -> None:
+        """
+        Brodcast the message.
+        :param messages_list:
+        :return:
+        """
+        if "Inventory" in messages_list:
+            #fill shared inventory
+        if "Incantation" in messages_list:
+            if self.__clear == 1:
+                self.__clear = 0
+                return
+            if self.__step < 4 and self.__step > -1:
+                self.__step = 4
+                self.command = []
+                return
+            if self.__number_incantation >= 1:
+                self.__number_incantation = 0
+                self.__incantation = False
+                self.__step = 0
+                return
+            if self.__incantation:
+                self.send_movement()
+        if "Ready" in messages_list and self.__number_incantation >= 1:
+            self.__number_incantation += 1
+        if "Moving" in messages_list:
+            self.__player_incantation += 1
