@@ -35,9 +35,27 @@ namespace Manager {
         }
     }
 
-    void Protocol::msz(std::string &str) {
+    void Protocol::msz(std::string &str)
+    {
         auto args = String::string_to_string_vector(str, " ");
         _mapSize = {std::stod(args[1]), std::stod(args[2])};
+    }
+
+    void Protocol::bct(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        double x = std::stod(args[1]);
+        double y = std::stod(args[2]);
+        std::vector<unsigned> resources;
+
+        for (int i = 3; i < 10; i++)
+            resources.push_back(std::stoi(args[i]));
+        if (_tiles.size() < _mapSize.x() * _mapSize.y())
+            return _tiles.push_back(GUI::Tiles({x, y}, resources));
+        for (auto &tile : _tiles) {
+            if (tile.getPos().x() == x && tile.getPos().y() == y)
+                return tile.setInventory(resources);
+        }
     }
 
 }
