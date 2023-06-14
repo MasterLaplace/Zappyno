@@ -47,14 +47,14 @@ namespace Interface {
             void addButton(const Interface::Button &button) { _buttons.push_back(button); }
             void addInput(const Interface::Input &input) { _inputs.push_back(input); }
             void addBar(const Interface::Bar &bar) { _bars.push_back(bar); }
-            template<typename T>
-            void drawPanel(T &win) {
+            template<typename Win>
+            void drawPanel(Win &win) {
                 if (!_isDisplayed) return;
                 if (_sprite) _sprite->drawSprite();
                 for (auto &button : _buttons)
                     button.drawButton();
                 for (auto &input : _inputs)
-                    input.drawInput<T>(win);
+                    input.drawInput<Win>(win);
                 for (auto &bar : _bars)
                     bar.drawBar();
             }

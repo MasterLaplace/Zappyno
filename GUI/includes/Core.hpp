@@ -27,6 +27,7 @@ class Core {
         std::shared_ptr<sf::RenderWindow> _window;
         std::shared_ptr<GUI::Scene> _scene;
         GUI::SceneManager _sceneManager;
+        std::shared_ptr<Manager::Client> _client;
 };
 
 template<typename T>

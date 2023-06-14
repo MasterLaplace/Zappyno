@@ -92,4 +92,4 @@ namespace GUI {
         }
         return "";
     }
-}
+} // namespace GUI

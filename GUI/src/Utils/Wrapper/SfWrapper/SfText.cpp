@@ -33,4 +33,4 @@ namespace Sf_text {
 
         window.draw(Sf_text);
     }
-}
+} // namespace Sf_text
