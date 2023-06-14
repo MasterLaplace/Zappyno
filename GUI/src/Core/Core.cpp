@@ -19,6 +19,7 @@ Core::Core(const unsigned ac, const char *av[])
     if (!this->parseArgs(ac, av))
         throw std::invalid_argument("Core: Invalid arguments, run with -h or -help for more informations");
     _client = std::make_shared<Manager::Client>("127.0.0.1", std::stoi(av[2]));
+    _protocol = std::make_shared<Manager::Protocol>();
     _window = std::make_shared<sf::RenderWindow>();
     _window->create(sf::VideoMode(WIN_X, WIN_Y), "GUI", sf::Style::Default);
     _window->setFramerateLimit(_client->getFramerate());
@@ -42,6 +43,7 @@ void Core::run()
         try {
             if ((message = _client->receiveFromServer()) != "") {
                 std::cout << "Message received: " << message;
+                _protocol->parseCommand(message, _client);
             }
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
