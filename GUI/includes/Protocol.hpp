@@ -29,6 +29,7 @@ namespace Manager {
                 commands["ppo"] = [this](std::string &str) { ppo(str); };
                 commands["plv"] = [this](std::string &str) { plv(str); };
                 commands["pin"] = [this](std::string &str) { pin(str); };
+                commands["pex"] = [this](std::string &str) { pex(str); };
             }
             ~Protocol() = default;
 
@@ -83,22 +84,34 @@ namespace Manager {
              */
             void pin(std::string &str);
 
+            /**
+             * @brief expulsion by a player (id)
+             *
+             * @param str  pex n\n
+             */
+            void pex(std::string &str);
+
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
 
             void setTrantorians(std::vector<GUI::Trantorian> trantorians) { _trantorians = trantorians; }
+            void setEggs(std::vector<GUI::Egg> eggs) { _eggs = eggs; }
 
             std::vector<GUI::Trantorian> getTrantorians() const { return _trantorians; }
+            std::vector<GUI::Egg> getEggs() const { return _eggs; }
             GUI::Trantorian getTrantorian(unsigned id) const;
 
             void addTrantorian(GUI::Trantorian trantorian) { _trantorians.push_back(trantorian); }
+            void addEgg(GUI::Egg egg) { _eggs.push_back(egg); }
 
             void deleteTrantorian(unsigned id);
+            void deleteEgg(unsigned id);
 
         protected:
         private:
             std::vector<GUI::Tiles> _tiles;
             std::vector<GUI::Trantorian> _trantorians;
+            std::vector<GUI::Egg> _eggs;
             Math::Vector _mapSize = {10, 10};
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
             std::vector<std::string /*name*/> _teams;

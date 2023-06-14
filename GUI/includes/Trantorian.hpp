@@ -7,6 +7,7 @@
 
 #ifndef TRANTORIAN_HPP_
     #define TRANTORIAN_HPP_
+    #include "Egg.hpp"
     #include "Vector.hpp"
     #include <map>
 

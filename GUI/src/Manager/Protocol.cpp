@@ -133,6 +133,59 @@ namespace Manager {
         throw std::runtime_error("[pin] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
+    void Protocol::pex(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                Math::Vector pos = player.getPos();
+                GUI::Trantorian::Direction dir = player.getDir();
+                Math::Vector newPos = pos;
+
+                // get new pos by dir
+                switch (dir) {
+                    case GUI::Trantorian::Direction::NORTH:
+                        newPos.operator[](1) -= 1;
+                        break;
+                    case GUI::Trantorian::Direction::EAST:
+                        newPos.operator[](0) += 1;
+                        break;
+                    case GUI::Trantorian::Direction::SOUTH:
+                        newPos.operator[](1) += 1;
+                        break;
+                    case GUI::Trantorian::Direction::WEST:
+                        newPos.operator[](0) -= 1;
+                        break;
+                }
+
+                // check limit map
+                if (newPos.x() < 0)
+                    newPos.operator[](0) = _mapSize.x() - 1;
+                else if (newPos.y() < 0)
+                    newPos.operator[](1) = _mapSize.y() - 1;
+                else if (newPos.x() >= _mapSize.x())
+                    newPos.operator[](0) = 0;
+                else if (newPos.y() >= _mapSize.y())
+                    newPos.operator[](1) = 0;
+
+                // apply new pos
+                for (auto &p : getTrantorians()) {
+                    if (p.getPos() == pos && p.getId() != id)
+                        p.setPos(newPos);
+                }
+                // destroy egg if on pos
+                for (auto &egg : getEggs()) {
+                    if (egg.getPos() == pos)
+                        deleteEgg(egg.getId());
+                }
+                return;
+            }
+        }
+        throw std::runtime_error("[pex] Player not found in map (id: " + std::to_string(id) + ")");
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
