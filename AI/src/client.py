@@ -38,7 +38,6 @@ class Client:
         """
         The main loop of the client.
         """
-        # message: str = ''
         self.__communication.connect()
 
         while True:
@@ -74,7 +73,15 @@ class Client:
             self.__handle_line(line)
 
     def __handle_write(self) -> None:
-        pass
+        if not self.__player.is_running:
+            return
+        if self.__is_logged:
+            print('Run/Play client')
+        if self.__player.response:
+            if not self.__is_logged and self.__player.response[:-1] == self.__team:
+                self.__state = State.SENT_TEAM
+            self.__communication.send(self.__player.response)
+            self.__player.is_running = False
 
     def __handle_line(self, line: str) -> None:
         if 'dead' in line:
