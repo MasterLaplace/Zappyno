@@ -127,11 +127,11 @@ class Player:
 
         data: list = []
         separated_look: list = look.split(',')
-        look_lenght: int = len(separated_look)
-        for i in range(look_lenght):
+        look_length: int = len(separated_look)
+        for i in range(look_length):
             data.append(' '.join(re.split(r'\'\W+', separated_look[i])[1:]))
-        lenght: int = len(data)
-        nb_line: int = int(math.sqrt(lenght))
+        length: int = len(data)
+        nb_line: int = int(math.sqrt(length))
         for i in range(nb_line):
             target_row = vertical_offset - horizontal_offset
             column = 0
@@ -207,7 +207,7 @@ class Player:
         command.append(str(Command.TAKE) + obj + "\n")
         command.append(Command.INVENTORY)
 
-    def movement_foreward(self, object_coord: List[int], obj: str, command: List):
+    def movement_forward(self, object_coord: List[int], obj: str, command: List):
         """
         Move the player forward.
         :param object_coord:
@@ -239,7 +239,7 @@ class Player:
         for _ in range(object_coord[0] - 8):
             command.append(Movement.FORWARD)
         if object_coord[0] == 0:
-            self.movement_foreward(object_coord, obj, command)
+            self.movement_forward(object_coord, obj, command)
         if object_coord[1] == 0:
             command.append(str(Command.TAKE) + obj + "\n")
         if object_coord[0] < 8:
