@@ -10,8 +10,9 @@ class Communication:
     def __init__(self, host: str, port: int):
         self.__host = host
         self.__port = port
-        self.__socket = None
+        self.__socket = socket(AF_INET, SOCK_STREAM)
         self.__selector = DefaultSelector()
+        self.__socket.setblocking(False)
 
     def __str__(self) -> str:
         return self.__host + ':' + str(self.__port)
@@ -26,8 +27,6 @@ class Communication:
 
     def connect(self) -> None:
         """Connect to the server using the host and port previously provided."""
-        self.__socket = socket(AF_INET, SOCK_STREAM)
-        self.__socket.setblocking(False)
         self.__socket.connect_ex((self.__host, self.__port))
         self.__selector.register(self.__socket, EVENT_READ | EVENT_WRITE)
 

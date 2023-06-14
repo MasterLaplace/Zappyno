@@ -188,7 +188,7 @@ class Player:
         :param command:
         """
         command.append(Movement.LEFT)
-        while range(8 - object_coord[0]):
+        for _ in range(8 - object_coord[0]):
             command.append(Movement.FORWARD)
         command.append(str(Command.TAKE) + obj + "\n")
         command.append(Command.INVENTORY)
@@ -201,7 +201,7 @@ class Player:
         :param command:
         """
         command.append(Movement.RIGHT)
-        while range(8 - object_coord[0]):
+        for _ in range(8 - object_coord[0]):
             command.append(Movement.FORWARD)
         command.append(str(Command.TAKE) + obj + "\n")
         command.append(Command.INVENTORY)
@@ -213,7 +213,7 @@ class Player:
         :param obj:
         :param command:
         """
-        while range(8 - object_coord[1]):
+        for _ in range(8 - object_coord[1]):
             command.append(Movement.FORWARD)
         command.append(str(Command.TAKE) + obj + "\n")
         command.append(Command.INVENTORY)
@@ -234,7 +234,7 @@ class Player:
             return command
         if object_coord[0] == 8 and object_coord[1] == 0:
             return [str(Command.TAKE) + obj + '\n']
-        while range(object_coord[0] - 8):
+        for _ in range(object_coord[0] - 8):
             command.append(Movement.FORWARD)
         if object_coord[0] == 0:
             self.movement_foreward(object_coord, obj, command)
