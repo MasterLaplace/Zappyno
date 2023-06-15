@@ -186,6 +186,24 @@ namespace Manager {
         throw std::runtime_error("[pex] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
+    void Protocol::pbc(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        std::string message = "";
+
+        for (auto &arg : args) {
+            if (arg == "smg")
+                continue;
+            if (arg == args[1])
+                message += arg + ": ";
+            else
+                message += arg + " ";
+        }
+        if (message[message.size() - 1] == ' ')
+            message[message.size() - 1] = '\0';
+        _chat->addMessage(message);
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)

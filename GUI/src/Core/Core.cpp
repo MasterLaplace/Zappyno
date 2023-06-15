@@ -26,7 +26,7 @@ Core::Core(const unsigned ac, const char *av[])
     _window->setVerticalSyncEnabled(true);
 
     /* LOAD SCENES */
-    _scene = _sceneManager.create_scene<sf::RenderWindow, Sf_sprite::SfSprite>(GUI::SceneManager::MENU, _window);
+    _scene = _sceneManager.create_scene<sf::RenderWindow, Sf_sprite::SfSprite>(Scene_Manager::SceneType::MENU, _window);
 
     /* RUN */
     this->run();
@@ -65,7 +65,7 @@ void Core::run()
         } else {
             _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         }
-        _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene);
+        _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
         _scene->drawScene<sf::RenderWindow>(*_window);
 
         _window->display();

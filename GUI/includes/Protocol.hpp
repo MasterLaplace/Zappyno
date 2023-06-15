@@ -11,6 +11,7 @@
     #include "Tiles.hpp"
     #include "Trantorian.hpp"
     #include "StringManager.hpp"
+    #include "Chat.hpp"
     #include "Client.hpp"
     #include <functional>
 
@@ -30,6 +31,7 @@ namespace Manager {
                 commands["plv"] = [this](std::string &str) { plv(str); };
                 commands["pin"] = [this](std::string &str) { pin(str); };
                 commands["pex"] = [this](std::string &str) { pex(str); };
+                commands["pbc"] = [this](std::string &str) { pbc(str); };
             }
             ~Protocol() = default;
 
@@ -91,6 +93,13 @@ namespace Manager {
              */
             void pex(std::string &str);
 
+            /**
+             * @brief broadcast (id, message)
+             *
+             * @param str  pbc n M\n
+             */
+            void pbc(std::string &str);
+
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
 
@@ -107,6 +116,9 @@ namespace Manager {
             void deleteTrantorian(unsigned id);
             void deleteEgg(unsigned id);
 
+            std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
+            void setChat(std::shared_ptr<Interface::Chat> chat) { _chat = chat; }
+
         protected:
         private:
             std::vector<GUI::Tiles> _tiles;
@@ -116,6 +128,7 @@ namespace Manager {
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
             std::vector<std::string /*name*/> _teams;
             unsigned _timeUnit = 100;
+            std::shared_ptr<Interface::Chat> _chat = nullptr;
     };
 } // namespace Manager
 

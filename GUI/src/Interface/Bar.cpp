@@ -19,4 +19,4 @@ namespace Interface {
             rect.x(1);
         this->_sprite->setSize(rect);
     }
-}
+} // namespace Interface
