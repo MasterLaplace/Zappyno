@@ -56,6 +56,7 @@ class Player:
         self.__object: Dict[int, str] = {}
         self.__shared_inventory: Dict[str, int] = {}
         self.__map: List[List[int]] = [[]]
+        self.is_running: bool = True
         self.response: str = ''
         self.__incantation: bool = False
         self.__clear: bool = False
@@ -66,6 +67,8 @@ class Player:
         self.__ready: bool = False
         self.__direction = 0
         self._message = ''
+        self.unused_slots: int = 0
+        self.fork: bool = True
 
     def send_message(self, message: str) -> None:
         """
