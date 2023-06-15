@@ -105,10 +105,8 @@ namespace Manager {
         unsigned id = std::stoi(args[1]);
 
         for (auto &player : getTrantorians()) {
-            if (player.getId() == id) {
-                player.setLevel(std::stoi(args[2]));
-                return;
-            }
+            if (player.getId() == id)
+                return player.setLevel(std::stoi(args[2]));
         }
         throw std::runtime_error("[plv] Player not found in map (id: " + std::to_string(id) + ")");
     }
@@ -180,8 +178,7 @@ namespace Manager {
                     if (egg.getPos() == pos)
                         deleteEgg(egg.getId());
                 }
-                player.setState(GUI::Trantorian::State::EXPULSING);
-                return;
+                return player.setState(GUI::Trantorian::State::EXPULSING);
             }
         }
         throw std::runtime_error("[pex] Player not found in map (id: " + std::to_string(id) + ")");
@@ -237,6 +234,17 @@ namespace Manager {
                 else
                     player.setState(GUI::Trantorian::State::DYING); // Temporary
             }
+        }
+    }
+
+    void Protocol::pfk(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id)
+                return player.setState(GUI::Trantorian::State::FORKING);
         }
     }
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {

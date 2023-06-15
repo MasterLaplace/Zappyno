@@ -34,6 +34,7 @@ namespace Manager {
                 commands["pbc"] = [this](std::string &str) { pbc(str); };
                 commands["pic"] = [this](std::string &str) { pic(str); };
                 commands["pie"] = [this](std::string &str) { pie(str); };
+                commands["pfk"] = [this](std::string &str) { pfk(str); };
             }
             ~Protocol() = default;
 
@@ -115,6 +116,13 @@ namespace Manager {
              * @param str  pie X Y R\n
              */
             void pie(std::string &str);
+
+            /**
+             * @brief egg laying by the player (id of the player)
+             *
+             * @param str  pfk n\n
+             */
+            void pfk(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
