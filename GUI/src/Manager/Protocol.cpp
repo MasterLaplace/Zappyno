@@ -204,6 +204,17 @@ namespace Manager {
         _chat->addMessage(message);
     }
 
+    void Protocol::pic(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+        Math::Vector pos = {std::stod(args[2]), std::stod(args[3])};
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id && player.getPos() == pos)
+                player.setState(GUI::Trantorian::State::INCANTING);
+        }
+    }
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
