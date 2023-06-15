@@ -41,7 +41,9 @@ void send_player_s_position(t_server *server, char** array)
     strncat(message, " ",strlen(message) + 1);
     strncat(message, itoa(y),strlen(message) + strlen(itoa(y)));
     sprintf(message, "%s", message);
-    send_to_client(server, message, server->id);
+    strncat(message, itoa(O),strlen(message) + my_nblen(O));
+    sprintf(message, "%s\n", message);
+    send_to_client(server, message, id);
 }
 
 void send_player_s_position_to_all(t_server *server, char **array)
@@ -55,5 +57,7 @@ void send_player_s_position_to_all(t_server *server, char **array)
     strncat(message, " ",strlen(message) + 1);
     strncat(message, itoa(y),strlen(message) + strlen(itoa(y)));
     sprintf(message, "%s", message);
-    send_to_client(server, message, server->id);
+    strncat(message, itoa(O),strlen(message) + my_nblen(O));
+    sprintf(message, "%s\n", message);
+    send_to_client(server, message, id);
 }

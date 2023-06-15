@@ -11,17 +11,17 @@
 #include <time.h>
 
 ai_command ia_client[] = {
-    {"Look", recv_look, 7},
-    {"Forward", recv_forward, 7},
-    {"Right", recv_right, 7},
-    {"Left", recv_left, 7},
+    {"Look", recv_look, 1},
+    {"Forward", recv_forward, 1},
+    {"Right", recv_right, 1},
+    {"Left", recv_left, 1},
     {"Inventory", recv_inventory, 1},
     {"Connect_nbr", recv_connect_nbr, 0},
-    {"Take", recv_take, 7},
-    {"Set", recv_set, 7},
-    {"Broadcast", recv_broadcast, 7},
+    {"Take", recv_take, 1},
+    {"Set", recv_set, 1},
+    {"Broadcast", recv_broadcast, 1},
     {"Fork", recv_fork, 42},
-    {"Eject", recv_eject, 7},
+    {"Eject", recv_eject, 1},
     {"Incantation", recv_incantation, 300},
     {NULL, NULL, 0}
 };

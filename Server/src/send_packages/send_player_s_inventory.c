@@ -36,7 +36,7 @@ void send_player_s_inventory(t_server *server, char** array)
         strncat(message, itoa(data), strlen(message) + my_nblen(data));
         strncat(message, " ",strlen(message) + 1);
     }
-    sprintf(message, "%s", message);
+    sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
 }
 
@@ -60,6 +60,6 @@ void send_player_s_inventory_to_all(t_server *server, char **array)
         strncat(message, itoa(data), strlen(message) + my_nblen(data));
         strncat(message, " ",strlen(message) + 1);
     }
-    sprintf(message, "%s", message);
+    sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
 }
