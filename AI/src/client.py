@@ -39,7 +39,6 @@ class Client:
         The main loop of the client.
         """
         self.__communication.connect()
-
         while True:
             for _, mask in self.__communication.select():
                 if mask & EVENT_READ:
@@ -99,8 +98,19 @@ class Client:
             self.__handle_welcome()
         elif self.__state != State.SAVED_INFOS:
             self.__store_infos(line)
-        else:
-            print('Received: ' + line)
+        elif 'Elevation underway' in line:
+            print('Increase Player step')
+        elif 'Current level:' in line:
+            print('Current level')
+        elif self.__state == State.SAVED_INFOS and 'message' in line:
+            return
+        elif 'ok' in line and 'Take' in self.__player.response and 'food' not in self.__player.response:
+            print('Update shared inventory')
+        elif 'Inventory' in self.__player.response:
+            print('Parse and save player inventory')
+        elif 'Look' in self.__player.response:
+            print('Look')
+        self.__player.is_running = True
 
     def __handle_death(self) -> None:
         """
