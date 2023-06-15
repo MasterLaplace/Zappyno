@@ -4,7 +4,9 @@ Player class is used to store information about the player.
 import math
 from typing import Dict, List
 from enum import Enum
+from collections import Counter
 import random
+import json
 import re
 from communication import Communication
 
@@ -58,12 +60,12 @@ class Player:
         self.__incantation: bool = False
         self.__clear: bool = False
         self.__number_incantation = 0
-        self.__player_incantation = 0
+        self._player_incantation = 0
         self.command: List = []
         self.__step = -2
         self.__ready: bool = False
         self.__direction = 0
-        self.__message = ''
+        self._message = ''
 
     def send_message(self, message: str) -> None:
         """
@@ -103,15 +105,18 @@ class Player:
         self.receive_message()
         self.look()
 
-    def fill_shared_inventory(self, message: str) -> None:
+    def fill_shared_inventory(self, inventory: str) -> None:
         """
         Fill the shared inventory.
         """
-        object_take: str = message.split(' ')[1]
-        if object_take in self.__shared_inventory:
-            self.__shared_inventory[object_take] += 1
-        else:
-            self.__shared_inventory[object_take] = 1
+        client, _, inventory = inventory.split(";")
+        counter: Dict[str, int] = Counter()
+        self.__shared_inventory[client] = json.loads(inventory)
+        for obj in self.__shared_inventory:
+            if obj == 'total':
+                continue
+            self.__shared_inventory.update(counter)
+        self.__shared_inventory = dict(counter)
 
     def create_map(self, look: str) -> None:
         """
@@ -252,7 +257,7 @@ class Player:
             return
         self.command = []
         if self.__direction == 0:
-            self.__message = str(Brodcaste.READY)
+            self._message = str(Brodcaste.READY)
             self.__ready = True
         if self.__direction in (2, 1, 8):
             self.command.append("Forward\n")
@@ -268,10 +273,10 @@ class Player:
         :return:
         """
         if "Inventory" in messages_list:
-            #fill shared inventory
+            self.fill_shared_inventory(messages_list[9])
         if "Incantation" in messages_list:
-            if self.__clear == 1:
-                self.__clear = 0
+            if self.__clear:
+                self.__clear = False
                 return
             if self.__step < 4 and self.__step > -1:
                 self.__step = 4
@@ -287,4 +292,4 @@ class Player:
         if "Ready" in messages_list and self.__number_incantation >= 1:
             self.__number_incantation += 1
         if "Moving" in messages_list:
-            self.__player_incantation += 1
+            self._player_incantation += 1
