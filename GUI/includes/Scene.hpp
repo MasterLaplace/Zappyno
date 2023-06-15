@@ -40,6 +40,7 @@ namespace GUI {
 
             std::shared_ptr<Interface::Chat> getChat();
 
+            void addPanel(const Interface::Panel &panel) { _panels.push_back(panel); }
 
             void updateScene(const Math::Vector &mousePos, const bool &mousePressed = false);
             void updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed = false);

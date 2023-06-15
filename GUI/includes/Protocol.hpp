@@ -33,6 +33,7 @@ namespace Manager {
                 commands["pex"] = [this](std::string &str) { pex(str); };
                 commands["pbc"] = [this](std::string &str) { pbc(str); };
                 commands["pic"] = [this](std::string &str) { pic(str); };
+                commands["pie"] = [this](std::string &str) { pie(str); };
             }
             ~Protocol() = default;
 
@@ -107,6 +108,13 @@ namespace Manager {
              * @param str  pic X Y L n n . . . \n
              */
             void pic(std::string &str);
+
+            /**
+             * @brief end of an incantation (by the first player)
+             *
+             * @param str  pie X Y R\n
+             */
+            void pie(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }

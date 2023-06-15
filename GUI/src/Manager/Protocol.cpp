@@ -180,6 +180,7 @@ namespace Manager {
                     if (egg.getPos() == pos)
                         deleteEgg(egg.getId());
                 }
+                player.setState(GUI::Trantorian::State::EXPULSING);
                 return;
             }
         }
@@ -189,14 +190,21 @@ namespace Manager {
     void Protocol::pbc(std::string &str)
     {
         auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
         std::string message = "";
 
         for (auto &arg : args) {
             if (arg == "smg")
                 continue;
-            if (arg == args[1])
+            if (arg == args[1]) {
+                for (auto &player : getTrantorians()) {
+                    if (player.getId() == id) {
+                        player.setState(GUI::Trantorian::State::BROADCASTING);
+                        break;
+                    }
+                }
                 message += arg + ": ";
-            else
+            } else
                 message += arg + " ";
         }
         if (message[message.size() - 1] == ' ')
@@ -213,6 +221,22 @@ namespace Manager {
         for (auto &player : getTrantorians()) {
             if (player.getId() == id && player.getPos() == pos)
                 player.setState(GUI::Trantorian::State::INCANTING);
+        }
+    }
+
+    void Protocol::pie(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        Math::Vector pos = {std::stod(args[1]), std::stod(args[2])};
+        bool success = std::stoi(args[3]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getPos() == pos) {
+                if (success)
+                    player.setState(GUI::Trantorian::State::IDLE); // Temporary
+                else
+                    player.setState(GUI::Trantorian::State::DYING); // Temporary
+            }
         }
     }
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
