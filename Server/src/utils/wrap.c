@@ -7,7 +7,8 @@
 
 #include "../../include/server.h"
 
-int wrap_x(int x, int width) {
+int wrap_x(int x, int width)
+{
     if (x < 0) {
         return (x + width) % width;
     } else if (x >= width) {
@@ -16,7 +17,8 @@ int wrap_x(int x, int width) {
     return x;
 }
 
-int wrap_y(int y, int height) {
+int wrap_y(int y, int height)
+{
     if (y < 0) {
         return (y + height) % height;
     } else if (y >= height) {

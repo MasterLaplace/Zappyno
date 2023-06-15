@@ -9,19 +9,19 @@
 
 static void modify_direction(t_server *server)
 {
-    int orientation = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
+    int orientation = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
     switch (orientation) {
-        case 0: // North
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 1; // becomes East
+        case 0:
+            TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 1;
             break;
-        case 1: // East
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 2; // becomes South
+        case 1:
+            TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 2;
             break;
-        case 2: // South
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 3; // becomes West
+        case 2:
+            TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 3;
             break;
-        case 3: // West
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 0; // becomes North
+        case 3:
+            TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 0;
             break;
     }
 }

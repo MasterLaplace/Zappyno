@@ -6,10 +6,18 @@
 */
 
 #ifndef SEND_PACKAGE_H_
-#define SEND_PACKAGE_H_
-#define min(a,b) ((a) < (b) ? (a) : (b))
+    #define SEND_PACKAGE_H_
+    #define min(a,b) ((a) < (b) ? (a) : (b))
+    #define ORIENTATION TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation
+    #define POS_X TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x
+    #define POS_Y TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y
 
-#include "server.h"
+    #include "server.h"
+
+typedef struct tmp_s {
+    int i;
+    int j
+} tmp_t;
 
 // CONNECTION DIRECTORY
 //------------------ \\
@@ -98,6 +106,5 @@ void send_name_of_all_the_teams(t_server *server, char** array);
 //OTHERS
 void send_command_not_found_to_all(t_client *clients);
 void send_command_not_found(t_client *client);
-
 
 #endif /* !SEND_PACKAGE_H_ */

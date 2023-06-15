@@ -7,13 +7,24 @@
 
 #include "../../include/send_package.h"
 
+// count array line for number of spaces betwen each words
+size_t count_array_line(char **array)
+{
+    size_t count = 0;
+
+    for (size_t i = 0; array[i] != NULL; i++)
+        count++;
+    return count;
+}
+
 // count all words size for number of char in all team names
 size_t count_all_words_size(char **array)
 {
     size_t count = 0;
 
-    for(size_t i = 0; array[i] != NULL; i++)
-        count += strlen(array[i]);
+    for (size_t i = 0; array[i] != NULL; i++)
+        for (size_t y = 0; array[i][y] != '\0'; y++)
+            count++;
     return count;
 }
 

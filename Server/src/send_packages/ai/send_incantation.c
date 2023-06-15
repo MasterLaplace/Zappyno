@@ -7,7 +7,7 @@
 
 #include "../../../include/send_package.h"
 
-int required_ressources[8][8] = {
+static int required_ressources[8][8] = {
         //level | nb of player| linen| dera| sibu| mend| phir| thys
         {1, 1, 1, 0, 0, 0, 0, 0},  // for level 1
         {2, 2, 1, 1, 1, 0, 0, 0},  // for level 2
@@ -18,122 +18,68 @@ int required_ressources[8][8] = {
         {7, 6, 2, 2, 2, 2, 2, 1}   // for level 7
 };
 
-void freeze_participating_players(t_server *server, t_client* player)
+int verify_elevation_conditions_next(t_server *server, int j)
 {
-    int level = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
-    // Get the tile where the player is located
-    int x = player->pos_x;
-    int y = player->pos_y;
-    int tile_index = find_tile(server, x, y);
-
-    // Freeze all players on the tile
-    for (int j = 0; j < server->params->num_teams; j++) {
-        for (int i = 0; i < server->game.teams[j].max_players; i++) {
-            if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y &&
-                (level + 1) == server->game.teams[j].players[i].level) {
-                server->game.teams[j].players[i].is_freezed = true;
-            }
-        }
-    }
-}
-
-void perform_elevation(t_server *server)
-{
-    int level = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
-    // Get the current player initiating the incantation
-    t_client* player = &server->clients[server->id];
-
-    // Get the tile where the player is located
-    int x = player->pos_x;
-    int y = player->pos_y;
-
-    // Increase the level of all participating players
-    for (int j = 0; j < server->params->num_teams; j++) {
-        for (int i = 0; i < server->game.teams[j].max_players; i++) {
-            if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y &&
-                (level + 1) == server->game.teams[j].players[i].level) {
-                server->game.teams[j].players[i].level++;
-                server->game.teams[j].players[i].is_freezed = false;
-            }
-        }
-    }
-
-
-    for (int j = 0; j < server->params->num_teams; j++) {
-        for (int i = 0; i < server->game.teams[j].max_players; i++) {
-            if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y &&
-                (level + 1) == server->game.teams[j].players[i].level) {
-                send_to_client(server, "Current level: ++", server->game.teams[j].players[i].id);
-            }
-        }
-    }
-}
-
-void remove_required_resources(t_server *server)
-{
-    int level = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
-    // Get the current player initiating the incantation
-    t_client* player = &server->clients[server->id];
-
-    // Get the tile where the player is located
-    int x = player->pos_x;
-    int y = player->pos_y;
+    int nb_players = 0;
+    int x = CLIENT(server->id).pos_x;
+    int y = CLIENT(server->id).pos_y;
     int pos = find_tile(server, x, y);
+    int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
 
-    // Remove the required resources from the tile
-    for (int j = 0; j < server->params->num_teams; j++) {
-        for (int i = 0; i < server->game.teams[j].max_players; i++) {
-            if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y &&
-                (level + 1) == server->game.teams[j].players[i].level) {
-                for (int k = 1; k < TOTAL_RESOURCES; k++) {
-                    if (server->game.tiles[pos].resources[k] >= required_ressources[level][k + 1]) {
-                        server->game.tiles[pos].resources[k] -= required_ressources[level][k + 1];
-                    }
-                }
-            }
+    for (int i = 0; i < TEAMS[j].max_players; i++) {
+        if (TEAMS[j].players[i].pos_x == x &&
+            TEAMS[j].players[i].pos_y == y &&
+            (level + 1) == TEAMS[j].players[i].level) {
+            nb_players++;
         }
     }
+    return nb_players;
+}
+
+bool verify_nmb_ressources_next(t_server *server, int j, int i, int level)
+{
+    int x = CLIENT(server->id).pos_x;
+    int y = CLIENT(server->id).pos_y;
+    int pos = find_tile(server, x, y);
+    if (TEAMS[j].players[i].pos_x != x ||
+        TEAMS[j].players[i].pos_y != y ||
+        (level + 1) != TEAMS[j].players[i].level) {
+        return false;
+    }
+    for (int k = 1; k < TOTAL_RESOURCES; k++) {
+        if (TILES(pos).resources[k] < required_ressources[level][k + 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool verify_nmb_ressources(t_server *server, int j, int level)
+{
+    for (int i = 0; i < TEAMS[j].max_players; i++) {
+        if (!verify_nmb_ressources_next(server, j, i, level))
+            return false;
+    }
+    return true;
 }
 
 bool verify_elevation_conditions(t_server *server)
 {
-    int level = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
-    // Verify the number of players on the tile
+    int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     int nb_players = 0;
-    int x = server->clients[server->id].pos_x;
-    int y = server->clients[server->id].pos_y;
+    int x = CLIENT(server->id).pos_x;
+    int y = CLIENT(server->id).pos_y;
     int pos = find_tile(server, x, y);
     for (int j = 0; j < server->params->num_teams; j++) {
-        for (int i = 0; i < server->game.teams[j].max_players; i++) {
-            if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y &&
-                (level + 1) == server->game.teams[j].players[i].level) {
-                nb_players++;
-            }
-        }
+        nb_players += verify_elevation_conditions_next(server, j);
     }
-    printf("nb_player: %d | required: %d\n", nb_players, required_ressources[level][1]);
-    if (nb_players < required_ressources[level][1]) {
-        printf("nb_players: %d\n", nb_players);
-        return false;
-    }
-
+    printf("nb_player: %d | required: %d\n", nb_players,
+required_ressources[level][1]);
+    if (nb_players < required_ressources[level][1])
+        return !printf("nb_players: %d\n", nb_players);
     for (int j = 0; j < server->params->num_teams; j++) {
-        for (int i = 0; i < server->game.teams[j].max_players; i++) {
-            if (server->game.teams[j].players[i].pos_x == x &&
-                server->game.teams[j].players[i].pos_y == y &&
-                (level + 1) == server->game.teams[j].players[i].level) {
-                for (int k = 1; k < TOTAL_RESOURCES; k++) {
-                    if (server->game.tiles[pos].resources[k] < required_ressources[level][k + 1]) {
-                        return false;
-                    }
-                }
-            }
-        }
+        if (!verify_nmb_ressources(server, j, level))
+            return false;
     }
     return true;
 }
@@ -141,27 +87,14 @@ bool verify_elevation_conditions(t_server *server)
 void send_incantation(t_server *server)
 {
     printf("incantation\n");
-    // Get the current player initiating the incantation
-    t_client* player = &server->clients[server->id];
-
-    // Get the tile where the player is located
+    t_client* player = &CLIENT(server->id);
     int x = player->pos_x;
     int y = player->pos_y;
-    int tile_index = find_tile(server, x, y);
-
-    // Verify the conditions for the elevation ritual at the beginning
     if (!verify_elevation_conditions(server)) {
-        // Conditions not met, send failure message to the player
         send_to_client(server, "ko\n", server->id);
         return;
     }
-
-    // Freeze all participating players during the ritual
     freeze_participating_players(server, player);
-
-    // Perform the elevation by increasing the level of all participating players
     perform_elevation(server);
-
-    // Remove the required resources from the tile
     remove_required_resources(server);
 }

@@ -8,8 +8,8 @@
 #ifndef CLIENT_H
     #define CLIENT_H
 
-#include <stdbool.h>
-#include <stddef.h>
+    #include <stdbool.h>
+    #include <stddef.h>
 
 typedef struct s_server t_server;
 
@@ -24,28 +24,31 @@ typedef enum {
     TOTAL_RESOURCES // This will always be the total number of resources.
 } e_resources;
 
+typedef struct my_timer_s {
+    time_t start;
+    double duration;
+} my_timer_t;
+
 typedef struct s_client {
     int id;
-    bool is_gui;             // Whether the client is a gui or not
     int socket_fd;           // The socket file descriptor for the client
-    fd_set read_fds;          // The buffer for the read file descriptor
+    unsigned pos_x;
+    unsigned pos_y;
+    unsigned level;
+    unsigned orientation;
+    unsigned index_team;
+    unsigned resources[TOTAL_RESOURCES];
+    unsigned index_in_team;
+    my_timer_t *timer;
+    void (*function)(t_server *, char **);
+    bool is_gui;             // Whether the client is a gui or not
     bool is_freezed;         // Whether the client is freezed or not
     bool is_connected;      // Whether the client is connected or not
     bool is_an_egg;
-    int pos_x;
-    int pos_y;
-    int level;
-    int orientation;
-    int index_team;
-    int resources[TOTAL_RESOURCES];
-    int index_in_team;
-    void (*command_to_execute)(t_server *, char **);
-    char **command_args;
-    bool timer_set;
-    clock_t delay;
     // TODO: add more client-specific data (player info, team info, etc.)
 } t_client;
 
 void client_init(t_client *client, int socket_fd);
 void client_destroy(t_client *client);
+
 #endif //CLIENT_H

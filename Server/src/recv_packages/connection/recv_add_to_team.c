@@ -7,7 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void init_inventory(int* resources) {
+void init_inventory(int *resources)
+{
     resources[FOOD] = 10;
     resources[LINEMATE] = 1;
     resources[DERAUMERE] = 0;
@@ -25,25 +26,23 @@ void init_inventory(int* resources) {
  */
 static void add_to_team(t_server *server, int i)
 {
-    server->game.teams[i].nb_players++;
-    for (int j = 0; j < server->game.teams[i].max_players; j++) {
-        if (server->game.teams[i].players[j].socket_fd == 0) {
-            server->game.teams[i].players[j].socket_fd = server->clients[server->id].socket_fd;
-            printf("pos x : %d | pos y : %d | j = %d\n", server->game.teams[i].players[j].pos_x,
-                   server->game.teams[i].players[j].pos_y, j);
-            server->clients[server->id].pos_x = server->game.teams[i].players[j].pos_x;
-            server->clients[server->id].pos_y = server->game.teams[i].players[j].pos_y;
-            server->clients[server->id].is_connected = true;
-            server->clients[server->id].is_gui = false;
-            server->game.teams[i].players[j].orientation = rand() % 4;
-            server->game.teams[i].players[j].is_an_egg = false;
-            server->game.teams[i].players[j].level = 1;
-            server->clients[server->id].index_team = i;
-            server->clients[server->id].index_in_team = j;
-            server->game.teams[i].players[j].id = server->id;
-            init_inventory(server->game.teams[i].players[j].resources);
-            server->game.tiles[find_tile(server, server->game.teams[i].players[j].pos_x,
-                server->game.teams[i].players[j].pos_y)].player++;
+    TEAMS[i].nb_players++;
+    for (int j = 0; j < TEAMS[i].max_players; j++) {
+        if (TEAMS[i].players[j].socket_fd == 0) {
+            TEAMS[i].players[j].socket_fd = CLIENT(server->id).socket_fd;
+            CLIENT(server->id).pos_x = TEAMS[i].players[j].pos_x;
+            CLIENT(server->id).pos_y = TEAMS[i].players[j].pos_y;
+            CLIENT(server->id).is_connected = true;
+            CLIENT(server->id).is_gui = false;
+            TEAMS[i].players[j].orientation = rand() % 4;
+            TEAMS[i].players[j].is_an_egg = false;
+            TEAMS[i].players[j].level = 1;
+            CLIENT(server->id).index_team = i;
+            CLIENT(server->id).index_in_team = j;
+            TEAMS[i].players[j].id = server->id;
+            init_inventory(TEAMS[i].players[j].resources);
+            TILES(find_tile(server, TEAMS[i].players[j].pos_x,
+TEAMS[i].players[j].pos_y)).player++;
             break;
         }
     }
@@ -60,20 +59,14 @@ bool recv_check_to_add_to_team(t_server *server, char **message)
 {
     printf("An AI is trying to join the team : \"%s\"\n", message[0]);
     for (int i = 0; i < server->params->num_teams; i++) {
-        printf("%s | %s\n", message[0], server->params->team_names[i]);
-        if (!strcmp(message[0], server->params->team_names[i])) {
-            if (server->game.teams[i].nb_players >= server->game.teams[i].max_players) {
-                send_error(server, 0);
-                return false;
-            }
-            printf("ok2\n");
-            add_to_team(server, i);
-            printf("ok\n");
-            send_join_ai(server);
-            return true;
-        }
+        if (strcmp(message[0], server->params->team_names[i]))
+            continue;
+        if (TEAMS[i].nb_players >= TEAMS[i].max_players)
+            return send_error(server, 0), false;
+        add_to_team(server, i);
+        send_join_ai(server);
+        return true;
     }
     send_error(server, 0);
     return false;
 }
-

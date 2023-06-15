@@ -19,7 +19,7 @@ void display_params(t_params params)
     printf("clientsNb: %d\n", params.clientsNb);
     printf("freq: %d\n", params.freq);
     printf("num_teams: %d\n", params.num_teams);
-    for (int i = 0; i < params.num_teams; i++)
+    for (unsigned i = 0; i < params.num_teams; i++)
         printf("team_names[%d]: %s\n", i, params.team_names[i]);
 }
 
@@ -35,9 +35,9 @@ void check_params(t_params *params)
         check = true;
     if (params->port < 1024 || params->port > 65535)
         check = true;
-    if (params->width < 10 || params->width > 1920)
+    if (params->width < 10 || params->width > 30)
         check = true;
-    if (params->height < 10 || params->height > 1080)
+    if (params->height < 10 || params->height > 30)
         check = true;
     if (params->freq < 2 || params->freq > 1000)
         check = true;

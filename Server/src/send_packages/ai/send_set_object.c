@@ -7,6 +7,14 @@
 
 #include "../../../include/send_package.h"
 
+static const char *resourceNames[] = {"food",
+"linemate",
+"deraumere",
+"sibur",
+"mendiane",
+"phiras",
+"thystame"
+};
 
 /**
  * @brief Take an object from the map
@@ -15,11 +23,11 @@
  */
 static bool set_object(t_server *server, int index)
 {
-    int x = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
-    int y = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y;
+    int x = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
+    int y = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y;
     int pos = find_tile(server, x, y);
-    int *tile_resources = server->game.tiles[pos].resources;
-    int *player_resources = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].resources;
+    int *tile_resources = TILES(pos).resources;
+    int *player_resources = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources;
     for (int i = 0; i < TOTAL_RESOURCES; i++) {
         printf("i = %d | index = %d\n", i, index);
         if (i == index) {
@@ -32,20 +40,23 @@ static bool set_object(t_server *server, int index)
     return false;
 }
 
-static const char *resourceNames[] = {"food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame"};
+void check_set_object(t_server *server, int i)
+{
+    if (set_object(server, i)) {
+        send_to_client(server, "ok\n", server->id);
+        return;
+    } else {
+        send_error(server, 0);
+        return;
+    }
+}
 
 void send_set_object(t_server *server, char **message)
 {
     printf("ressource: %s\n", message[1]);
     for (int i = 0; i < TOTAL_RESOURCES; i++) {
         if (strcmp(message[1], resourceNames[i]) == 0) {
-            if (set_object(server, i)) {
-                send_to_client(server, "ok\n", server->id);
-                return;
-            } else {
-                send_error(server, 0);
-                return;
-            }
+            return check_set_object(server, i);
         }
     }
 }

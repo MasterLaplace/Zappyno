@@ -8,43 +8,7 @@
 #include "../../include/recv_package.h"
 #include "../../include/send_package.h"
 #include "../../include/game.h"
-
-char **copy_message_args(char **message) {
-    // First count how many elements in message
-    int count = 0;
-    while (message[count] != NULL) {
-        count++;
-    }
-
-    // Allocate new array
-    char **copy = malloc((count + 1) * sizeof(char *));
-    if (copy == NULL) {
-        // Handle error
-        fprintf(stderr, "Failed to allocate memory for command arguments.\n");
-        return NULL;
-    }
-
-    // Copy each string
-    for (int i = 0; i < count; i++) {
-        copy[i] = strdup(message[i]);
-        if (copy[i] == NULL) {
-            // Handle error
-            fprintf(stderr, "Failed to duplicate command argument.\n");
-            // Cleanup already allocated memory
-            for (int j = 0; j < i; j++) {
-                free(copy[j]);
-            }
-            free(copy);
-            return NULL;
-        }
-    }
-
-    // Null terminate
-    copy[count] = NULL;
-
-    return copy;
-}
-
+#include <time.h>
 
 ai_command ia_client[] = {
     {"Look", recv_look, 7},
@@ -63,32 +27,30 @@ ai_command ia_client[] = {
 };
 
 gui_command gui_client[] = {
-    {MAP_SIZE, recv_map_size},
-    {0, NULL},
-    {TNA, send_name_of_all_the_teams},
+    {"msz", recv_map_size},
+    {0, NULL}
 };
 
-//join client
-bool join_client(t_server *server, char **message, int i)
+static bool join_client(t_server *server, char **message)
 {
     if (!strcmp(message[0], "GRAPHIC")) {
-        server->clients[server->id].is_gui = true;
+        CLIENT(server->id).is_gui = true;
         recv_check_to_add_gui(server, message);
         return true;
     }
     return recv_check_to_add_to_team(server, message);
 }
 
-bool check_command_ai(t_server *server, char **message)
+static bool check_command_ai(t_server *server, char **message)
 {
     for (int i = 0; ia_client[i].command_id; i++) {
         if (!strncmp(ia_client[i].command_id, message[0],
-                     strlen(ia_client[i].command_id)) && !server->clients[server->id].is_freezed) {
-            printf("Command %s matched, setting cooldown...\n", ia_client[i].command_id);
-            server->clients[server->id].timer_set = true;
-            server->clients[server->id].command_to_execute = ia_client[i].function_ai;
-            server->clients[server->id].command_args = copy_message_args(message);
-            server->clients[server->id].delay = clock();
+            strlen(ia_client[i].command_id)) &&
+            !CLIENT(server->id).is_freezed) {
+            printf("Command found : %s\n", ia_client[i].command_id);
+            CLIENT(server->id).function = ia_client[i].function_ai;
+            CLIENT(server->id).timer->start = time(NULL);
+            CLIENT(server->id).timer->duration = ia_client[i].time;
             return true;
         }
     }
@@ -105,59 +67,42 @@ bool check_command_gui(t_server *server, char **message)
     }
     return false;
 }
+
+static void set_id_player(t_server *server, int fd)
+{
+    for (register int i = 0; i < MAX_CLIENTS; i++) {
+        if (CLIENT(i).socket_fd == fd) {
+            server->id = i;
+            break;
+        }
+    }
+}
+
 /**
  * Handle the data received from a client
  * @param server
  * @param fd
  */
-void handle_client_data(t_server *server, int fd) {
+void handle_client_data(t_server *server, int fd)
+{
     bool ret = false;
-    for (int i = 0; i < MAX_CLIENTS; i++) {
-        if (server->clients[i].socket_fd == fd) {
-            server->id = i;
-            break;
-        }
-    }
-    printf("Handling client data : %d\n", fd);
+    set_id_player(server, fd);
     char *buffer = receive_from_client(fd);
-    if (buffer == NULL || strlen(buffer) == 0) {
-        remove_client(server, server->id);
+    if (buffer == NULL || !*buffer)
         return;
-    }
-    printf("Received: |%s|\n", buffer);
     char **message = stwa(buffer, " \n\t");
-    for (int i = 0; message[i]; i++)
-        printf("message[%d] = %s\n", i, message[i]);
-    if (!server->clients[server->id].is_connected) {
-        if (!join_client(server, message, 0))
+    if (!CLIENT(server->id).is_connected) {
+        if (!join_client(server, message))
             free(buffer);
         return;
     } else {
-        if (server->clients[server->id].is_gui) {
-            ret = check_command_gui(server, message);
-        } else {
+        if (!CLIENT(server->id).is_gui) {
             ret = check_command_ai(server, message);
+        } else {
+            ret = check_command_gui(server, message);
         }
     }
     if (!ret)
         send_error(server, 0);
     free(buffer);
-}
-
-/**
- * Remove a client from the server
- * @param server
- * @param id
- */
-void remove_client(t_server *server, int id)
-{
-    close(server->clients[id].socket_fd);
-    FD_CLR(server->clients[id].socket_fd, &server->readfds);
-    memset(&server->clients[id], 0, sizeof(t_client));
-    server->max_fd = server->sockfd;
-    for (int i = 0; i < MAX_CLIENTS; i++) {
-        if (server->clients[i].socket_fd > server->max_fd) {
-            server->max_fd = server->clients[i].socket_fd;
-        }
-    }
 }

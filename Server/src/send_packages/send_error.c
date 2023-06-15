@@ -17,12 +17,14 @@ static char ErrorFlag[7][50] = {
     "ko Error\n",
 };
 
-void send_error(t_server *server, int error_id) {
+void send_error(t_server *server, int error_id)
+{
     printf("Error: %s", ErrorFlag[error_id]);
     send_to_client(server, ErrorFlag[error_id], server->id);
 }
 
-void send_error_to_all(t_server *server, int error_id) {
+void send_error_to_all(t_server *server, int error_id)
+{
     printf("Error: %s", ErrorFlag[error_id]);
     send_to_all_clients(server, ErrorFlag[error_id]);
 }

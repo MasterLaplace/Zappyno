@@ -9,5 +9,7 @@
 
 void recv_map_size(t_server *server, char **message)
 {
-    send_map_size(server);
+    server->params->width = atoi(message[1]);
+    server->params->height = atoi(message[2]);
+    send_map_size_to_all(server);
 }

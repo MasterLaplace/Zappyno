@@ -11,9 +11,10 @@
  * Create the socket
  * @return the socket fd if success, -1 if error
  */
-int create_socket(void) {
-
+int create_socket(void)
+{
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
     if (sockfd < 0) {
         perror("Cannot open socket");
         return -1;
@@ -29,20 +30,18 @@ int create_socket(void) {
  * @param params
  * @return 0 if success, -1 if error
  */
-int bind_socket(t_server *server, t_params *params) {
-    struct sockaddr_in serv_addr;
+int bind_socket(t_server *server, t_params *params)
+{
+    struct sockaddr_in serv_addr = {0};
 
-    memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(params->port);
-
-    if (bind(server->sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+    if (bind(server->sockfd, (struct sockaddr *)&serv_addr, 16U) < 0) {
         perror("Cannot bind socket");
-        return -1;
+        return (-1);
     }
-
-    return 0;
+    return (0);
 }
 
 /**
@@ -51,13 +50,13 @@ int bind_socket(t_server *server, t_params *params) {
  * @param params
  * @return
  */
-int listen_socket(t_server *server, t_params *params) {
+int listen_socket(t_server *server, t_params *params)
+{
     if (listen(server->sockfd, MAX_CLIENTS) < 0) {
         perror("Cannot listen on socket");
-        return -1;
+        return (-1);
     }
-
-    return 0;
+    return (0);
 }
 
 /**
@@ -66,20 +65,34 @@ int listen_socket(t_server *server, t_params *params) {
  * @param params
  * @return 0 if success, -1 if error
  */
-int setup_server(t_server *server, t_params *params) {
+int setup_server(t_server *server, t_params *params)
+{
     server->sockfd = create_socket();
     if (server->sockfd < 0)
-        return -1;
-
+        return (-1);
     if (bind_socket(server, params) < 0)
-        return -1;
-
+        return (-1);
     if (listen_socket(server, params) < 0)
-        return -1;
-
+        return (-1);
     server->max_fd = server->sockfd;
-
     printf("Server setup complete\n");
+    return (0);
+}
 
-    return 0;
+/**
+ * Remove a client from the server
+ * @param server
+ * @param id
+ */
+void remove_client(t_server *server, int id)
+{
+    close(CLIENT(id).socket_fd);
+    FD_CLR(CLIENT(id).socket_fd, &server->readfds);
+    memset(&CLIENT(id), 0, sizeof(t_client));
+    server->max_fd = server->sockfd;
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (CLIENT(i).socket_fd > server->max_fd) {
+            server->max_fd = CLIENT(i).socket_fd;
+        }
+    }
 }

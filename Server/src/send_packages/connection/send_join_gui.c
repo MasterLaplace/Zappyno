@@ -7,12 +7,6 @@
 
 #include "../../../include/send_package.h"
 
-/*
- * struct PACKED JoinGui {
- *    uint8_t command_id;
- * } JoinGui;
- */
-
 void send_join_gui(t_server *server)
 {
     send_to_client(server, "WELCOME\n", server->id);

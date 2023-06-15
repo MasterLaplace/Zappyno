@@ -41,3 +41,22 @@ char **stwa(char *str, const char *delim)
     free(str_dup);
     return words;
 }
+
+char *my_strcat(char *dest, char *src)
+{
+    char *tmp = malloc(sizeof(char) * (strlen(dest) + strlen(src) + 1));
+    unsigned i = 0;
+    unsigned e = 0;
+
+    if (!tmp)
+        return NULL;
+
+    for (; src && src[i]; ++i)
+        tmp[i] = src[i];
+    for (; dest && dest[e]; ++i, ++e)
+        tmp[i] = dest[e];
+    tmp[i] = '\0';
+    if (dest)
+        free(dest);
+    return tmp;
+}

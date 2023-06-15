@@ -6,11 +6,11 @@
 */
 
 #ifndef RECV_PACKAGE_H_
-#define RECV_PACKAGE_H_
+    #define RECV_PACKAGE_H_
 
-#include "server.h"
-#include "recv_package.h"
-#include "send_package.h"
+    #include "server.h"
+    #include "recv_package.h"
+    #include "send_package.h"
 
 // CONNECTION DIRECTORY
 // Check if the client is a gui and adds it

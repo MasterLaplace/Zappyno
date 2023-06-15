@@ -7,101 +7,75 @@
 
 #include "../../../include/send_package.h"
 
-char *my_strcat(char *dest, char *src)
+char *get_tile_resources(t_server *server, int pos, char* message)
 {
-    char *tmp = malloc(sizeof(char) * (strlen(dest) + strlen(src) + 1));
-    unsigned i = 0;
-    unsigned e = 0;
-
-    if (!tmp)
-        return NULL;
-
-    for (; src && src[i]; ++i)
-        tmp[i] = src[i];
-    for (; dest && dest[e]; ++i, ++e)
-        tmp[i] = dest[e];
-    tmp[i] = '\0';
-    if (dest)
-        free(dest);
-    return tmp;
-}
-
-char *get_tile_resources(t_server *server, int pos, char* message) {
-    // Calculate the maximum size required for the message
     int max_size = (strlen(message) + 15) * sizeof(char);
     char *tmp = calloc(max_size, sizeof(char));
-    printf("player : %d\n", server->game.tiles[pos].player);
-    for (int i = 0; i < server->game.tiles[pos].player; i++) {
-        tmp = my_strcat(tmp, " player");
-    }
-    for (int i = 0; i < server->game.tiles[pos].resources[FOOD]; i++) {
+    printf("player : %d\n", TILES(pos).player);
+    for (int i = 0; i < TILES(pos).resources[FOOD]; i++)
         tmp = my_strcat(tmp, " food");
-    }
-    for (int i = 0; i < server->game.tiles[pos].resources[LINEMATE]; i++) {
+    for (int i = 0; i < TILES(pos).resources[LINEMATE]; i++)
         tmp = my_strcat(tmp, " linemate");
-    }
-    for (int i = 0; i < server->game.tiles[pos].resources[DERAUMERE]; i++) {
+    for (int i = 0; i < TILES(pos).resources[DERAUMERE]; i++)
         tmp = my_strcat(tmp, " deraumere");
-    }
-    for (int i = 0; i < server->game.tiles[pos].resources[SIBUR]; i++) {
+    for (int i = 0; i < TILES(pos).resources[SIBUR]; i++)
         tmp = my_strcat(tmp, " sibur");
-    }
-    for (int i = 0; i < server->game.tiles[pos].resources[MENDIANE]; i++) {
+    for (int i = 0; i < TILES(pos).resources[MENDIANE]; i++)
         tmp = my_strcat(tmp, " mendiane");
-    }
-    for (int i = 0; i < server->game.tiles[pos].resources[PHIRAS]; i++) {
+    for (int i = 0; i < TILES(pos).resources[PHIRAS]; i++)
         tmp = my_strcat(tmp, " phiras");
-    }
-    for (int i = 0; i < server->game.tiles[pos].resources[THYSTAME]; i++) {
+    for (int i = 0; i < TILES(pos).resources[THYSTAME]; i++)
         tmp = my_strcat(tmp, " thystame");
-    }
-    message = strdup(tmp);
-    free(tmp);
-
-    return message;
+    for (int i = 0; i < TILES(pos).player; i++)
+        tmp = my_strcat(tmp, " player");
+    return my_strcat(message, tmp);
 }
 
-int *get_pos_tiles_seen(t_server *server, int x, int y, int orientation, int level)
+void update_position_switch(t_server *server, int *pos_tiles_seen, int *index,
+tmp_t tmp)
 {
-    int *pos_tiles_seen = calloc((level * 2 + 1) * (level * 2 + 1), sizeof(int));
+    int tgx = 0, tgy = 0;
+    switch (ORIENTATION) {
+        case NORTH:
+            tgx = wrap_x(POS_X + tmp.j - tmp.i, server->params->width);
+            tgy = wrap_y(POS_Y - tmp.i, server->params->height);
+            break;
+        case EAST:
+            tgx = wrap_x(POS_X + tmp.i, server->params->width);
+            tgy = wrap_y(POS_Y + tmp.j - tmp.i, server->params->height);
+            break;
+        case SOUTH:
+            tgx = wrap_x(POS_X - tmp.j + tmp.i, server->params->width);
+            tgy = wrap_y(POS_Y + tmp.i, server->params->height);
+            break;
+        case WEST:
+            tgx = wrap_x(POS_X - tmp.i, server->params->width);
+            tgy = wrap_y(POS_Y - tmp.j + tmp.i, server->params->height);
+            break;
+    }
+    pos_tiles_seen[*index] = find_tile(server, tgx, tgy);
+}
+
+void update_positions(t_server *server, int *pos_tiles_seen, int *index, int i)
+{
+    tmp_t tmp = {0};
+
+    for (int j = 0; j < (i * 2) + 1; j++) {
+        tmp.i = i;
+        tmp.j = j;
+        update_position_switch(server, pos_tiles_seen, index, tmp);
+        (*index)++;
+    }
+}
+
+int *get_pos_tiles_seen(t_server *server, int x, int y, int level)
+{
+    int *pos_tiles_seen = calloc((level * 2 + 1) * (level * 2 + 1),
+sizeof(int));
     pos_tiles_seen[0] = find_tile(server, x, y);
     int index = 1;
-    if (orientation == NORTH) {
-        for (int i = 1; i <= level; i++) {
-            for (int j = 0; j < (i * 2) + 1; j++) {
-                int target_x = wrap_x(x + j - i, server->params->width);
-                int target_y = wrap_y(y - i, server->params->height);
-                pos_tiles_seen[index] = find_tile(server, target_x, target_y);
-                index++;
-            }
-        }
-    } else if (orientation == EAST) {
-        for (int i = 1; i <= level; i++) {
-            for (int j = 0; j < (i * 2) + 1; j++) {
-                int target_x = wrap_x(x + i, server->params->width);
-                int target_y = wrap_y(y + j - i, server->params->height);
-                pos_tiles_seen[index] = find_tile(server, target_x, target_y);
-                index++;
-            }
-        }
-    } else if (orientation == SOUTH) {
-        for (int i = 1; i <= level; i++) {
-            for (int j = 0; j < (i * 2) + 1; j++) {
-                int target_x = wrap_x(x - j + i, server->params->width);
-                int target_y = wrap_y(y + i, server->params->height);
-                pos_tiles_seen[index] = find_tile(server, target_x, target_y);
-                index++;
-            }
-        }
-    } else if (orientation == WEST) {
-        for (int i = 1; i <= level; i++) {
-            for (int j = 0; j < (i * 2) + 1; j++) {
-                int target_x = wrap_x(x - i, server->params->width);
-                int target_y = wrap_y(y - j + i, server->params->height);
-                pos_tiles_seen[index] = find_tile(server, target_x, target_y);
-                index++;
-            }
-        }
+    for (int i = 1; i <= level; i++) {
+        update_positions(server, pos_tiles_seen, &index, i);
     }
     pos_tiles_seen[index] = -1;
     return pos_tiles_seen;
@@ -109,17 +83,16 @@ int *get_pos_tiles_seen(t_server *server, int x, int y, int orientation, int lev
 
 void send_look(t_server *server)
 {
-    printf("x: %d, y: %d\n", server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x,
-           server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y);
     char *message = calloc(1, sizeof(char));
-    printf("TEAM_INDEX: %d, INDEX_IN_TEAM: %d\n", TEAM_INDEX, INDEX_IN_TEAM);
-    int x = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
-    int y = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y;
-    int orientation = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
-    int level = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].level;
-    int *pos_tiles_seen = get_pos_tiles_seen(server, x, y, orientation, level);
-    for (int i = 0; pos_tiles_seen[i] != -1; i++) {
-        message = my_strcat(message, get_tile_resources(server, pos_tiles_seen[i], message));
+    int x = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
+    int y = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y;
+    int orientation = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
+    int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level;
+    int *pos_tiles = get_pos_tiles_seen(server, x, y, level);
+
+    for (int i = 0; pos_tiles[i] != -1; i++) {
+        message = my_strcat(message,
+get_tile_resources(server, pos_tiles[i], message));
         message = my_strcat(message, ",");
     }
     char *tmp = calloc(strlen(message) + 15, sizeof(char));
@@ -127,11 +100,4 @@ void send_look(t_server *server)
     send_to_client(server, tmp, server->id);
     if (message)
         free(message);
-}
-
-void send_look_to_all(t_server *server)
-{
-    char *message = calloc(15, sizeof(char));
-    sprintf(message, "look %d %d\n", server->params->width, server->params->height);
-    send_to_all_clients(server, message);
 }

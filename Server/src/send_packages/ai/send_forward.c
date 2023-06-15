@@ -7,36 +7,30 @@
 
 #include "../../../include/send_package.h"
 
-void modify_position(t_server *server) {
-    int x = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
-    int y = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y;
-    int orientation = server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
-    int map_width = server->params->width;
-    int map_height = server->params->height;
-    server->game.tiles[find_tile(server, x, y)].player--;
+enum Direction { North, East, South, West };
 
-    switch (orientation) {
-        case 0: // North - decrease y
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y = (y - 1 + map_height) % map_height;
-            server->clients[server->id].pos_y = (y - 1 + map_height) % map_height;
-            server->game.tiles[find_tile(server, x, POS_Y)].player++;
+static void modify_position(t_server *server)
+{
+    t_client *player = &TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM];
+    unsigned x = player->pos_x, y = player->pos_y, new_x = x, new_y = y;
+    TILES(find_tile(server, x, y)).player--;
+    switch (player->orientation) {
+        case North:
+            new_y = (y - 1 + server->params->height) % server->params->height;
             break;
-        case 1: // East - increase x
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x = (x + 1) % map_width;
-            server->clients[server->id].pos_x = (x + 1) % map_width;
-            server->game.tiles[find_tile(server, POS_X, y)].player++;
+        case East:
+            new_x = (x + 1) % server->params->width;
             break;
-        case 2: // South - increase y
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y = (y + 1) % map_height;
-            server->clients[server->id].pos_y = (y + 1) % map_height;
-            server->game.tiles[find_tile(server, x, POS_Y)].player++;
+        case South:
+            new_y = (y + 1) % server->params->height;
             break;
-        case 3: // West - decrease x
-            server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x = (x - 1 + map_width) % map_width;
-            server->clients[server->id].pos_x = (x - 1 + map_width) % map_width;
-            server->game.tiles[find_tile(server, POS_X, y)].player++;
+        case West:
+            new_x = (x - 1 + server->params->width) % server->params->width;
             break;
     }
+    player->pos_x = CLIENT(server->id).pos_x = new_x;
+    player->pos_y = CLIENT(server->id).pos_y = new_y;
+    TILES(find_tile(server, new_x, new_y)).player++;
 }
 
 void send_forward(t_server *server)

@@ -17,7 +17,7 @@
  */
 void send_to_client(t_server *server, char *message, int id)
 {
-    t_client *client = &server->clients[id];
+    t_client *client = &CLIENT(id);
     if (client->socket_fd == 0)
         return;
     int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
@@ -50,10 +50,11 @@ void send_to_all_clients(t_server *server, char * message)
 char *receive_from_client(int fd)
 {
     char *message = calloc(1024, sizeof(char));
-    ssize_t recv_result = recv(fd, message, 1024, 0);
+    ssize_t recv_result = read(fd, message, 1024);
+
     if (recv_result == -1) {
         if (errno == ECONNRESET) {
-            // Connection was reset by the client
+            printf("Client disconnected\n");
             free(message);
             return NULL;
         } else {
@@ -61,7 +62,7 @@ char *receive_from_client(int fd)
             exit(EXIT_FAILURE);
         }
     } else if (recv_result == 0) {
-        // The peer has performed an orderly shutdown
+        printf("Client disconnected\n");
         free(message);
         return NULL;
     }

@@ -11,13 +11,14 @@ void send_connect_nbr(t_server *server)
 {
     char response[1024] = {0};
     sprintf(response, "%d\n",
-            (server->game.teams[TEAM_INDEX].max_players - server->game.teams[TEAM_INDEX].nb_players));
+            (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
     send_to_client(server, response, server->id);
 }
 
 void send_connect_nbr_to_all(t_server *server)
 {
     char response[1024] = {0};
-    sprintf(response, "%d\n", (server->game.teams[TEAM_INDEX].max_players - server->game.teams[TEAM_INDEX].nb_players));
+    sprintf(response, "%d\n",
+(TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
     send_to_all_clients(server, response);
 }

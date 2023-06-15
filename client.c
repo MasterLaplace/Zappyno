@@ -6,10 +6,10 @@
 
 #define MAX_BUFFER_SIZE 20000
 
-// pour uint8_t, uint16_t, uint32_t, etc.
+// For uint8_t, uint16_t, uint32_t, etc.
 #include <stdint.h>
 
-// pour send et recv
+// For send and recv
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdbool.h>
@@ -25,7 +25,7 @@ int main() {
     // Server address information
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(8080);  // Replace with the actual server port
+    server_addr.sin_port = htons(4242);  // Replace with the actual server port
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Replace with the actual server IP
 
     // Connect to the server
@@ -34,44 +34,10 @@ int main() {
         exit(EXIT_FAILURE);
     }
     printf("Connected to the server!\n");
-    // Send a message to the server
-    /*char message[] = "name1";
-    if (send(sockfd, message, strlen(message), 0) == -1) {
-        perror("Send failed");
-        exit(EXIT_FAILURE);
-    }
 
-
-    // Receive a response from the server
-    char buffer[MAX_BUFFER_SIZE];
-    ssize_t num_bytes = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
-    if (num_bytes == -1) {
-        perror("Receive failed");
-        exit(EXIT_FAILURE);
-    }
-    buffer[num_bytes] = '\0';
-    Package_t package = *(Package_t *) &buffer;
-    printf("command_id: %d\n", package.command_id);
-    printf("size: %d\n", ntohs(package.size));
-    TeamIsFull teamIsFull = *(TeamIsFull *) &buffer[sizeof(Package_t)];
-    printf("is_full: %d\n", teamIsFull.is_full);*/
-
-    // Send a message to the server JoinCheckIA
-    /*
-     * uint8_t *buffer = calloc(size + sizeof(Package_t), sizeof(uint8_t));
-    memcpy(buffer, package, sizeof(Package_t));
-    memcpy(buffer + sizeof(Package_t), structure, size);
-    // Send the buffer over the socket
-    int bytes_sent = send(client->socket_fd, buffer, size + sizeof(Package_t), 0);
-    if (bytes_sent == -1) {
-        perror("send");
-        exit(EXIT_FAILURE);
-    }
-     */
     ssize_t numChars;
     size_t bufferSize = 0;
     while (1) {
-        char *buffer = calloc(MAX_BUFFER_SIZE, sizeof(char));
         char response[MAX_BUFFER_SIZE] = {0};
         // Receive and display the response from the server
         if (recv(sockfd, response, MAX_BUFFER_SIZE - 1, 0) == -1) {
@@ -79,6 +45,7 @@ int main() {
             exit(EXIT_FAILURE);
         }
         printf("Response: %s", response);
+        char *buffer = calloc(MAX_BUFFER_SIZE, sizeof(char));
         // Read user input
         printf("Enter your command: ");
         numChars = getline(&buffer, &bufferSize, stdin);
@@ -93,7 +60,6 @@ int main() {
         }
         free(buffer);
     }
-
 
     // Close the socket
     close(sockfd);

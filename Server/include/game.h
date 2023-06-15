@@ -6,28 +6,29 @@
 */
 
 #ifndef GAME_H_
-#define GAME_H_
+    #define GAME_H_
 
-//Include all the libraries you need here
-#include <stdio.h>
-#include <string.h>
+    //Include all the libraries you need here
+    #include <stdio.h>
+    #include <string.h>
 
 typedef struct s_client t_client;
 typedef struct s_server t_server;
+typedef struct my_timer_s my_timer_t;
 
 typedef struct s_teams {
-    char *name;
     t_client *players;
-    int nb_players;
-    int max_players;
+    unsigned nb_players;
+    unsigned max_players;
+    char *name;
 } t_teams;
 
 typedef struct t_map {
-    int x;
-    int y;
-    int resources[TOTAL_RESOURCES];
-    int player;
-    int egg;
+    unsigned x;
+    unsigned y;
+    unsigned player;
+    unsigned egg;
+    unsigned resources[TOTAL_RESOURCES];
 } t_map;
 
 typedef struct s_game {
@@ -45,4 +46,5 @@ typedef struct ai_command {
     void (*function_ai)(t_server *, char **);
     int time;
 } ai_command;
+
 #endif /* !GAME_H_ */

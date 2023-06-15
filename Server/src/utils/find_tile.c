@@ -9,16 +9,17 @@
 
 /**
  * @file find_tile.c
+ *
  * @param server
  * @param x
  * @param y
  * @return
  */
-int find_tile(t_server *server, int x, int y)
+unsigned find_tile(t_server *server, unsigned x, unsigned y)
 {
-    int size = server->params->height * server->params->width;
-    for (int i = 0; i < size; i++) {
-        if (server->game.tiles[i].x == x && server->game.tiles[i].y == y)
+    unsigned size = server->params->height * server->params->width;
+    for (unsigned i = 0; i < size; i++) {
+        if (TILES(i).x == x && TILES(i).y == y)
             return i;
     }
     return -1;
