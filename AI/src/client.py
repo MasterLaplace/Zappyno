@@ -6,6 +6,7 @@ the host, the port, the IA, the team name, the communication object…
 from selectors import EVENT_READ, EVENT_WRITE
 from sys import exit as sys_exit
 from enum import Enum
+from subprocess import Popen
 from communication import Communication
 from player import Player
 
@@ -110,6 +111,12 @@ class Client:
             print('Parse and save player inventory')
         elif 'Look' in self.__player.response:
             print('Look')
+        elif 'Connect_nbr' in self.__player.response:
+            self.__player.unused_slots = int(line)
+            if self.__player.unused_slots > 0 and self.__player.fork and self.__id < 6:
+                with Popen(['python3', 'zappy_ai', '-p', self.__port, '-n', self.__team, '-i', str(self.__id + 1)]):
+                    self.__player.fork = False
+                    print('A new IA has been forked')
         self.__player.is_running = True
 
     def __handle_death(self) -> None:

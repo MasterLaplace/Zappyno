@@ -53,6 +53,7 @@ class Player:
         self.__map: List[List[int]] = [[]]
         self.is_running: bool = True
         self.response: str = ''
+        self.unused_slots: int = 0
         self.fork: bool = True
 
     def send_message(self, message: str) -> None:
