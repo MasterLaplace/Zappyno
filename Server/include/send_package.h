@@ -98,10 +98,65 @@ void send_incantation(t_server *server);
 void send_dead(t_server *server);
 // Send to all clients all teams names
 void send_name_of_all_the_teams_to_all(t_server *server, char** array);
-// Send to the client all teams names
-void send_name_of_all_the_teams(t_server *server, char** array);
-
-
+//
+void send_player_s_position(t_server *server, char** array);
+void send_player_s_position_to_all(t_server *server, char **array);
+//
+void send_player_s_level(t_server *server, char** array);
+void send_player_s_level_to_all(t_server *server, char** array);
+//
+void send_player_s_inventory(t_server *server, char** array);
+void send_player_s_inventory_to_all(t_server *server, char** array);
+//
+void send_map_size(t_server *server);
+void send_map_size_to_all(t_server *server);
+//
+void send_expulsion(t_server *server, char** array);
+void send_expulsion_to_all(t_server *server, char** array);
+//
+void send_egg_laying_by_the_player(t_server *server, char** array);
+void send_egg_laying_by_the_player_to_all(t_server *server, char** array);
+//
+void send_death_of_a_player(t_server *server, char** array);
+void send_death_of_a_player_to_all(t_server *server, char** array);
+//
+void send_broadcast_gui(t_server *server, char *brodacst);
+void send_broadcast_gui_to_all(t_server *server, char *brodacst);
+//
+void send_start_of_an_incantation(t_server *server, tmp_t co, int l,
+int *players);
+void send_start_of_an_incantation_to_all(t_server *server, tmp_t co, int l,
+int *players);
+//
+void send_end_of_an_incantation(t_server *server, tmp_t co, char *res);
+void send_end_of_an_incantation_to_all(t_server *server, tmp_t co, char *res);
+//
+void send_ressource_dropping(t_server *server, int id);
+void send_ressource_dropping_to_all(t_server *server, int id);
+//
+void send_ressource_collecting(t_server *server, int id);
+void send_ressource_collecting_to_all(t_server *server, int id);
+//
+void send_an_egg_was_laid_by_a_player(t_server *server, int egg_num, int x,
+int y);
+void send_an_egg_was_laid_by_a_player_to_all(t_server *server, int egg_num,
+int x, int y);
+//
+void send_player_connection_for_an_egg(t_server *server, int egg_num);
+void send_player_connection_for_an_egg_to_all(t_server *server, int egg_num);
+//
+void send_end_of_game(t_server *server, char *team_name);
+void send_end_of_game_to_all(t_server *server, char *team_name);
+//
+void send_message_from_the_server(t_server *server, char *message_);
+void send_message_from_the_server_to_all(t_server *server, char *message_);
+//
+void send_unknown_command(t_server *server, int egg_num);
+void send_unknown_command_to_all(t_server *server, int egg_num);
+//
+void send_send_cammand_paramater(t_server *server, int egg_num);
+void send_send_cammand_paramater_to_all(t_server *server, int egg_num);
+//
 
 //OTHERS
 void send_command_not_found_to_all(t_client *clients);

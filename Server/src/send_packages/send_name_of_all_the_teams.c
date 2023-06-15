@@ -46,7 +46,7 @@ void send_name_of_all_the_teams(t_server *server, char** array)
         + strlen(server->params->team_names[i]));
         strncat(message, "\n",strlen(message) + 1);
     }
-    sprintf(message, "%s", message);
+    sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
 }
 

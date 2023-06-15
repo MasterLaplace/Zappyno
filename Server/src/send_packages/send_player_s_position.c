@@ -39,8 +39,10 @@ void send_player_s_position(t_server *server, char** array)
     strncat(message, "ppo ",strlen(message) + 4);
     strncat(message, itoa(x),strlen(message) + strlen(itoa(x)));
     strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(y),strlen(message) + strlen(itoa(y)));
-    sprintf(message, "%s", message);
+    strncat(message, itoa(x),strlen(message) + my_nblen(x));
+    strncat(message, " ",strlen(message) + 1);
+    strncat(message, itoa(y),strlen(message) + my_nblen(y));
+    strncat(message, " ",strlen(message) + 1);
     strncat(message, itoa(O),strlen(message) + my_nblen(O));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, id);
@@ -55,8 +57,10 @@ void send_player_s_position_to_all(t_server *server, char **array)
     strncat(message, "ppo ",strlen(message) + 4);
     strncat(message, itoa(x),strlen(message) + strlen(itoa(x)));
     strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(y),strlen(message) + strlen(itoa(y)));
-    sprintf(message, "%s", message);
+    strncat(message, itoa(x),strlen(message) + my_nblen(x));
+    strncat(message, " ",strlen(message) + 1);
+    strncat(message, itoa(y),strlen(message) + my_nblen(y));
+    strncat(message, " ",strlen(message) + 1);
     strncat(message, itoa(O),strlen(message) + my_nblen(O));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, id);
