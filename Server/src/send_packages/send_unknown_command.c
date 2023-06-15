@@ -14,6 +14,7 @@ void send_unknown_command(t_server *server, int egg_num)
     strncat(message, "suc",strlen(message) + 3);
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_unknown_command_to_all(t_server *server, int egg_num)
@@ -23,4 +24,5 @@ void send_unknown_command_to_all(t_server *server, int egg_num)
     strncat(message, "suc",strlen(message) + 3);
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

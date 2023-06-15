@@ -14,6 +14,7 @@ void send_send_cammand_paramater(t_server *server, int egg_num)
     strncat(message, "sdp",strlen(message) + 3);
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_send_cammand_paramater_to_all(t_server *server, int egg_num)
@@ -23,4 +24,5 @@ void send_send_cammand_paramater_to_all(t_server *server, int egg_num)
     strncat(message, "sdp",strlen(message) + 3);
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

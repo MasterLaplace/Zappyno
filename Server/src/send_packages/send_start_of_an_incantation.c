@@ -21,7 +21,6 @@ int *players)
     char *message = calloc(8 + my_nblen(server->id) + my_nblen(co.i) +
     my_nblen(co.j) + my_nblen(l) + ( 2 * count_nb_players(players)),
     sizeof(char));
-
     strncat(message, "pic ",strlen(message) + 4);
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
     strncat(message, " ",strlen(message) + 1);
@@ -38,6 +37,7 @@ int *players)
     }
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_start_of_an_incantation_to_all(t_server *server, tmp_t co, int l,
@@ -46,7 +46,6 @@ int *players)
     char *message = calloc(8 + my_nblen(server->id) + my_nblen(co.i) +
     my_nblen(co.j) + my_nblen(l) + ( 2 * count_nb_players(players)),
     sizeof(char));
-
     strncat(message, "pic ",strlen(message) + 4);
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
     strncat(message, " ",strlen(message) + 1);
@@ -63,4 +62,5 @@ int *players)
     }
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

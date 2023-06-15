@@ -15,6 +15,7 @@ void send_message_from_the_server(t_server *server, char *message_)
     strncat(message, message_,strlen(message) + strlen(message_));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_message_from_the_server_to_all(t_server *server, char *message_)
@@ -25,4 +26,5 @@ void send_message_from_the_server_to_all(t_server *server, char *message_)
     strncat(message, message_,strlen(message) + strlen(message_));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

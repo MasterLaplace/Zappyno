@@ -22,6 +22,7 @@ int y)
     strncat(message, itoa(y),strlen(message) + my_nblen(y));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_an_egg_was_laid_by_a_player_to_all(t_server *server, int egg_num,
@@ -39,4 +40,5 @@ int x, int y)
     strncat(message, itoa(y),strlen(message) + my_nblen(y));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

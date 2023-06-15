@@ -15,6 +15,7 @@ void send_expulsion(t_server *server, char** array)
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_expulsion_to_all(t_server *server, char **array)
@@ -25,4 +26,5 @@ void send_expulsion_to_all(t_server *server, char **array)
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

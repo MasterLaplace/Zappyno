@@ -38,6 +38,7 @@ void send_player_s_inventory(t_server *server, char** array)
     }
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_player_s_inventory_to_all(t_server *server, char **array)
@@ -62,4 +63,5 @@ void send_player_s_inventory_to_all(t_server *server, char **array)
     }
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

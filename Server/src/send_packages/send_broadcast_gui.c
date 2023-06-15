@@ -17,6 +17,7 @@ void send_broadcast_gui(t_server *server, char *brodacst)
     strncat(message, brodacst,strlen(message) + strlen(brodacst));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_broadcast_gui_to_all(t_server *server, char *brodacst)
@@ -29,4 +30,5 @@ void send_broadcast_gui_to_all(t_server *server, char *brodacst)
     strncat(message, brodacst,strlen(message) + strlen(brodacst));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

@@ -19,6 +19,7 @@ void send_player_s_level(t_server *server, char** array)
     strncat(message, itoa(lvl), strlen(message) + my_nblen(lvl));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_player_s_level_to_all(t_server *server, char **array)
@@ -33,4 +34,5 @@ void send_player_s_level_to_all(t_server *server, char **array)
     strncat(message, itoa(lvl), strlen(message) + my_nblen(lvl));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

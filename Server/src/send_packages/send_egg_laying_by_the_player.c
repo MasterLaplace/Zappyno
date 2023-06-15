@@ -15,6 +15,7 @@ void send_egg_laying_by_the_player(t_server *server, char** array)
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_egg_laying_by_the_player_to_all(t_server *server, char **array)
@@ -25,4 +26,5 @@ void send_egg_laying_by_the_player_to_all(t_server *server, char **array)
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

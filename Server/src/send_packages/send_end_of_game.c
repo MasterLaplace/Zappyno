@@ -15,6 +15,7 @@ void send_end_of_game(t_server *server, char *team_name)
     strncat(message, team_name,strlen(message) + strlen(team_name));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_end_of_game_to_all(t_server *server, char *team_name)
@@ -25,4 +26,5 @@ void send_end_of_game_to_all(t_server *server, char *team_name)
     strncat(message, team_name,strlen(message) + strlen(team_name));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }

@@ -17,6 +17,7 @@ void send_ressource_collecting(t_server *server, int id)
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
 
 void send_ressource_collecting_to_all(t_server *server, int id)
@@ -29,4 +30,5 @@ void send_ressource_collecting_to_all(t_server *server, int id)
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
+    free(message);
 }
