@@ -23,8 +23,7 @@ size_t count_all_words_size(char **array)
     size_t count = 0;
 
     for (size_t i = 0; array[i] != NULL; i++)
-        for (size_t y = 0; array[i][y] != '\0'; y++)
-            count++;
+        count += strlen(array[i]);
     return count;
 }
 
@@ -54,7 +53,6 @@ void send_name_of_all_the_teams(t_server *server, char** array)
 void send_name_of_all_the_teams_to_all(t_server *server, char** array)
 {
     (void)array;
-    size_t z = 0;
     char *message = calloc(
     count_message_size(server->params->team_names, server), sizeof(char));
 
