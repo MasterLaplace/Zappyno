@@ -61,6 +61,9 @@ class Client:
         print(self.__height)
 
     def __handle_read(self) -> None:
+        """
+        Handle read selector from select.
+        """
         message: str = ''
         received: str = self.__communication.receive()
 
@@ -73,6 +76,9 @@ class Client:
             self.__handle_line(line)
 
     def __handle_write(self) -> None:
+        """
+        Handle write selector from select.
+        """
         if not self.__player.is_running:
             return
         if self.__is_logged:
@@ -84,6 +90,9 @@ class Client:
             self.__player.is_running = False
 
     def __handle_line(self, line: str) -> None:
+        """
+        Handle line received from the server.
+        """
         if 'dead' in line:
             self.__handle_death()
         elif 'WELCOME' in line and not self.__is_logged:
@@ -94,14 +103,23 @@ class Client:
             print('Received: ' + line)
 
     def __handle_death(self) -> None:
+        """
+        Handle death of the IA. It disconnects the client and exit the program.
+        """
         print(f'IA n°{self.__id} is dead.')
         self.__communication.disconnect()
         sys_exit(0)
 
     def __handle_welcome(self) -> None:
+        """
+        Handle welcome message from the server.
+        """
         self.__player.response = self.__team + '\n'
 
     def __store_infos(self, line: str) -> None:
+        """
+        Store the width and the height of the map received from the server.
+        """
         splitted = line.split()
 
         if 'message' in line:
