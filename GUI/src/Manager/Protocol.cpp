@@ -247,6 +247,22 @@ namespace Manager {
                 return player.setState(GUI::Trantorian::State::FORKING);
         }
     }
+
+    void Protocol::pdr(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                player.removeFood(std::stoi(args[2]), 1);
+                if (player.getPos().x() > _mapSize.x() || player.getPos().y() > _mapSize.y())
+                    throw std::runtime_error("[pdr] Player pos is out of map (id: " + std::to_string(id) + ")");
+                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].addFood(player.intToFoodString(std::stoi(args[2])), 1);
+                return;
+            }
+        }
+    }
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
