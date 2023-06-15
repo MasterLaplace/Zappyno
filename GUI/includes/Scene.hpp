@@ -47,7 +47,6 @@ namespace GUI {
 
             std::vector<Interface::CALLBACK> getCallback();
 
-            }
             template<typename T>
             void drawScene(T &win) {
                 for (auto &panel : _panels)
