@@ -36,6 +36,8 @@ static void modify_position(t_server *server)
 void send_forward(t_server *server)
 {
     modify_position(server);
+    printf("Position player : %d %d\n", CLIENT(server->id).pos_x,
+        CLIENT(server->id).pos_y);
     send_to_client(server, "ok\n", server->id);
 }
 

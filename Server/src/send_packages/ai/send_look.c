@@ -11,23 +11,24 @@ char *get_tile_resources(t_server *server, int pos, char* message)
 {
     int max_size = (strlen(message) + 15) * sizeof(char);
     char *tmp = calloc(max_size, sizeof(char));
-    printf("player : %d\n", TILES(pos).player);
     for (int i = 0; i < TILES(pos).resources[FOOD]; i++)
-        tmp = my_strcat(tmp, " food");
+        tmp = my_strcat(tmp, "food ");
     for (int i = 0; i < TILES(pos).resources[LINEMATE]; i++)
-        tmp = my_strcat(tmp, " linemate");
+        tmp = my_strcat(tmp, "linemate ");
     for (int i = 0; i < TILES(pos).resources[DERAUMERE]; i++)
-        tmp = my_strcat(tmp, " deraumere");
+        tmp = my_strcat(tmp, "deraumere ");
     for (int i = 0; i < TILES(pos).resources[SIBUR]; i++)
-        tmp = my_strcat(tmp, " sibur");
+        tmp = my_strcat(tmp, "sibur ");
     for (int i = 0; i < TILES(pos).resources[MENDIANE]; i++)
-        tmp = my_strcat(tmp, " mendiane");
+        tmp = my_strcat(tmp, "mendiane ");
     for (int i = 0; i < TILES(pos).resources[PHIRAS]; i++)
-        tmp = my_strcat(tmp, " phiras");
+        tmp = my_strcat(tmp, "phiras ");
     for (int i = 0; i < TILES(pos).resources[THYSTAME]; i++)
-        tmp = my_strcat(tmp, " thystame");
+        tmp = my_strcat(tmp, "thystame ");
+    printf("pos tile : %d\n", pos);
+    printf("nb players : %d\n", TILES(pos).player);
     for (int i = 0; i < TILES(pos).player; i++)
-        tmp = my_strcat(tmp, " player");
+        tmp = my_strcat(tmp, "player ");
     return my_strcat(message, tmp);
 }
 
@@ -68,6 +69,19 @@ void update_positions(t_server *server, int *pos_tiles_seen, int *index, int i)
     }
 }
 
+void reverse_array(int *arr, int size) {
+    int start = 0;
+    int end = size - 1;
+
+    while (start < end) {
+        int temp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = temp;
+        start++;
+        end--;
+    }
+}
+
 int *get_pos_tiles_seen(t_server *server, int x, int y, int level)
 {
     int *pos_tiles_seen = calloc((level * 2 + 1) * (level * 2 + 1),
@@ -78,6 +92,10 @@ sizeof(int));
         update_positions(server, pos_tiles_seen, &index, i);
     }
     pos_tiles_seen[index] = -1;
+    reverse_array(pos_tiles_seen, index); // Reverse the array before returning
+    printf("SIZE array : %d\n", index);
+    for (int i = 0; pos_tiles_seen[i] != -1; i++)
+        printf("pos tile : %d\n", pos_tiles_seen[i]);
     return pos_tiles_seen;
 }
 
@@ -91,9 +109,10 @@ void send_look(t_server *server)
     int *pos_tiles = get_pos_tiles_seen(server, x, y, level);
 
     for (int i = 0; pos_tiles[i] != -1; i++) {
-        message = my_strcat(message,
-get_tile_resources(server, pos_tiles[i], message));
-        message = my_strcat(message, ",");
+        message = strdup(get_tile_resources(server, pos_tiles[i], message));
+        if (i != 0)
+            message = my_strcat(message, ",");
+        printf("I : %d\n", i);
     }
     char *tmp = calloc(strlen(message) + 15, sizeof(char));
     sprintf(tmp, "[%s]%d%d\n", message, x, y);

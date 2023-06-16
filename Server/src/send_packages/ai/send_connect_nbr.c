@@ -9,6 +9,8 @@
 
 void send_connect_nbr(t_server *server)
 {
+    printf("Connect_nbr : %d\n",
+            (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
     char response[1024] = {0};
     sprintf(response, "%d\n",
             (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));

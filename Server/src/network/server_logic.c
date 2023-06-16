@@ -16,7 +16,7 @@ ai_command ia_client[] = {
     {"Right", recv_right, 1},
     {"Left", recv_left, 1},
     {"Inventory", recv_inventory, 1},
-    {"Connect_nbr", recv_connect_nbr, 0},
+    {"Connect_nbr", recv_connect_nbr, -1},
     {"Take", recv_take, 1},
     {"Set", recv_set, 1},
     {"Broadcast", recv_broadcast, 1},
@@ -47,10 +47,14 @@ static bool check_command_ai(t_server *server, char **message)
         if (!strncmp(ia_client[i].command_id, message[0],
             strlen(ia_client[i].command_id)) &&
             !CLIENT(server->id).is_freezed) {
+            CLIENT(server->id).function = NULL;
             printf("Command found : %s\n", ia_client[i].command_id);
             CLIENT(server->id).function = ia_client[i].function_ai;
+            printf("ok\n");
             CLIENT(server->id).timer->start = time(NULL);
+            printf("ok2\n");
             CLIENT(server->id).timer->duration = ia_client[i].time;
+            printf("ok3\n");
             return true;
         }
     }

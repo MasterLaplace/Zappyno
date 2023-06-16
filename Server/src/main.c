@@ -31,9 +31,8 @@ void read_data_from_server(t_server *svr, unsigned client_id)
     int sd = svr->clients[client_id].socket_fd;
 
     if (has_timer_expired(&svr->clients[client_id])) {
-        svr->clients[client_id].is_freezed = false;
-        svr->clients[client_id].timer = NULL;
         svr->clients[client_id].function(svr, NULL);
+        svr->clients[client_id].is_freezed = false;
         svr->clients[client_id].function = NULL;
     }
 

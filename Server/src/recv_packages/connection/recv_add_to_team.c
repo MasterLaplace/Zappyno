@@ -10,7 +10,7 @@
 void init_inventory(int *resources)
 {
     resources[FOOD] = 10;
-    resources[LINEMATE] = 1;
+    resources[LINEMATE] = 0;
     resources[DERAUMERE] = 0;
     resources[SIBUR] = 0;
     resources[MENDIANE] = 0;
