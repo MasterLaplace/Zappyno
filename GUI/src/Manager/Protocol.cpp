@@ -281,10 +281,6 @@ namespace Manager {
         }
     }
 
-                return;
-            }
-        }
-    }
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
