@@ -293,6 +293,22 @@ namespace Manager {
         }
     }
 
+    void Protocol::enw(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[2]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                GUI::Egg egg;
+                egg.setId(std::stoi(args[1]));
+                egg.setPos({std::stod(args[3]), std::stod(args[4])});
+                egg.setTeam(player.getTeam());
+                return addEgg(egg);
+            }
+        }
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)

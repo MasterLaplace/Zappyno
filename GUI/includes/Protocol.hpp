@@ -38,6 +38,7 @@ namespace Manager {
                 commands["pdr"] = [this](std::string &str) { pdr(str); };
                 commands["pgt"] = [this](std::string &str) { pgt(str); };
                 commands["pdi"] = [this](std::string &str) { pdi(str); };
+                commands["enw"] = [this](std::string &str) { enw(str); };
             }
             ~Protocol() = default;
 
@@ -147,6 +148,13 @@ namespace Manager {
              * @param str  pdi n\n
              */
             void pdi(std::string &str);
+
+            /**
+             * @brief egg laying by the player (id of the player, id of the egg)
+             *
+             * @param str  enw e n X Y\n
+             */
+            void enw(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
