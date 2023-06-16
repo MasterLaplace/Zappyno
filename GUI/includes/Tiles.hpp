@@ -32,6 +32,9 @@ namespace GUI {
             Math::Vector getPos() const { return _pos; }
             std::map<std::string, unsigned> getInventory() const { return _inventory; }
 
+            void addFood(std::string food, unsigned quantity) { _inventory[food] += quantity; }
+            void removeFood(std::string food, unsigned quantity) { _inventory[food] -= quantity; }
+
         protected:
         private:
             Math::Vector _pos;

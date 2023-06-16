@@ -36,6 +36,7 @@ namespace Manager {
                 commands["pie"] = [this](std::string &str) { pie(str); };
                 commands["pfk"] = [this](std::string &str) { pfk(str); };
                 commands["pdr"] = [this](std::string &str) { pdr(str); };
+                commands["pgt"] = [this](std::string &str) { pgt(str); };
             }
             ~Protocol() = default;
 
@@ -131,6 +132,13 @@ namespace Manager {
              * @param str  pdr n i\n
              */
             void pdr(std::string &str);
+
+            /**
+             * @brief resource collecting by the player (id of the player, id of the resource)
+             *
+             * @param str  pgt n i\n
+             */
+            void pgt(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }

@@ -259,6 +259,28 @@ namespace Manager {
                 if (player.getPos().x() > _mapSize.x() || player.getPos().y() > _mapSize.y())
                     throw std::runtime_error("[pdr] Player pos is out of map (id: " + std::to_string(id) + ")");
                 _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].addFood(player.intToFoodString(std::stoi(args[2])), 1);
+                return player.setState(GUI::Trantorian::State::DROPPING);
+            }
+        }
+    }
+
+    void Protocol::pgt(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+        unsigned food = std::stoi(args[2]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                if (player.getPos().x() > _mapSize.x() || player.getPos().y() > _mapSize.y())
+                    throw std::runtime_error("[pgt] Player pos is out of map (id: " + std::to_string(id) + ")");
+                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].removeFood(player.intToFoodString(food), 1);
+                player.addFood(food, 1);
+                return player.setState(GUI::Trantorian::State::TAKING);
+            }
+        }
+    }
+
                 return;
             }
         }
