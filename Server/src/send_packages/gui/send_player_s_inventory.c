@@ -5,7 +5,7 @@
 ** send_player_s
 */
 
-#include "../../include/send_package.h"
+#include "../../../include/send_package.h"
 
 size_t count_inv_size(int *resources, int x, int y, int id)
 {
@@ -22,7 +22,7 @@ void send_player_s_inventory(t_server *server, char** array)
     int data = 0;
     int x = server->game.teams->players[id].pos_x;
     int y = server->game.teams->players[id].pos_y;
-    char *message = calloc(14 + count_inv_size(server->clients[id].resources,
+    AUTO_FREE char *message = calloc(14 + count_inv_size(server->clients[id].resources,
     x, y, id), sizeof(char));
     strncat(message, "pin ",strlen(message) + 4);
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
@@ -38,7 +38,6 @@ void send_player_s_inventory(t_server *server, char** array)
     }
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }
 
 void send_player_s_inventory_to_all(t_server *server, char **array)
@@ -47,7 +46,7 @@ void send_player_s_inventory_to_all(t_server *server, char **array)
     int data = 0;
     int x = server->game.teams->players[id].pos_x;
     int y = server->game.teams->players[id].pos_y;
-    char *message = calloc(14 + count_inv_size(server->clients[id].resources,
+    AUTO_FREE char *message = calloc(14 + count_inv_size(server->clients[id].resources,
     x, y, id), sizeof(char));
     strncat(message, "pin ",strlen(message) + 4);
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
@@ -63,5 +62,4 @@ void send_player_s_inventory_to_all(t_server *server, char **array)
     }
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }

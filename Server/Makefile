@@ -12,7 +12,7 @@ SRC_DIR      = src/
 SRC          = $(shell find $(SRC_DIR) -name '*.c')
 
 OBJ          = $(SRC:.c=.o)
-INCLUDE      = -I./include/ -I./include/**/
+INCLUDE      = -iquote ./include/
 C_FLAGS    = -Wall -Wextra -std=c99 -Wpedantic
 FAST_FLAGS   = -g3 -ggdb
 TEST_FLAGS   = -lcriterion --coverage

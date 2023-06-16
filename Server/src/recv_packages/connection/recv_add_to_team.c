@@ -67,6 +67,6 @@ bool recv_check_to_add_to_team(t_server *server, char **message)
         send_join_ai(server);
         return true;
     }
-    send_error(server, 0);
+    send_error(server, 1);
     return false;
 }

@@ -26,21 +26,23 @@ void add_client(t_server *server, int new_socket)
     }
 }
 
-void read_data_from_server(t_server *svr, unsigned client_id)
+bool read_data_from_server(t_server *svr, unsigned client_id)
 {
     int sd = svr->clients[client_id].socket_fd;
 
     if (has_timer_expired(&svr->clients[client_id])) {
-        svr->clients[client_id].function(svr, NULL);
+        svr->clients[client_id].function(svr, svr->clients[client_id].params_function);
         svr->clients[client_id].is_freezed = false;
         svr->clients[client_id].function = NULL;
+        svr->clients[client_id].params_function = NULL;
     }
 
     if (sd == 0)
-        return;
+        return true;
     if (FD_ISSET(sd, &svr->readfds)) {
-        handle_client_data(svr, sd);
+        return handle_client_data(svr, sd);
     }
+    return true;
 }
 
 void handle_new_connection(t_server *svr)
@@ -78,9 +80,10 @@ int main(int ac, char **av)
     t_params params = set_param_struct();
     parse_args(ac, av, &params);
     check_params(&params);
-    t_server *server = set_server_struct(&params);
+    ON_CLEANUP(free_server) t_server *server = set_server_struct(&params);
     setup_server(server, &params);
-    while (true) {
+    bool tmp = true;
+    while (tmp) {
         struct timeval timeout = {0};
         timeout.tv_sec = 1;
         if (select(set_fds(server) + 1, &server->readfds,
@@ -89,6 +92,11 @@ NULL, NULL, &timeout) < 0)
         if (FD_ISSET(server->sockfd, &server->readfds))
             handle_new_connection(server);
         for (unsigned i = 0; i < MAX_CLIENTS; i++)
-            read_data_from_server(server, i);
+            tmp &= read_data_from_server(server, i);
     }
+    for (unsigned i = 0; i < MAX_CLIENTS; i++) {
+        if (server->clients[i].params_function)
+            free_double_array(&server->clients[i].params_function);
+    }
+    return EXIT_SUCCESS;
 }

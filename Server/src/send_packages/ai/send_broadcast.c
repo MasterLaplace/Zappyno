@@ -23,15 +23,18 @@ int map_height)
 void send_broadcast(t_server *server, char *message)
 {
     char *str;
+    char *number;
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < TEAMS[j].max_players; i++) {
-            str = malloc(sizeof(char) * 100);
             int distance = shortest_distance(
 &TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM], &TEAMS[j].players[i],
 server->params->width, server->params->height);
+            number = itoa(distance);
+            str = calloc(strlen(message) + 12 + strlen(number), sizeof(char));
             sprintf(str, "message %d, %s\n", distance, message);
             send_to_client(server, str, TEAMS[j].players[i].id);
             free(str);
+            free(number);
         }
     }
 }
@@ -42,9 +45,7 @@ void send_broadcast_to_all(t_server *server, char *text)
     unsigned y = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y;
     unsigned pos = find_tile(server, x, y);
 
-    char *message = calloc(strlen(text) + 12, sizeof(char));
+    AUTO_FREE char *message = calloc(strlen(text) + 12, sizeof(char));
     sprintf(message, "message %d, %s\n", pos, text);
     send_to_all_clients(server, message);
-
-    free(message);
 }

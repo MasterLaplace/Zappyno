@@ -5,7 +5,7 @@
 ** send_player_s_position
 */
 
-#include "../../include/send_package.h"
+#include "../../../include/send_package.h"
 
 char *itoa(int nb)
 {
@@ -51,9 +51,12 @@ void send_player_s_position(t_server *server, char** array)
 
 void send_player_s_position_to_all(t_server *server, char **array)
 {
-    int x = server->game.teams->players[server->id].pos_x;
-    int y = server->game.teams->players[server->id].pos_y;
-    char *message = calloc(6 + strlen(itoa(x)) + strlen(itoa(y)), sizeof(char));
+    int id = atoi(array[1]);
+    int x = server->game.teams->players[id].pos_x;
+    int y = server->game.teams->players[id].pos_y;
+    int O = server->game.teams->players[id].orientation;
+    AUTO_FREE char *message = calloc(8 + my_nblen(x) + my_nblen(y) + my_nblen(id) +
+    my_nblen(O), sizeof(char));
 
     strncat(message, "ppo ",strlen(message) + 4);
     strncat(message, itoa(x),strlen(message) + strlen(itoa(x)));
@@ -65,5 +68,4 @@ void send_player_s_position_to_all(t_server *server, char **array)
     strncat(message, itoa(O),strlen(message) + my_nblen(O));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, id);
-    free(message);
 }

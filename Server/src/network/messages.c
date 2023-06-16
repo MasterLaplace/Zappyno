@@ -55,7 +55,6 @@ char *receive_from_client(int fd)
     if (recv_result == -1) {
         if (errno == ECONNRESET) {
             printf("Client disconnected\n");
-            free(message);
             return NULL;
         } else {
             perror("recv");
@@ -63,7 +62,6 @@ char *receive_from_client(int fd)
         }
     } else if (recv_result == 0) {
         printf("Client disconnected\n");
-        free(message);
         return NULL;
     }
     return message;

@@ -9,6 +9,9 @@
 
 void recv_set(t_server *server, char **message)
 {
+    if (!message)
+        return;
+    printf("%s\n", message[0]);
     if (message[1] == NULL) {
         send_error(server, 0);
         return;

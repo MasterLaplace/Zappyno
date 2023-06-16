@@ -13,6 +13,7 @@
     #define POS_Y TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y
 
     #include "server.h"
+    #include "clean_up.h"
 
 typedef struct tmp_s {
     int i;

@@ -53,7 +53,7 @@ static t_game set_game_struct(t_params *params)
         game.teams[i].name = strdup(params->team_names[i]);
     for (int i = 0; i < params->num_teams; i++) {
         game.teams[i].max_players = params->clientsNb;
-        game.teams[i].players = (t_client *)calloc(params->clientsNb, 88UL);
+        game.teams[i].players = (t_client *)calloc(params->clientsNb + 1, 88UL);
         if (game.teams[i].players == NULL)
             perror("Failed to allocate memory for ply"), exit(EXIT_FAILURE);
         for (int j = 0; j < params->clientsNb; j++) {
@@ -76,8 +76,6 @@ t_server *set_server_struct(t_params *params)
     t_server *server = (t_server *)calloc(1, sizeof(t_server));
     if (server == NULL)
         perror("Failed to allocate memory for server"), exit(EXIT_FAILURE);
-    if (!(server->clients->timer = (my_timer_t *)calloc(MAX_CLIENTS, 16UL)))
-        perror("Failed to allocate memory for timer"), exit(EXIT_FAILURE);
     server->params = params;
     server->game = set_game_struct(params);
     generate_food(server);

@@ -40,6 +40,7 @@
     #include "params.h"
     #include "client.h"
     #include "game.h"
+    #include "clean_up.h"
 
 /**
  * @brief Structure that contains the server
@@ -65,7 +66,7 @@ typedef struct s_server {
 // Prototypes src/network/ | function made to setup the server
 int setup_server(t_server *server, t_params *params);
 // Prototypes src/network/ | function made to handle the server
-void handle_client_data(t_server *server, int fd);
+bool handle_client_data(t_server *server, int fd);
 // remove_client will remove a client from the server
 void remove_client(t_server *server, int id);
 // send_to_client will send a message to a specific client
@@ -97,5 +98,14 @@ bool has_timer_expired(t_client *player);
 void init(void) __attribute__((constructor));
 //
 char *my_strcat(char *dest, char *src);
+//
+int my_nblen(int nb);
+//
+char *itoa(int nb);
+//
+void free_server(t_server **server);
+//
+void free_double_array(char ***array);
+
 
 #endif // SERVER_H

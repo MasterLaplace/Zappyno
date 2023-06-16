@@ -59,6 +59,7 @@ void send_set_object(t_server *server, char **message)
             return check_set_object(server, i);
         }
     }
+    send_error(server, 0);
 }
 
 void send_set_object_to_all(t_server *server, char **message)

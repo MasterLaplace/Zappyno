@@ -5,12 +5,12 @@
 ** send_an_egg_was_laid_by_a_player
 */
 
-#include "../../include/send_package.h"
+#include "../../../include/send_package.h"
 
 void send_an_egg_was_laid_by_a_player(t_server *server, int egg_num, int x,
 int y)
 {
-    char *message = calloc(8 + my_nblen(server->id) + my_nblen(egg_num) +
+    AUTO_FREE char *message = calloc(8 + my_nblen(server->id) + my_nblen(egg_num) +
     my_nblen(x) + my_nblen(y), sizeof(char));
     strncat(message, "enw ",strlen(message) + 4);
     strncat(message, itoa(egg_num),strlen(message) + my_nblen(egg_num));
@@ -22,13 +22,12 @@ int y)
     strncat(message, itoa(y),strlen(message) + my_nblen(y));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }
 
 void send_an_egg_was_laid_by_a_player_to_all(t_server *server, int egg_num,
 int x, int y)
 {
-    char *message = calloc(8 + my_nblen(server->id) + my_nblen(egg_num) +
+    AUTO_FREE char *message = calloc(8 + my_nblen(server->id) + my_nblen(egg_num) +
     my_nblen(x) + my_nblen(y), sizeof(char));
     strncat(message, "enw ",strlen(message) + 4);
     strncat(message, itoa(egg_num),strlen(message) + my_nblen(egg_num));
@@ -40,5 +39,4 @@ int x, int y)
     strncat(message, itoa(y),strlen(message) + my_nblen(y));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }

@@ -5,11 +5,11 @@
 ** send_ressource_dropping
 */
 
-#include "../../include/send_package.h"
+#include "../../../include/send_package.h"
 
-void send_ressource_dropping(t_server *server, int id)
+void send_ressource_collecting(t_server *server, int id)
 {
-    char *message = calloc(6 + my_nblen(server->id) + my_nblen(id),
+    AUTO_FREE char *message = calloc(6 + my_nblen(server->id) + my_nblen(id),
     sizeof(char));
     strncat(message, "pdr ",strlen(message) + 4);
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
@@ -17,12 +17,11 @@ void send_ressource_dropping(t_server *server, int id)
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }
 
-void send_ressource_dropping_to_all(t_server *server, int id)
+void send_ressource_collecting_to_all(t_server *server, int id)
 {
-    char *message = calloc(6 + my_nblen(server->id) + my_nblen(id),
+    AUTO_FREE char *message = calloc(6 + my_nblen(server->id) + my_nblen(id),
     sizeof(char));
     strncat(message, "pdr ",strlen(message) + 4);
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
@@ -30,5 +29,4 @@ void send_ressource_dropping_to_all(t_server *server, int id)
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }

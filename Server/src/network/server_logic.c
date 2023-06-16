@@ -51,9 +51,10 @@ static bool check_command_ai(t_server *server, char **message)
             printf("Command found : %s\n", ia_client[i].command_id);
             CLIENT(server->id).function = ia_client[i].function_ai;
             printf("ok\n");
-            CLIENT(server->id).timer->start = time(NULL);
+            CLIENT(server->id).timer.start = time(NULL);
             printf("ok2\n");
-            CLIENT(server->id).timer->duration = ia_client[i].time;
+            CLIENT(server->id).timer.duration = ia_client[i].time;
+            CLIENT(server->id).params_function = message;
             printf("ok3\n");
             return true;
         }
@@ -87,18 +88,25 @@ static void set_id_player(t_server *server, int fd)
  * @param server
  * @param fd
  */
-void handle_client_data(t_server *server, int fd)
+bool handle_client_data(t_server *server, int fd)
 {
     bool ret = false;
     set_id_player(server, fd);
     char *buffer = receive_from_client(fd);
     if (buffer == NULL || !*buffer)
-        return;
+        return false;
+    printf("Received : %s\n", buffer);
+    if (!strcmp(buffer, "exit\n")) {
+        return false;
+    }
+    printf("ok\n");
     char **message = stwa(buffer, " \n\t");
+    printf("ok2\n");
+    for (int i = 0; message[i]; i++)
+        printf("Message[%d] : %s\n", i, message[i]);
     if (!CLIENT(server->id).is_connected) {
-        if (!join_client(server, message))
-            free(buffer);
-        return;
+        join_client(server, message);
+        return true;
     } else {
         if (!CLIENT(server->id).is_gui) {
             ret = check_command_ai(server, message);
@@ -108,5 +116,5 @@ void handle_client_data(t_server *server, int fd)
     }
     if (!ret)
         send_error(server, 0);
-    free(buffer);
+    return true;
 }

@@ -55,6 +55,7 @@ static void fill_tiles(t_server *server, int *permutation, int *max_resources)
         unsigned tile_index = permutation[i];
         add_resource(server, i, tile_index, max_resources);
     }
+    free(permutation);
 }
 
 void generate_food(t_server *server)

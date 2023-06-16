@@ -12,25 +12,19 @@ bool has_timer_expired(t_client *player)
 {
     if (!player)
         return !printf("No player\n");
-    if (!player->timer)
-        return !printf("No timer\n");
-    if (!player->timer->duration)
+    if (!player->timer.duration)
         return false;
-    if (player->timer->duration == -1) {
-        player->timer = NULL;
-        player->timer = malloc(sizeof(my_timer_t));
-        player->timer->start = 0;
-        player->timer->duration = 0;
+    if (player->timer.duration == -1) {
+        player->timer.start = 0;
+        player->timer.duration = 0;
         return true;
     }
-    printf("start: %ld | end: %ld\n", player->timer->start, time(NULL));
-    if (difftime(time(NULL), player->timer->start) >=
-        player->timer->duration) {
+    printf("start: %ld | end: %ld\n", player->timer.start, time(NULL));
+    if (difftime(time(NULL), player->timer.start) >=
+        player->timer.duration) {
         printf("Timer expired\n");
-        player->timer->start = 0;
-        player->timer->duration = 0;
-        player->timer = NULL;
-        player->timer = malloc(sizeof(my_timer_t));
+        player->timer.start = 0;
+        player->timer.duration = 0;
         return true;
     }
     return false;

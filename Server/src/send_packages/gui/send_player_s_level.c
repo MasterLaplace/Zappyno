@@ -5,13 +5,13 @@
 ** send_player_s_level
 */
 
-#include "../../include/send_package.h"
+#include "../../../include/send_package.h"
 
 void send_player_s_level(t_server *server, char** array)
 {
     int id = atoi(array[1]);
     int lvl = server->game.teams->players[server->id].level;
-    char *message = calloc(6 + my_nblen(lvl) + my_nblen(id), sizeof(char));
+    AUTO_FREE char *message = calloc(6 + my_nblen(lvl) + my_nblen(id), sizeof(char));
 
     strncat(message, "plv ",strlen(message) + 4);
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
@@ -19,14 +19,13 @@ void send_player_s_level(t_server *server, char** array)
     strncat(message, itoa(lvl), strlen(message) + my_nblen(lvl));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }
 
 void send_player_s_level_to_all(t_server *server, char **array)
 {
     int id = atoi(array[1]);
     int lvl = server->game.teams->players[server->id].level;
-    char *message = calloc(6 + my_nblen(lvl) + my_nblen(id), sizeof(char));
+    AUTO_FREE char *message = calloc(6 + my_nblen(lvl) + my_nblen(id), sizeof(char));
 
     strncat(message, "plv ",strlen(message) + 4);
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
@@ -34,5 +33,4 @@ void send_player_s_level_to_all(t_server *server, char **array)
     strncat(message, itoa(lvl), strlen(message) + my_nblen(lvl));
     sprintf(message, "%s\n", message);
     send_to_client(server, message, server->id);
-    free(message);
 }

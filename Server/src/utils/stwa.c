@@ -56,5 +56,7 @@ char *my_strcat(char *dest, char *src)
     for (; dest && dest[e]; ++i, ++e)
         tmp[i] = dest[e];
     tmp[i] = '\0';
+    if (dest)
+        free(dest);
     return tmp;
 }

@@ -5,7 +5,7 @@
 ** send_name_of_all_the_teams
 */
 
-#include "../../include/send_package.h"
+#include "../../../include/send_package.h"
 
 // count array line for number of spaces betwen each words
 size_t count_array_line(char **array)
@@ -54,7 +54,7 @@ void send_name_of_all_the_teams(t_server *server, char** array)
 void send_name_of_all_the_teams_to_all(t_server *server, char** array)
 {
     (void)array;
-    char *message = calloc(
+    AUTO_FREE char *message = calloc(
     count_message_size(server->params->team_names, server), sizeof(char));
 
     for (size_t i = 0; server->params->team_names[i] != NULL; i++) {
@@ -73,5 +73,4 @@ void send_name_of_all_the_teams_to_all(t_server *server, char** array)
     message[z] = '\0';
     sprintf(message, "tna %s\n", message);
     send_to_all_clients(server, message);
-    free(message);
 }
