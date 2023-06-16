@@ -37,6 +37,7 @@ namespace Manager {
                 commands["pfk"] = [this](std::string &str) { pfk(str); };
                 commands["pdr"] = [this](std::string &str) { pdr(str); };
                 commands["pgt"] = [this](std::string &str) { pgt(str); };
+                commands["pdi"] = [this](std::string &str) { pdi(str); };
             }
             ~Protocol() = default;
 
@@ -139,6 +140,13 @@ namespace Manager {
              * @param str  pgt n i\n
              */
             void pgt(std::string &str);
+
+            /**
+             * @brief death of a player (id) (remove from map)
+             *
+             * @param str  pdi n\n
+             */
+            void pdi(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }

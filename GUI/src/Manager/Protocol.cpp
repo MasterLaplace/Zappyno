@@ -281,6 +281,18 @@ namespace Manager {
         }
     }
 
+    void Protocol::pdi(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                return player.setState(GUI::Trantorian::State::DYING);
+            }
+        }
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
