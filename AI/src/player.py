@@ -35,6 +35,8 @@ class Command(Enum):
     INVENTORY = "Inventory"
     LOOK = "Look"
     TAKE = "Take "
+    SET = "Set "
+    INCANTATION = "Incantation"
 
 class Brodcaste(Enum):
     """
@@ -67,7 +69,6 @@ class Player:
         self.__ready: bool = False
         self.__direction = 0
         self._message = ''
-        self.__ressources_lvlup: str = ""
         self.unused_slots: int = 0
         self.fork: bool = True
 
@@ -119,7 +120,10 @@ class Player:
         return True
 
     def drop_object(self) -> None:
-
+        """
+        Drop an object.
+        :return:
+        """
         self.look()
         if self.command:
             return
@@ -128,13 +132,44 @@ class Player:
             if len(data) == 0:
                 break
             data = data[1:]
-        data = data.split('')
+        new_data = data.split(' ')
+        required = lvls[self.__level]
+        for items in required:
+            for res in new_data:
+                if res == items:
+                    required[items] -= 1
         for ressources in lvls[self.__level]:
-            if ressources in data and self.__shared_inventory[ressources] > 0:
-                self.command.append("Set " + ressources)
+            if ressources in data and data and required[ressources] > 0:
+                self.command.append(str(Command.SET) + ressources)
                 self.command.append(Command.LOOK)
                 return
         self.__step = 7
+        return
+
+    def incantation(self) -> None:
+        """
+        Incantation of the player.
+        :return:
+        """
+        self.look()
+        if self.command:
+            return
+        data = self.__object.split(',')[0]
+        while True:
+            if len(data) == 0:
+                break
+            data = data[1:]
+        new_data = data.split(' ')
+        required = lvls[self.__level]
+        for items in required:
+            for res in new_data:
+                if res == items:
+                    required[items] -= 1
+        for ressources in lvls[self.__level]:
+            if ressources in data and required[ressources] > 0:
+                return
+        self.command = [str(Command.INCANTATION)]
+        self.__step += 1
         return
 
     def fill_shared_inventory(self, inventory: str) -> None:
