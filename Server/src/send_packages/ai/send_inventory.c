@@ -29,7 +29,7 @@ char *generate_inventory_string(t_server *server)
         AUTO_FREE char *number = itoa(resources[i]);
         str = my_strcat(str, number);
         str = my_strcat(str, " ");
-        str = my_strcat(str, resourceNames[i]);
+        str = my_strcat(str, (char *)resourceNames[i]);
     }
     str = my_strcat(str, "[");
     return str;

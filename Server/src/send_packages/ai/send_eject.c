@@ -11,7 +11,7 @@ static bool check_for_eject(t_server *server, int orientation, int target_x,
 int target_y)
 {
     bool eject = false;
-    for (int i = 0; i < MAX_CLIENTS; i++) {
+    for (int i = 0; i < SOMAXCONN; i++) {
         t_client *client = &CLIENT(i);
         if (client->index_team != TEAM_INDEX &&
             client->pos_x == TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x &&
@@ -22,7 +22,7 @@ int target_y)
             send_to_client(server, message, i);
         }
     }
-    for (int i = 0; i < MAX_CLIENTS; i++) {
+    for (int i = 0; i < SOMAXCONN; i++) {
         if (TEAMS[TEAM_INDEX].players[i].pos_x == target_x &&
 TEAMS[TEAM_INDEX].players[i].pos_y == target_y && CLIENT(i).is_an_egg) {
             remove_client(server, server->id);

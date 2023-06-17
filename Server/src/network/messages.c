@@ -36,7 +36,7 @@ void send_to_all_clients(t_server *server, char * message)
     t_client *clients = server->clients;
     bool tmp = false;
 
-    for (int i = 0; i < MAX_CLIENTS; i++) {
+    for (int i = 0; i < SOMAXCONN; i++) {
         if (i == server->id)
             send_to_client(server, "ok\n", server->id);
         if (clients[i].socket_fd != 0) {

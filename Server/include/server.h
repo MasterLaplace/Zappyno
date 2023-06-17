@@ -8,7 +8,6 @@
 #ifndef SERVER_H
     #define SERVER_H
     #define EXIT_ERROR 84
-    #define MAX_CLIENTS 3 // TODO : MAXCONN
     #define BUFFER_SIZE 1024
     #define TEAMS server->game.teams
     #define CLIENT(id) server->clients[id]
@@ -36,6 +35,9 @@
     #include <sys/time.h>
     #include <sys/select.h>
     #include <sys/types.h>
+    #include <uuid/uuid.h>
+    #include <arpa/inet.h>
+    #include <netinet/in.h>
 
     #include "params.h"
     #include "client.h"
@@ -58,7 +60,7 @@ typedef struct s_server {
     int max_fd;
     fd_set readfds;
     int id;
-    t_client clients[MAX_CLIENTS];
+    t_client clients[SOMAXCONN];
     t_params *params;
     t_game game;
 } t_server;
@@ -106,6 +108,12 @@ char *itoa(int nb);
 void free_server(t_server **server);
 //
 void free_double_array(char ***array);
+//
+void freeze_participating_players(t_server *server, t_client* player);
+//
+void perform_elevation(t_server *server);
+//
+void remove_required_resources(t_server *server);
 
 
 #endif // SERVER_H

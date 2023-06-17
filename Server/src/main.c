@@ -16,10 +16,11 @@
  */
 void add_client(t_server *server, int new_socket)
 {
-    for (int i = 0; i < MAX_CLIENTS; i++) {
+    for (int i = 0; i < SOMAXCONN; i++) {
         if (CLIENT(i).socket_fd == 0) {
             CLIENT(i).socket_fd = new_socket;
             server->id = i;
+            server->clients[i].params_function = NULL;
             printf("New client connected : %d\n", new_socket);
             break;
         }
@@ -34,9 +35,10 @@ bool read_data_from_server(t_server *svr, unsigned client_id)
         svr->clients[client_id].function(svr, svr->clients[client_id].params_function);
         svr->clients[client_id].is_freezed = false;
         svr->clients[client_id].function = NULL;
+        if (svr->clients[client_id].params_function != NULL)
+            free_double_array(&svr->clients[client_id].params_function);
         svr->clients[client_id].params_function = NULL;
     }
-
     if (sd == 0)
         return true;
     if (FD_ISSET(sd, &svr->readfds)) {
@@ -63,7 +65,7 @@ int set_fds(t_server *svr)
     svr->max_fd = svr->sockfd;
     FD_SET(svr->sockfd, &svr->readfds);
 
-    for (unsigned i = 0; i < MAX_CLIENTS; i++) {
+    for (unsigned i = 0; i < SOMAXCONN; i++) {
         int sd = svr->clients[i].socket_fd;
         if (sd > 0)
             FD_SET(sd, &svr->readfds);
@@ -91,10 +93,10 @@ NULL, NULL, &timeout) < 0)
             perror("select"), exit(EXIT_FAILURE);
         if (FD_ISSET(server->sockfd, &server->readfds))
             handle_new_connection(server);
-        for (unsigned i = 0; i < MAX_CLIENTS; i++)
+        for (unsigned i = 0; i < SOMAXCONN; i++)
             tmp &= read_data_from_server(server, i);
     }
-    for (unsigned i = 0; i < MAX_CLIENTS; i++) {
+    for (unsigned i = 0; i < SOMAXCONN; i++) {
         if (server->clients[i].params_function)
             free_double_array(&server->clients[i].params_function);
     }

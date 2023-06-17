@@ -61,12 +61,13 @@ bool recv_check_to_add_to_team(t_server *server, char **message)
     for (int i = 0; i < server->params->num_teams; i++) {
         if (strcmp(message[0], server->params->team_names[i]))
             continue;
+        printf("nb_players = %d | max_players = %d\n", TEAMS[i].nb_players, TEAMS[i].max_players);
         if (TEAMS[i].nb_players >= TEAMS[i].max_players)
             return send_error(server, 0), false;
         add_to_team(server, i);
         send_join_ai(server);
         return true;
     }
-    send_error(server, 1);
+    send_error(server, 0);
     return false;
 }

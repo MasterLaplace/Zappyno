@@ -10,10 +10,10 @@
 void send_fork(t_server *server)
 {
     TEAMS[TEAM_INDEX].max_players += 1;
-    TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].is_an_egg = true;
-    TEAMS = realloc(TEAMS, sizeof(t_teams) * (TEAMS[TEAM_INDEX].max_players));
-    TEAMS[TEAMS[TEAM_INDEX].max_players - 1].players = calloc(1,
-sizeof(t_client));
+    TEAMS = realloc(TEAMS, sizeof(t_teams) * TEAMS[TEAM_INDEX].max_players);
+
+    TEAMS[TEAM_INDEX].players = realloc(TEAMS[TEAM_INDEX].players, sizeof(t_client) * TEAMS[TEAM_INDEX].max_players);
+    TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].is_an_egg = true;
     send_to_client(server, "ok\n", server->id);
 }
 

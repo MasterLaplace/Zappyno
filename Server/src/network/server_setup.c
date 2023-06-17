@@ -52,7 +52,7 @@ int bind_socket(t_server *server, t_params *params)
  */
 int listen_socket(t_server *server, t_params *params)
 {
-    if (listen(server->sockfd, MAX_CLIENTS) < 0) {
+    if (listen(server->sockfd, SOMAXCONN) < 0) {
         perror("Cannot listen on socket");
         return (-1);
     }
@@ -90,9 +90,19 @@ void remove_client(t_server *server, int id)
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
     memset(&CLIENT(id), 0, sizeof(t_client));
     server->max_fd = server->sockfd;
-    for (int i = 0; i < MAX_CLIENTS; i++) {
+    for (int i = 0; i < SOMAXCONN; i++) {
         if (CLIENT(i).socket_fd > server->max_fd) {
             server->max_fd = CLIENT(i).socket_fd;
         }
     }
+    for (int i = 0; i < server->params->num_teams; i++) {
+        if (!server->game.teams[i].players)
+            continue;
+        if (server->game.teams[i].players[INDEX_IN_TEAM].params_function) {
+            free_double_array(&server->game.teams[i].players[INDEX_IN_TEAM].params_function);
+            server->game.teams[i].players[INDEX_IN_TEAM].socket_fd = 0;
+        }
+    }
+    server->game.teams[TEAM_INDEX].nb_players--;
+    send_to_client(server, "Goodbye\n", server->id);
 }
