@@ -51,7 +51,7 @@ class Player:
         self._id = number
         self._team = team
         self.__communication = communication
-        #self.__level = 1
+        self.__level = 1
         self.__inventory = ""
         self.__object: Dict[int, str] = {}
         self.__shared_inventory: Dict[str, int] = {}
@@ -67,6 +67,7 @@ class Player:
         self.__ready: bool = False
         self.__direction = 0
         self._message = ''
+        self.__ressources_lvlup: str = ""
         self.unused_slots: int = 0
         self.fork: bool = True
 
@@ -86,7 +87,7 @@ class Player:
         """
         Add an item to the inventory of the player.
         """
-        self.send_message("Inventory")
+        self.send_message(str(Command.INVENTORY))
         self.__inventory = self.receive_message()
         print(self.__inventory)
 
@@ -94,7 +95,7 @@ class Player:
         """
         Look around the player.
         """
-        self.send_message("Look")
+        self.send_message(str(Command.LOOK))
         object_string: str = self.receive_message()
         self.create_map(object_string)
         print(self.__object)
@@ -104,9 +105,18 @@ class Player:
         Take an object.
         """
         object_take: str = self.__object[1].split(' ')[2]
-        self.send_message("Take " + object_take)
+        self.send_message(str(Command.TAKE) + object_take)
         self.receive_message()
         self.look()
+
+    def check_incantation_possible(self) -> bool:
+        """
+        Check if the incantation is possible.
+        """
+        for obj in lvls[self.__level]:
+            if self.__shared_inventory[obj] < lvls[self.__level][obj]:
+                return False
+        return True
 
     def fill_shared_inventory(self, inventory: str) -> None:
         """
