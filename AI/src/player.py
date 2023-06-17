@@ -53,7 +53,7 @@ class Player:
         self.__communication = communication
         self.__level = 1
         self.__inventory = ""
-        self.__object: Dict[int, str] = {}
+        self.__object: str = ""
         self.__shared_inventory: Dict[str, int] = {}
         self.__map: List[List[int]] = [[]]
         self.is_running: bool = True
@@ -97,8 +97,8 @@ class Player:
         """
         self.send_message(str(Command.LOOK))
         object_string: str = self.receive_message()
+        self.__object = object_string
         self.create_map(object_string)
-        print(self.__object)
 
     def take_object(self) -> None:
         """
@@ -117,6 +117,25 @@ class Player:
             if self.__shared_inventory[obj] < lvls[self.__level][obj]:
                 return False
         return True
+
+    def drop_object(self) -> None:
+
+        self.look()
+        if self.command:
+            return
+        data = self.__object.split(',')[0]
+        while True:
+            if len(data) == 0:
+                break
+            data = data[1:]
+        data = data.split('')
+        for ressources in lvls[self.__level]:
+            if ressources in data and self.__shared_inventory[ressources] > 0:
+                self.command.append("Set " + ressources)
+                self.command.append(Command.LOOK)
+                return
+        self.__step = 7
+        return
 
     def fill_shared_inventory(self, inventory: str) -> None:
         """
