@@ -338,6 +338,11 @@ namespace Manager {
         _timeUnit = std::stoi(args[1]);
     }
 
+    void Protocol::sst(std::string &str) {
+        auto args = String::string_to_string_vector(str, " ");
+        _timeUnit = std::stoi(args[1]);
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)
