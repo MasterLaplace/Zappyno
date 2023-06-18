@@ -243,7 +243,7 @@ namespace Manager {
             void setWinnerTeam(std::string team) { _winnerTeam = team; }
             std::string getWinnerTeam() const { return _winnerTeam; }
 
-            Interface::CALLBACK getCallback(std::string command) const { return _gotoResult; }
+            Interface::CALLBACK getCallback() const { return _gotoResult; }
 
         protected:
         private:
