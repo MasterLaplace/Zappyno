@@ -39,6 +39,7 @@ namespace Manager {
                 commands["pgt"] = [this](std::string &str) { pgt(str); };
                 commands["pdi"] = [this](std::string &str) { pdi(str); };
                 commands["enw"] = [this](std::string &str) { enw(str); };
+                commands["ebo"] = [this](std::string &str) { ebo(str); };
             }
             ~Protocol() = default;
 
@@ -155,6 +156,13 @@ namespace Manager {
              * @param str  enw e n X Y\n
              */
             void enw(std::string &str);
+
+            /**
+             * @brief player connection for an egg (id of the egg)
+             *
+             * @param str  ebo e\n
+             */
+            void ebo(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
