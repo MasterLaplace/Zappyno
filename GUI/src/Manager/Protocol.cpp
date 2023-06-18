@@ -188,22 +188,17 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
-        std::string message = "";
+        std::string message = args[1] + ": ";
 
-        for (auto &arg : args) {
-            if (arg == "smg")
-                continue;
-            if (arg == args[1]) {
                 for (auto &player : getTrantorians()) {
                     if (player.getId() == id) {
                         player.setState(GUI::Trantorian::State::BROADCASTING);
                         break;
                     }
                 }
-                message += arg + ": ";
-            } else
-                message += arg + " ";
-        }
+        // start from 2 to skip id and "pbc"
+        for (unsigned i = 2; i < args.size(); i++)
+            message += args[i] + " ";
         if (message[message.size() - 1] == ' ')
             message[message.size() - 1] = '\0';
         _chat->addMessage(message);
@@ -353,6 +348,19 @@ namespace Manager {
             throw std::runtime_error("[seg] Team not found in vector (name: " + args[1] + ")");
         _winnerTeam = args[1];
         _gotoResult = Interface::CALLBACK::GOTO_RESULT;
+    }
+
+    void Protocol::smg(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        std::string message = "Global message: ";
+
+        // start at 1 to skip "smg"
+        for (unsigned i = 1; i < args.size(); i++)
+            message += args[i] + " ";
+        if (message[message.size() - 1] == ' ')
+            message[message.size() - 1] = '\0';
+        _chat->addMessage(message);
     }
 
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {

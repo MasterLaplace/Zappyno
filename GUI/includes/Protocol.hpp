@@ -45,6 +45,7 @@ namespace Manager {
                 commands["sgt"] = [this](std::string &str) { sgt(str); };
                 commands["sst"] = [this](std::string &str) { sst(str); };
                 commands["seg"] = [this](std::string &str) { seg(str); };
+                commands["smg"] = [this](std::string &str) { smg(str); };
             }
             ~Protocol() = default;
 
@@ -196,6 +197,13 @@ namespace Manager {
              * @param str  seg N\n
              */
             void seg(std::string &str);
+
+            /**
+            * @brief message from the server (message)
+             *
+             * @param str  smg M\n
+             */
+            void smg(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
