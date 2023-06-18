@@ -46,11 +46,17 @@ namespace Sf_sprite {
         void setScale(Math::Vector scale) override { this->scale = sf::Vector2f(scale.x(), scale.y()); }
         void setOrigin(Math::Vector origin) override { this->origin = sf::Vector2f(origin.x(), origin.y()); }
         void setSize(Math::Vector size) override { this->sprite.setTextureRect(sf::IntRect(0, 0, size.x(), size.y())); }
+        void setTransparency(const unsigned &transparency) override {
+            auto color = this->sprite.getColor();
+            color.a = transparency;
+            this->sprite.setColor(color);
+        }
         Math::Vector getPos() const override { return Math::Vector(this->pos.x, this->pos.y); }
         Math::Vector getScale() const override { return Math::Vector(this->scale.x, this->scale.y); }
         Math::Vector getOrigin() const override { return Math::Vector(this->origin.x, this->origin.y); }
         Math::Vector getSize() const override { return Math::Vector(this->sprite.getTextureRect().width, this->sprite.getTextureRect().height); }
         Math::Vector getMaxSize() const override { return Math::Vector(this->maxSize.width, this->maxSize.height); }
+        unsigned getTransparency() const override { return this->sprite.getColor().a; }
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }
 
