@@ -363,6 +363,16 @@ namespace Manager {
         _chat->addMessage(message);
     }
 
+    void Protocol::suc(std::string &str)
+    {
+        throw std::runtime_error("[" + str + "] Unknown command");
+    }
+
+    void Protocol::sbp(std::string &str)
+    {
+        throw std::runtime_error("[" + str + "] Invalid argument");
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)

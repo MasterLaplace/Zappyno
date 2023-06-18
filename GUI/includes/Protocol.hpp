@@ -46,6 +46,8 @@ namespace Manager {
                 commands["sst"] = [this](std::string &str) { sst(str); };
                 commands["seg"] = [this](std::string &str) { seg(str); };
                 commands["smg"] = [this](std::string &str) { smg(str); };
+                commands["suc"] = [this](std::string &str) { suc(str); };
+                commands["sbp"] = [this](std::string &str) { sbp(str); };
             }
             ~Protocol() = default;
 
@@ -204,6 +206,20 @@ namespace Manager {
              * @param str  smg M\n
              */
             void smg(std::string &str);
+
+            /**
+             * @brief throw unknown command
+             *
+             * @param str  suc\n
+             */
+            void suc(std::string &str);
+
+            /**
+             * @brief throw command parameter error
+             *
+             * @param str  sbp\n
+             */
+            void sbp(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
