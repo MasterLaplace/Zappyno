@@ -321,6 +321,18 @@ namespace Manager {
         throw std::runtime_error("[ebo] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
+    void Protocol::edi(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+        unsigned id = std::stoi(args[1]);
+
+        for (auto &egg : getEggs()) {
+            if (egg.getId() == id)
+                return deleteEgg(id);
+        }
+        throw std::runtime_error("[edi] Player not found in map (id: " + std::to_string(id) + ")");
+    }
+
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
         for (auto &trantorian : _trantorians) {
             if (trantorian.getId() == id)

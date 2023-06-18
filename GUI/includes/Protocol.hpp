@@ -40,6 +40,7 @@ namespace Manager {
                 commands["pdi"] = [this](std::string &str) { pdi(str); };
                 commands["enw"] = [this](std::string &str) { enw(str); };
                 commands["ebo"] = [this](std::string &str) { ebo(str); };
+                commands["edi"] = [this](std::string &str) { edi(str); };
             }
             ~Protocol() = default;
 
@@ -163,6 +164,13 @@ namespace Manager {
              * @param str  ebo e\n
              */
             void ebo(std::string &str);
+
+            /**
+             * @brief death of an egg (id) (remove from map)
+             *
+             * @param str  edi e\n
+             */
+            void edi(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
