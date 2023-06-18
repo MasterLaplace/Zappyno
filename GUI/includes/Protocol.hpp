@@ -41,6 +41,7 @@ namespace Manager {
                 commands["enw"] = [this](std::string &str) { enw(str); };
                 commands["ebo"] = [this](std::string &str) { ebo(str); };
                 commands["edi"] = [this](std::string &str) { edi(str); };
+                commands["sgt"] = [this](std::string &str) { sgt(str); };
             }
             ~Protocol() = default;
 
@@ -171,6 +172,13 @@ namespace Manager {
              * @param str  edi e\n
              */
             void edi(std::string &str);
+
+            /**
+             * @brief time unit request (time unit)
+             *
+             * @param str  sgt T\n
+             */
+            void sgt(std::string &str);
 
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
