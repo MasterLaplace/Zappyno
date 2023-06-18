@@ -38,11 +38,11 @@ class Command(Enum):
     SET = "Set "
     INCANTATION = "Incantation"
 
-class Brodcaste(Enum):
+class Broadcast(Enum):
     """
     This class is used to store the different broadcast of the player.
     """
-    READY = "Brodcast Ready"
+    READY = "Broadcast Ready"
 
 class Player:
     """
@@ -324,14 +324,14 @@ class Player:
             return
         self.command = []
         if self.__direction == 0:
-            self._message = str(Brodcaste.READY)
+            self._message = str(Broadcast.READY)
             self.__ready = True
         if self.__direction in (2, 1, 8):
-            self.command.append("Forward\n")
+            self.command.append(str(Movement.FORWARD))
         elif self.__direction in (5, 6, 7):
-            self.command.append("Right\n")
+            self.command.append(str(Movement.RIGHT))
         else:
-            self.command.append("Left\n")
+            self.command.append(str(Movement.LEFT))
 
     def brodcast(self, messages_list: List[str]) -> None:
         """
