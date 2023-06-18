@@ -49,7 +49,6 @@ namespace Interface {
 
             template<typename T>
             void drawPopup(T &window) {
-                this->updateState();
                 _sprite->drawSprite();
                 Sf_text::DrawText(window, _sfText);
             }
