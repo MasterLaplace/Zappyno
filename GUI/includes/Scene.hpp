@@ -145,6 +145,7 @@ namespace GUI {
             template <typename Win, typename Sprite>
             void switchScene(std::shared_ptr<Win> window, std::shared_ptr<Scene> &scene, std::shared_ptr<Manager::Protocol> &protocol) {
                 std::vector<Interface::CALLBACK> list_callback = scene->getCallback();
+                list_callback.push_back(protocol->getCallback());
                 for (auto it : list_callback) {
                     switch (it) {
                         case Interface::CALLBACK::EXIT:
@@ -154,6 +155,7 @@ namespace GUI {
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::MENU, window);
                             return;
                         case Interface::CALLBACK::GOTO_CREATE:
+                            protocol->setWinnerTeam("");
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREATE, window);
                             return;
                         case Interface::CALLBACK::GOTO_GAME:

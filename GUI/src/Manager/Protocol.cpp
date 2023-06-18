@@ -333,14 +333,26 @@ namespace Manager {
         throw std::runtime_error("[edi] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
-    void Protocol::sgt(std::string &str) {
+    void Protocol::sgt(std::string &str)
+    {
         auto args = String::string_to_string_vector(str, " ");
         _timeUnit = std::stoi(args[1]);
     }
 
-    void Protocol::sst(std::string &str) {
+    void Protocol::sst(std::string &str)
+    {
         auto args = String::string_to_string_vector(str, " ");
         _timeUnit = std::stoi(args[1]);
+    }
+
+    void Protocol::seg(std::string &str)
+    {
+        auto args = String::string_to_string_vector(str, " ");
+
+        if (std::find(_teams.begin(), _teams.end(), args[1]) == _teams.end())
+            throw std::runtime_error("[seg] Team not found in vector (name: " + args[1] + ")");
+        _winnerTeam = args[1];
+        _gotoResult = Interface::CALLBACK::GOTO_RESULT;
     }
 
     GUI::Trantorian Protocol::getTrantorian(unsigned id) const {

@@ -12,6 +12,7 @@
     #include "Trantorian.hpp"
     #include "StringManager.hpp"
     #include "Chat.hpp"
+    #include "Button.hpp"
     #include "Client.hpp"
     #include <functional>
 
@@ -43,6 +44,7 @@ namespace Manager {
                 commands["edi"] = [this](std::string &str) { edi(str); };
                 commands["sgt"] = [this](std::string &str) { sgt(str); };
                 commands["sst"] = [this](std::string &str) { sst(str); };
+                commands["seg"] = [this](std::string &str) { seg(str); };
             }
             ~Protocol() = default;
 
@@ -188,6 +190,13 @@ namespace Manager {
              */
             void sst(std::string &str);
 
+            /**
+             * @brief end of the game (team name)
+             *
+             * @param str  seg N\n
+             */
+            void seg(std::string &str);
+
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
 
@@ -207,6 +216,11 @@ namespace Manager {
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
             void setChat(std::shared_ptr<Interface::Chat> chat) { _chat = chat; }
 
+            void setWinnerTeam(std::string team) { _winnerTeam = team; }
+            std::string getWinnerTeam() const { return _winnerTeam; }
+
+            Interface::CALLBACK getCallback(std::string command) const { return _gotoResult; }
+
         protected:
         private:
             std::vector<GUI::Tiles> _tiles;
@@ -217,6 +231,8 @@ namespace Manager {
             std::vector<std::string /*name*/> _teams;
             unsigned _timeUnit = 100;
             std::shared_ptr<Interface::Chat> _chat = nullptr;
+            std::string _winnerTeam = "";
+            Interface::CALLBACK _gotoResult = Interface::CALLBACK::NONE;
     };
 } // namespace Manager
 
