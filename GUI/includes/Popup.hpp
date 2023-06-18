@@ -12,6 +12,17 @@
     #include <chrono>
     #include <memory>
 
+/**
+ * @brief Popup class is used to create a popup
+ *
+ * @namespace Interface
+ * @example in SFML:
+ * Interface::Popup popup = Interface::Popup(std::make_shared<Sprite>(window, "GUI/assets/Popup.png", {0, 0}, {1, 1}), "Hello World");
+ * while (_window.isOpen()) {
+ *      popup.animate(sf::Mouse::getPosition(_window), sf::Mouse::isButtonPressed(sf::Mouse::Left));
+ *      popup.drawPopup();
+ * }
+ */
 namespace Interface {
     class Popup {
         enum State {
@@ -28,6 +39,12 @@ namespace Interface {
             Math::Vector getPos() const { return _pos; }
             unsigned getState() const { return _state; }
 
+            /**
+             * @brief updateState is used to update the state of the popup (POP, FADE, END)
+             *
+             * @param mousePos  mouse position
+             * @param mousePressed  is the mouse pressed
+             */
             void updateState(const Math::Vector &mousePos, const bool &mousePressed = false);
 
             template<typename T>

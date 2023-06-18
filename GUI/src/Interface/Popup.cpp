@@ -19,6 +19,14 @@ namespace Interface {
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - _start);
 
+        // I have 3 states: POP, FADE, END (and I can't go back once I've passed the END state)
+        // POP: the popup appears and moves in 1 second (from pos to pos - 100)
+        // FADE: the popup disappears in 2 seconds (from 255 to 0)
+        // END: the popup is completely transparent and doesn't move anymore (it's dead)
+        // so if I'm in POP and I've exceeded 1 second, I go to FADE (and I reset the timer)
+        // if I'm in FADE and I've exceeded 2 seconds, I go to END
+        // if I click on the popup, I go directly to END
+        // if I'm in END, I do nothing
         if (mousePos.x() >= _pos.x() && mousePos.x() <= _pos.x() + _sprite->getSize().x()
             && mousePos.y() >= _pos.y() && mousePos.y() <= _pos.y() + _sprite->getSize().y()
             && mousePressed) {
