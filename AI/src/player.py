@@ -37,6 +37,7 @@ class Command(Enum):
     TAKE = "Take "
     SET = "Set "
     INCANTATION = "Incantation"
+    FORK = "Fork"
 
 class Broadcast(Enum):
     """
@@ -53,8 +54,8 @@ class Player:
         self._id = number
         self._team = team
         self.__communication = communication
-        self.__level = 1
-        self.__inventory = ""
+        self.__level: int = 1
+        self.__inventory: str = ""
         self.__object: str = ""
         self.__shared_inventory: Dict[str, int] = {}
         self.__map: List[List[int]] = [[]]
@@ -62,15 +63,16 @@ class Player:
         self.response: str = ''
         self.__incantation: bool = False
         self.__clear: bool = False
-        self.__number_incantation = 0
-        self._player_incantation = 0
+        self.__number_incantation: int = 0
+        self._player_incantation: int = 0
         self.command: List = []
-        self.__step = -2
+        self.__step: int = -2
         self.__ready: bool = False
         self.__direction = 0
-        self._message = ''
+        self._message: str = ''
         self.unused_slots: int = 0
         self.fork: bool = True
+        self.to_write: str = ''
 
     def send_message(self, message: str) -> None:
         """
@@ -360,3 +362,15 @@ class Player:
             self.__number_incantation += 1
         if "Moving" in messages_list:
             self._player_incantation += 1
+
+    def logical(self):
+        """
+        Logical of the AI.
+        """
+        if self.__step == -1:
+            if self._id < 6 and self.unused_slots == 0:
+                self.to_write = str(str(Command.FORK)) + "\n"
+                self.fork = True
+            else:
+                self.to_write = str(str(Command.LOOK)) + "\n"
+
