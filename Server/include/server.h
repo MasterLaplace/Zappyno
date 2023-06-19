@@ -35,7 +35,6 @@
     #include <sys/time.h>
     #include <sys/select.h>
     #include <sys/types.h>
-    #include <uuid/uuid.h>
     #include <arpa/inet.h>
     #include <netinet/in.h>
 

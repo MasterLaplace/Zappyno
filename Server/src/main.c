@@ -56,10 +56,10 @@ bool read_data_from_server(t_server *server, unsigned client_id)
             }
         }
     }
-    /*if (has_timer_expired_gen_food(&server->gen_food_timer, server->gen_food_timer.duration)) {
+    if (has_timer_expired_gen_food(&server->gen_food_timer, server->gen_food_timer.duration)) {
         printf("Generate food\n");
         generate_food(server);
-    }*/
+    }
     if (has_timer_expired(&server->clients[client_id])) {
         server->clients[client_id].function(server, server->clients[client_id].params_function);
         server->clients[client_id].is_freezed = false;
