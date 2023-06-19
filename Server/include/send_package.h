@@ -109,8 +109,8 @@ void send_player_s_level_to_all(t_server *server, char** array);
 void send_player_s_inventory(t_server *server, char** array);
 void send_player_s_inventory_to_all(t_server *server, char** array);
 //
-void send_map_size(t_server *server);
-void send_map_size_to_all(t_server *server);
+void send_map_size(t_server *server, char** array);
+void send_map_size_to_all(t_server *server, char** array);
 //
 void send_expulsion(t_server *server, char** array);
 void send_expulsion_to_all(t_server *server, char** array);
@@ -129,7 +129,7 @@ void send_start_of_an_incantation(t_server *server, tmp_t co, int l,
 void send_start_of_an_incantation_to_all(t_server *server, tmp_t co, int l,
                                          int *players);
 //
-void send_end_of_an_incantation(t_server *server, tmp_t co, char *res);
+void send_end_of_an_incantation(t_server *server, tmp_t co, int l);
 void send_end_of_an_incantation_to_all(t_server *server, tmp_t co, char *res);
 //
 void send_ressource_dropping(t_server *server, int id);
@@ -161,6 +161,12 @@ void send_command_paramater_to_all(t_server *server);
 void send_content_of_a_tile(t_server *server, char **array);
 //
 void send_content_of_map(t_server *server, char **array);
+//
+void send_con_of_new_player(t_server *server, t_client *player);
+//
+void send_time_unit(t_server *server, char **message);
+//
+void recv_time_unit_change(t_server *server, char **message);
 
 //OTHERS
 void send_command_not_found_to_all(t_client *clients);

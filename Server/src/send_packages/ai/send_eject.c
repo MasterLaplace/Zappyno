@@ -17,9 +17,10 @@ int target_y)
             client->pos_x == TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x &&
             client->pos_y == TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y) {
             eject = true;
-            char message[12];
-            sprintf(message, "eject : %d\n", orientation);
+            char *message = calloc(my_nblen(client->id) + 10, sizeof(char));
+            sprintf(message, "pex %d\n", client->id);
             send_to_client(server, message, i);
+            free(message);
         }
     }
     for (int i = 0; i < SOMAXCONN; i++) {

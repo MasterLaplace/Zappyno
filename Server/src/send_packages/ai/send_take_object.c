@@ -42,7 +42,10 @@ static bool take_object(t_server *server, int index)
 
 void check_take_object(t_server *server, int i)
 {
+    AUTO_FREE char *str = calloc(my_nblen(server->id) + 10, sizeof(char));
+    sprintf(str, "pgt %d %d\n", server->id, i);
     if (take_object(server, i)) {
+        send_to_all_gui(server, str);
         send_to_client(server, "ok\n", server->id);
         return;
     } else {

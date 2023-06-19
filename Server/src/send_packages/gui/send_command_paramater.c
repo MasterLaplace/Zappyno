@@ -9,18 +9,14 @@
 
 void send_command_paramater(t_server *server)
 {
-    AUTO_FREE char *message = calloc(6,
-    sizeof(char));
-    strncat(message, "sdp",strlen(message) + 3);
-    sprintf(message, "%s\n", message);
+    AUTO_FREE char *message = calloc(6,sizeof(char));
+    sprintf(message, "sbp %s\n", message);
     send_to_client(server, message, server->id);
 }
 
 void send_command_paramater_to_all(t_server *server)
 {
-    AUTO_FREE char *message = calloc(6,
-    sizeof(char));
-    strncat(message, "sdp",strlen(message) + 3);
-    sprintf(message, "%s\n", message);
+    AUTO_FREE char *message = calloc(6,sizeof(char));
+    sprintf(message, "sbp %s\n", message);
     send_to_client(server, message, server->id);
 }

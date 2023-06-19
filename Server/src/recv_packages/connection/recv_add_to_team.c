@@ -43,6 +43,7 @@ static void add_to_team(t_server *server, int i)
             init_inventory(TEAMS[i].players[j].resources);
             TILES(find_tile(server, TEAMS[i].players[j].pos_x,
 TEAMS[i].players[j].pos_y)).player++;
+            send_con_of_new_player(server, &TEAMS[i].players[j]);
             break;
         }
     }

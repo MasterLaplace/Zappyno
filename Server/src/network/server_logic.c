@@ -27,15 +27,15 @@ ai_command ia_client[] = {
 };
 
 gui_command gui_client[] = {
-        {"msz", recv_map_size},
+        {"msz", send_map_size},
         {"ppo", send_player_s_position},
         {"plv", send_player_s_level},
         {"pin", send_player_s_inventory},
         {"tna", send_name_of_all_the_teams},
         {"bct", send_content_of_a_tile},
         {"mct", send_content_of_map},
-        //{"sgt", send_time_unit_request},
-        //{"sst", recv_time_unit_change},
+        {"sgt", send_time_unit},
+        {"sst", recv_time_unit_change},
         {0, NULL}
 };
 

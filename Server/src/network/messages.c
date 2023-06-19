@@ -18,7 +18,7 @@
 void send_to_client(t_server *server, char *message, int id)
 {
     t_client *client = &CLIENT(id);
-    if (client->socket_fd == 0)
+    if (client->socket_fd == 0 || client->socket_fd == -1 || client->is_gui)
         return;
     int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
     if (bytes_sent == -1) {
@@ -65,4 +65,31 @@ char *receive_from_client(int fd)
         return NULL;
     }
     return message;
+}
+
+void send_to_gui(t_server *server, char * message, int id)
+{
+    t_client *client = &CLIENT(id);
+    if (client->socket_fd == 0 || client->socket_fd == -1 || !client->is_gui)
+        return;
+    int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
+    if (bytes_sent == -1) {
+        perror("send");
+        exit(EXIT_FAILURE);
+    }
+    if (errno == EPIPE) {
+        remove_client(server, id);
+    }
+}
+
+void send_to_all_gui(t_server *server, char * message)
+{
+    t_client *clients = server->clients;
+
+    for (int i = 0; i < SOMAXCONN; i++) {
+        if (clients[i].socket_fd != 0) {
+            printf("Send to client %d\n", i);
+            send_to_gui(server, message, i);
+        }
+    }
 }

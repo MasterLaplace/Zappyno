@@ -86,6 +86,10 @@ void send_to_client(t_server *, char *, int);
 void send_to_all_clients(t_server *, char *);
 // receive_from_client will receive a message from a specific client
 char *receive_from_client(int fd);
+//
+void send_to_all_gui(t_server *server, char * message);
+//
+void send_to_gui(t_server *server, char * message, int id);
 
 //
 char **stwa(char *str, const char *delim);
@@ -127,6 +131,7 @@ void perform_elevation(t_server *server);
 void remove_required_resources(t_server *server);
 //
 bool is_connected_player(t_server *server, int id);
+
 
 
 #endif // SERVER_H

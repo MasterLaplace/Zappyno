@@ -42,7 +42,10 @@ static bool set_object(t_server *server, int index)
 
 void check_set_object(t_server *server, int i)
 {
+    AUTO_FREE char *str = calloc(my_nblen(server->id) + 10, sizeof(char));
+    sprintf(str, "pdr %d %d\n", server->id, i);
     if (set_object(server, i)) {
+        send_to_all_gui(server, str);
         send_to_client(server, "ok\n", server->id);
         return;
     } else {

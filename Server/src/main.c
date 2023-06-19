@@ -34,8 +34,10 @@ bool check_death(t_server *server)
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].id == -1)
         return false;
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0] <= 0 && has_timer_expired_gen_food(&server->remove_food_timer, server->remove_food_timer.duration)) {
+        AUTO_FREE char *str = calloc(my_nblen(server->id) + 10, sizeof(char));
+        sprintf(str, "pdi %d\n", server->id);
         printf("Player %d died\n", server->id);
-        //send_death_of_a_player(server, NULL);
+        send_to_all_gui(server, str);
         remove_client(server, server->id);
         return true;
     }

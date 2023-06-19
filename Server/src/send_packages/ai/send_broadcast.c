@@ -47,5 +47,8 @@ void send_broadcast_to_all(t_server *server, char *text)
 
     AUTO_FREE char *message = calloc(strlen(text) + 12, sizeof(char));
     sprintf(message, "message %d, %s\n", pos, text);
+    AUTO_FREE char *message2 = calloc(strlen(text) + 7, sizeof(char));
+    sprintf(message2, "pbc %d %s\n", server->id, text);
     send_to_all_clients(server, message);
+    send_to_all_gui(server, message2);
 }
