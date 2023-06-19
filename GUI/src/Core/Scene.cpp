@@ -8,29 +8,63 @@
 #include "../../includes/Scene.hpp"
 
 namespace GUI {
-    void SceneManager::switchScene(SceneType &actualScene, const SceneManager::SceneType &nextScene) {
+    //* SCENE *//
+
+    std::shared_ptr<Interface::Chat> Scene::getChat() {
+        for (auto &panel : _panels) {
+            auto chat = panel.getChat();
+            if (chat != nullptr)
+                return chat;
+        }
+        return nullptr;
+    }
+
+    void Scene::updateScene(const Math::Vector &mousePos, const bool &mousePressed) {
+        for (auto &panel : _panels)
+            panel.updatePanel(mousePos, mousePressed);
+    }
+
+    void Scene::updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed) {
+        for (auto &panel : _panels)
+            panel.updatePanel(mousePos, key, mousePressed);
+    }
+
+    std::vector<Interface::CALLBACK> Scene::getCallback() {
+        std::vector<Interface::CALLBACK> callback;
+        for (auto &panel : _panels) {
+            std::vector<Interface::CALLBACK> tmp = panel.getCallback();
+            callback.insert(callback.end(), tmp.begin(), tmp.end());
+        }
+        return callback;
+    }
+
+    //* SCENE MANAGER *//
+
+    void SceneManager::switchScene(Scene_Manager::SceneType &actualScene, const Scene_Manager::SceneType &nextScene) {
         actualScene = nextScene;
     }
-    std::string SceneManager::SceneTypeToString(const SceneManager::SceneType &sceneType) {
+
+    std::string SceneManager::SceneTypeToString(const Scene_Manager::SceneType &sceneType) {
         switch (sceneType) {
-            case SceneManager::GAME:
+            case Scene_Manager::SceneType::GAME:
                 return "game";
-            case SceneManager::MENU:
+            case Scene_Manager::SceneType::MENU:
                 return "menu";
-            case SceneManager::SETTING:
+            case Scene_Manager::SceneType::SETTING:
                 return "setting";
-            case SceneManager::CREATE:
+            case Scene_Manager::SceneType::CREATE:
                 return "create";
-            case SceneManager::PAUSE:
+            case Scene_Manager::SceneType::PAUSE:
                 return "pause";
-            case SceneManager::CREDIT:
+            case Scene_Manager::SceneType::CREDIT:
                 return "credit";
-            case SceneManager::RESULT:
+            case Scene_Manager::SceneType::RESULT:
                 return "result";
             default:
                 return "NONE";
         }
     }
+
     std::string SceneManager::CallbackToString(const Interface::CALLBACK &callback) {
         switch (callback) {
             case Interface::CALLBACK::GOTO_CREATE:
@@ -55,6 +89,7 @@ namespace GUI {
             return "NONE";
         }
     }
+
     Interface::CALLBACK SceneManager::StringToCallback(const std::string &callback) {
         for (int i = 0; i < Interface::CALLBACK::EXIT; i++) {
             if (callback == CallbackToString(static_cast<Interface::CALLBACK>(i)))
@@ -62,6 +97,7 @@ namespace GUI {
         }
         return Interface::CALLBACK::NONE;
     }
+
     sf::Color SceneManager::StringToSfColor(const std::string &color) {
         if (color == "red")
             return sf::Color::Red;
@@ -83,6 +119,7 @@ namespace GUI {
             return sf::Color::Black;
         return sf::Color::White;
     }
+
     std::string SceneManager::findInTiles(std::vector<std::map<std::string, std::string>> tile, std::string compare, std::string key) {
         for (auto &it : tile) {
             if (compare == it["name"]) {

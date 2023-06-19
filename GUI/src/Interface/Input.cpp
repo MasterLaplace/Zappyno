@@ -29,4 +29,4 @@ namespace Interface {
         if (_state == CLICKED && ((key >= 26 && key <= 35) || (key >= 75 && key <= 84)))
             _text += char(key - ((key >= 75)?75:26) + '0');
     }
-}
+} // namespace Interface
