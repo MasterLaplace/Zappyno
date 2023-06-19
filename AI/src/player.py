@@ -10,14 +10,14 @@ import json
 import re
 from communication import Communication
 
-lvls: List[Dict[str, int]] = [
-        {"linemate": 1},
-        {"linemate": 1, "deraumere": 1, "sibur": 1},
-        {"linemate": 2, "sibur": 1, "phiras": 2},
-        {"linemate": 1, "deraumere": 1, "sibur": 2, "phiras": 1},
-        {"linemate": 1, "deraumere": 2, "sibur": 1, "mendiane": 3},
-        {"linemate": 1, "deraumere": 2, "sibur": 3, "phiras": 1},
-        {"linemate": 2, "deraumere": 2, "sibur": 2, "mendiane": 2, "phiras": 2, "thystame": 1},
+required_resources: List[Dict[str, int]] = [
+    {"linemate": 1},
+    {"linemate": 1, "deraumere": 1, "sibur": 1},
+    {"linemate": 2, "sibur": 1, "phiras": 2},
+    {"linemate": 1, "deraumere": 1, "sibur": 2, "phiras": 1},
+    {"linemate": 1, "deraumere": 2, "sibur": 1, "mendiane": 3},
+    {"linemate": 1, "deraumere": 2, "sibur": 3, "phiras": 1},
+    {"linemate": 2, "deraumere": 2, "sibur": 2, "mendiane": 2, "phiras": 2, "thystame": 1}
 ]
 
 class Movement(Enum):
@@ -116,8 +116,8 @@ class Player:
         """
         Check if the incantation is possible.
         """
-        for obj in lvls[self.__level]:
-            if self.__shared_inventory[obj] < lvls[self.__level][obj]:
+        for obj in required_resources[self.__level]:
+            if self.__shared_inventory[obj] < required_resources[self.__level][obj]:
                 return False
         return True
 
@@ -135,12 +135,12 @@ class Player:
                 break
             data = data[1:]
         new_data = data.split(' ')
-        required = lvls[self.__level]
+        required = required_resources[self.__level]
         for items in required:
             for res in new_data:
                 if res == items:
                     required[items] -= 1
-        for ressources in lvls[self.__level]:
+        for ressources in required_resources[self.__level]:
             if ressources in data and data and required[ressources] > 0:
                 self.command.append(str(Command.SET) + ressources)
                 self.command.append(Command.LOOK)
@@ -162,12 +162,12 @@ class Player:
                 break
             data = data[1:]
         new_data = data.split(' ')
-        required = lvls[self.__level]
+        required = required_resources[self.__level]
         for items in required:
             for res in new_data:
                 if res == items:
                     required[items] -= 1
-        for ressources in lvls[self.__level]:
+        for ressources in required_resources[self.__level]:
             if ressources in data and required[ressources] > 0:
                 return
         self.command = [str(Command.INCANTATION)]
@@ -373,4 +373,3 @@ class Player:
                 self.fork = True
             else:
                 self.to_write = str(str(Command.LOOK)) + "\n"
-
