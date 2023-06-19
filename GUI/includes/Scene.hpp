@@ -10,6 +10,7 @@
     #include "Panel.hpp"
     #include "Mesh.hpp"
     #include "Xml.hpp"
+    #include <SFML/Audio.hpp>
 
 namespace GUI {
     class Scene {
@@ -67,6 +68,10 @@ namespace GUI {
         public:
             SceneManager() {
                 _xml.loadFile("GUI/assets/scene.xml");
+                if (!music.openFromFile("GUI/assets/sounds/Outer_Wilds.ogg"))
+                    throw std::invalid_argument("Core: Cannot load music file");
+                music.play();
+                music.setLoop(true);
             }
             ~SceneManager() = default;
             SceneManager(SceneManager&) = default;
@@ -176,6 +181,12 @@ namespace GUI {
                         case Interface::CALLBACK::EXIT:
                             window->close();
                             return;
+                        case Interface::CALLBACK::MUTE_SOUND:
+                            if (music.getVolume() == 0)
+                                music.setVolume(100);
+                            else
+                                music.setVolume(0);
+                            return;
                         case Interface::CALLBACK::GOTO_MENU:
                             scene = create_scene<Win, Sprite>(SceneType::MENU, window);
                             return;
@@ -203,6 +214,7 @@ namespace GUI {
         protected:
         private:
             Parser::Xml _xml;
+            sf::Music music;
     };
 }
 
