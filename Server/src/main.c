@@ -35,7 +35,7 @@ bool check_death(t_server *server)
         return false;
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0] <= 0 && has_timer_expired_gen_food(&server->remove_food_timer, server->remove_food_timer.duration)) {
         printf("Player %d died\n", server->id);
-        send_to_client(server, "dead\n", server->id);
+        //send_death_of_a_player(server, NULL);
         remove_client(server, server->id);
         return true;
     }
@@ -56,10 +56,10 @@ bool read_data_from_server(t_server *server, unsigned client_id)
             }
         }
     }
-    if (has_timer_expired_gen_food(&server->gen_food_timer, server->gen_food_timer.duration)) {
+    /*if (has_timer_expired_gen_food(&server->gen_food_timer, server->gen_food_timer.duration)) {
         printf("Generate food\n");
         generate_food(server);
-    }
+    }*/
     if (has_timer_expired(&server->clients[client_id])) {
         server->clients[client_id].function(server, server->clients[client_id].params_function);
         server->clients[client_id].is_freezed = false;

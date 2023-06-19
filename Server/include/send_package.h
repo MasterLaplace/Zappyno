@@ -158,6 +158,9 @@ void send_unknown_command_to_all(t_server *server, int egg_num);
 void send_send_cammand_paramater(t_server *server, int egg_num);
 void send_send_cammand_paramater_to_all(t_server *server, int egg_num);
 //
+void send_content_of_a_tile(t_server *server, char **array);
+//
+void send_content_of_map(t_server *server, char **array);
 
 //OTHERS
 void send_command_not_found_to_all(t_client *clients);

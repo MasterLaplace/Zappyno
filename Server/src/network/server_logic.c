@@ -32,6 +32,10 @@ gui_command gui_client[] = {
         {"plv", send_player_s_level},
         {"pin", send_player_s_inventory},
         {"tna", send_name_of_all_the_teams},
+        {"bct", send_content_of_a_tile},
+        {"mct", send_content_of_map},
+        //{"sgt", send_time_unit_request},
+        //{"sst", recv_time_unit_change},
         {0, NULL}
 };
 
