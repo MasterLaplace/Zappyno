@@ -15,10 +15,16 @@
         <Image name="create_game_img_button" path="GUI/assets/create_game_button.png" offset="500, 80" max="1"/>
         <Image name="settings_img_button" path="GUI/assets/settings_button.png" offset="500, 80" max="1"/>
         <Image name="credits_img_button" path="GUI/assets/credits_button.png" offset="500, 80" max="1"/>
+        <Image name="game_img_button" path="GUI/assets/game_button.png" offset="500, 80" max="1"/>
         <Image name="exit_img_button" path="GUI/assets/exit_button.png" offset="500, 80" max="1"/>
         <Image name="back_img_button" path="GUI/assets/back_button.png" offset="108, 106" max="1"/>
-        <Image name="mute_img_button" path="GUI/assets/mute_button.png" offset="80, 80" max="1"/>
-        <Image name="full_screen_img_button" path="GUI/assets/full_screen_button.png" offset="80, 80" max="1"/>
+        <Image name="mute_img_button" path="GUI/assets/mute_check_box.png" offset="80, 80" max="1"/>
+        <Image name="full_screen_img_button" path="GUI/assets/full_screen_check_box.png" offset="80, 80" max="1"/>
+        <Image name="1_img_button" path="GUI/assets/1_button.png" offset="80, 80" max="1"/>
+        <Image name="2_img_button" path="GUI/assets/2_button.png" offset="80, 80" max="1"/>
+        <Image name="3_img_button" path="GUI/assets/3_button.png" offset="80, 80" max="1"/>
+        <Image name="4_img_button" path="GUI/assets/4_button.png" offset="80, 80" max="1"/>
+        <Image name="5_img_button" path="GUI/assets/5_button.png" offset="80, 80" max="1"/>
         <Image name="volume_txt_img" path="GUI/assets/volume_txt.png"/>
     </Images>
     <Buttons>
@@ -27,11 +33,23 @@
         <Button name="create_game_button" img="create_game_img_button" pos="710, 401" scale="1, 1" callback="goto_create"/>
         <Button name="settings_button" img="settings_img_button" pos="710, 518" scale="1, 1" callback="goto_setting"/>
         <Button name="credits_button" img="credits_img_button" pos="710, 634" scale="1, 1" callback="goto_credit"/>
-        <Button name="exit_button" img="exit_img_button" pos="710, 745" scale="1, 1" callback="goto_create"/>
+        <Button name="exit_button" img="exit_img_button" pos="710, 745" scale="1, 1" callback="exit"/>
         <Button name="back_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_menu"/>
         <Button name="mute_button" img="mute_img_button" pos="810, 522" scale="1, 1" callback=""/>
+        <Button name="game_button" img="game_img_button" pos="710, 840" scale="1, 1" callback=""/>
         <Button name="full_screen_button" img="full_screen_img_button" pos="1020, 522" scale="1, 1" callback=""/>
+        <Button name="1_button" img="1_img_button" pos="890, 624" scale="1, 1" callback=""/>
+        <Button name="2_button" img="2_img_button" pos="994, 624" scale="1, 1" callback=""/>
+        <Button name="3_button" img="3_img_button" pos="1098, 624" scale="1, 1" callback=""/>
+        <Button name="4_button" img="4_img_button" pos="1202, 624" scale="1, 1" callback=""/>
+        <Button name="5_button" img="5_img_button" pos="1310, 624" scale="1, 1" callback=""/>
     </Buttons>
+    <Checkboxs>
+        <!-- CALLBACK: -->
+        <!-- "NONE", "goto_create", "goto_game", "goto_setting", "goto_credit", "goto_result", "goto_menu", "resize", "mute_sound", "exit" -->
+        <Checkbox name="mute_button" img="mute_img_button" pos="810, 522" scale="1, 1" callback=""/>
+        <Checkbox name="full_screen_button" img="full_screen_img_button" pos="1020, 522" scale="1, 1" callback=""/>
+    </Checkboxs>
     <Inputs>
         <Input name="ip" img="table_panel" pos="0, 0" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
     </Inputs>
@@ -41,8 +59,8 @@
     <Panels>
         <Panel name="background" img="space_background" pos="0, 0" scale="1, 1" inputs="ip" bars="healh"/>
         <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" inputs="ip" bars="healh"/>
-        <Panel name="settings_panel" img="settings_menu" pos="426, 216" scale="1, 1" buttons="back_button, mute_button, full_screen_button" inputs="ip" bars="healh"/>
-        <Panel name="create_game_panel" img="create_game_menu" pos="426, 216" scale="1, 1" buttons="back_button" inputs="ip" bars="healh"/>
+        <Panel name="settings_panel" img="settings_menu" pos="426, 216" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" inputs="ip" bars="healh"/>
+        <Panel name="create_game_panel" img="create_game_menu" pos="426, 216" scale="1, 1" buttons="back_button, game_button, 1_button, 2_button, 3_button, 4_button, 5_button" inputs="ip" bars="healh"/>
         <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" inputs="ip" bars="healh"/>
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" inputs="ip" bars="healh"/>
     </Panels>
