@@ -82,6 +82,14 @@ namespace Sf_sprite {
                 this->sprite.setTextureRect(rect);
             }
         }
+
+        void animate_checkbox(bool &ischecked, const unsigned &state = 0) {
+            sf::IntRect rect = this->sprite.getTextureRect();
+
+            rect.left = this->offset_x * ischecked;
+            rect.top = this->offset_y * state;
+            this->sprite.setTextureRect(rect);
+        }
         void drawSprite() const override { this->window->draw(this->sprite); }
     };
 

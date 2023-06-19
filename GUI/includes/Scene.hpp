@@ -87,6 +87,7 @@ namespace GUI {
                 std::vector<std::map<std::string, std::string>> image = _xml.getTiles("GUI/assets/scene.xml", "Images");
                 std::vector<std::map<std::string, std::string>> font = _xml.getTiles("GUI/assets/scene.xml", "Fonts");
                 std::vector<std::map<std::string, std::string>> button = _xml.getTiles("GUI/assets/scene.xml", "Buttons");
+                std::vector<std::map<std::string, std::string>> checkbox = _xml.getTiles("GUI/assets/scene.xml", "Checkboxs");
                 std::vector<std::map<std::string, std::string>> input = _xml.getTiles("GUI/assets/scene.xml", "Inputs");
                 std::vector<std::map<std::string, std::string>> bar = _xml.getTiles("GUI/assets/scene.xml", "Bars");
                 std::vector<std::map<std::string, std::string>> panel = _xml.getTiles("GUI/assets/scene.xml", "Panels");
@@ -120,6 +121,24 @@ namespace GUI {
                                                 sprite->setMaxOffsetX(std::stoi(findInTiles(image, it5["img"], "max")));
                                                 _button.setCallback(SceneManager::StringToCallback(it5["callback"]));
                                                 _panel.addButton(_button);
+                                            }
+                                        }
+                                    }
+                                    auto checkboxs = String::string_to_string_vector(it3["checkboxs"], ", \t");
+                                    std::cout << "checkboxs: " << it3["checkboxs"] << std::endl;
+                                    for (auto it4 : checkboxs) {
+                                        for (auto it5 : checkbox) {
+                                            if (it5["name"] == it4) {
+                                                std::cout << "name checkbox: " << it5["name"] << std::endl;
+                                                Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
+                                                Math::Vector scale(String::string_to_string_vector(it5["scale"], ", \t"));
+                                                Interface::Checkbox _checkbox = Interface::Checkbox(std::make_shared<Sprite>(window, findInTiles(image, it5["img"]), pos, scale));
+                                                auto sprite = _checkbox.getSprite();
+                                                std::vector<std::string> offsetComponents = String::string_to_string_vector(findInTiles(image, it5["img"], "offset"), ", \t");
+                                                sprite->setOffset(Math::Vector(std::stof(offsetComponents[0]), std::stof(offsetComponents[1])));
+                                                sprite->setMaxOffsetX(std::stoi(findInTiles(image, it5["img"], "max")));
+                                                _checkbox.setCallback(SceneManager::StringToCallback(it5["callback"]));
+                                                _panel.addCheckbox(_checkbox);
                                             }
                                         }
                                     }

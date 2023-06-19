@@ -9,6 +9,7 @@
     #define PANEL_HPP_
     #include "Button.hpp"
     #include "Input.hpp"
+    #include "CheckBox.hpp"
     #include "Bar.hpp"
 
 /**
@@ -46,6 +47,7 @@ namespace Interface {
 
             void addButton(const Interface::Button &button) { _buttons.push_back(button); }
             void addInput(const Interface::Input &input) { _inputs.push_back(input); }
+            void addCheckbox(const Interface::Checkbox &checkbox) { _checkboxs.push_back(checkbox); }
             void addBar(const Interface::Bar &bar) { _bars.push_back(bar); }
             template<typename T>
             void drawPanel(T &win) {
@@ -53,6 +55,8 @@ namespace Interface {
                 if (_sprite) _sprite->drawSprite();
                 for (auto &button : _buttons)
                     button.drawButton();
+                for (auto &checkbox : _checkboxs)
+                    checkbox.drawCheckbox();
                 for (auto &input : _inputs)
                     input.drawInput<T>(win);
                 for (auto &bar : _bars)
@@ -67,6 +71,7 @@ namespace Interface {
         protected:
         private:
             std::vector<Interface::Button> _buttons;
+            std::vector<Interface::Checkbox> _checkboxs;
             std::vector<Interface::Input> _inputs;
             std::vector<Interface::Bar> _bars;
             std::shared_ptr<ISprite> _sprite;

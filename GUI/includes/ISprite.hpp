@@ -13,6 +13,7 @@ class ISprite {
     public:
         virtual ~ISprite() = default;
         virtual void animate(const unsigned &state) = 0;
+        virtual void animate_checkbox(bool &ischecked, const unsigned &state) = 0;
         virtual void setOffset(Math::Vector offset) = 0;
         virtual void setMaxOffsetX(unsigned max_offset_x) = 0;
         virtual void setPos(Math::Vector pos) = 0;
