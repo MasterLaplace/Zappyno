@@ -61,6 +61,7 @@ namespace Interface {
             void setPos(const Math::Vector &pos) { _pos = pos; }
             void setSize(const Math::Vector &size) { _size = size; }
             void setScale(const Math::Vector &scale) { _scale = scale; }
+            void setState(const State &state) { _state = state; }
             void setCallback(const CALLBACK &callback) { _callback = callback; }
             std::shared_ptr<ISprite> getSprite() const { return _sprite; }
             CALLBACK getCallback() const { return _callback; }
