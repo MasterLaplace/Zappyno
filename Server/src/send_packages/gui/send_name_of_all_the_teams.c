@@ -21,7 +21,7 @@ size_t count_all_words_size(char **array)
 size_t count_message_size(char **array, t_server *server)
 {
     size_t res = (server->params->num_teams * 5) + count_all_words_size(array)
-                 + 1;
+                 + 2;
     return res;
 }
 

@@ -9,7 +9,7 @@
 
 void send_broadcast_gui(t_server *server, char *brodacst)
 {
-    AUTO_FREE char *message = calloc(6 + my_nblen(server->id) + strlen(brodacst),
+    AUTO_FREE char *message = calloc(7 + my_nblen(server->id) + strlen(brodacst),
     sizeof(char));
     strncat(message, "pbc ",strlen(message) + 4);
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
@@ -21,7 +21,7 @@ void send_broadcast_gui(t_server *server, char *brodacst)
 
 void send_broadcast_gui_to_all(t_server *server, char *brodacst)
 {
-    AUTO_FREE char *message = calloc(6 + my_nblen(server->id) + strlen(brodacst),
+    AUTO_FREE char *message = calloc(7 + my_nblen(server->id) + strlen(brodacst),
     sizeof(char));
     strncat(message, "pbc ",strlen(message) + 4);
     strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));

@@ -7,30 +7,43 @@
 
 #include "../../../include/send_package.h"
 
-void send_player_s_level(t_server *server, char** array)
+char *make_lvl_message(t_server *server, int id)
 {
-    int id = atoi(array[1]);
     int lvl = server->game.teams->players[server->id].level;
-    AUTO_FREE char *message = calloc(6 + my_nblen(lvl) + my_nblen(id), sizeof(char));
+    char *message = calloc(7 + my_nblen(lvl) + my_nblen(id), sizeof(char));
 
     strncat(message, "plv ",strlen(message) + 4);
     strncat(message, itoa(id),strlen(message) + my_nblen(id));
     strncat(message, " ",strlen(message) + 1);
     strncat(message, itoa(lvl), strlen(message) + my_nblen(lvl));
     sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+    return message;
+}
+
+void send_player_s_level(t_server *server, char** array)
+{
+    int id = atoi(array[1]);
+    char *message;
+
+    if (is_connected_player(server, id)) {
+        message = make_lvl_message(server, id);
+        send_to_client(server, message, server->id);
+    } else {
+        send_command_paramater(server);
+    }
+    free(message);
 }
 
 void send_player_s_level_to_all(t_server *server, char **array)
 {
     int id = atoi(array[1]);
-    int lvl = server->game.teams->players[server->id].level;
-    AUTO_FREE char *message = calloc(6 + my_nblen(lvl) + my_nblen(id), sizeof(char));
+    char *message;
 
-    strncat(message, "plv ",strlen(message) + 4);
-    strncat(message, itoa(id),strlen(message) + my_nblen(id));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(lvl), strlen(message) + my_nblen(lvl));
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+    if (is_connected_player(server, id)) {
+        message = make_lvl_message(server, id);
+        send_to_all_clients(server, message);
+    } else {
+        send_command_paramater_to_all(server);
+    }
+    free(message);
 }

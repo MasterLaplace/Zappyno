@@ -155,8 +155,8 @@ void send_message_from_the_server_to_all(t_server *server, char *message_);
 void send_unknown_command(t_server *server, int egg_num);
 void send_unknown_command_to_all(t_server *server, int egg_num);
 //
-void send_send_cammand_paramater(t_server *server, int egg_num);
-void send_send_cammand_paramater_to_all(t_server *server, int egg_num);
+void send_command_paramater(t_server *server);
+void send_command_paramater_to_all(t_server *server);
 //
 void send_content_of_a_tile(t_server *server, char **array);
 //

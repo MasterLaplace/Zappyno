@@ -9,7 +9,7 @@
 
 void send_death_of_an_egg(t_server *server, int egg_num)
 {
-    AUTO_FREE char *message = calloc(6 + my_nblen(server->id) + my_nblen(egg_num),
+    AUTO_FREE char *message = calloc(7 + my_nblen(server->id) + my_nblen(egg_num),
     sizeof(char));
     strncat(message, "edi ",strlen(message) + 4);
     strncat(message, itoa(egg_num),strlen(message) + my_nblen(egg_num));
@@ -19,7 +19,7 @@ void send_death_of_an_egg(t_server *server, int egg_num)
 
 void send_death_of_an_egg_to_all(t_server *server, int egg_num)
 {
-    AUTO_FREE char *message = calloc(6 + my_nblen(server->id) + my_nblen(egg_num),
+    AUTO_FREE char *message = calloc(7 + my_nblen(server->id) + my_nblen(egg_num),
     sizeof(char));
     strncat(message, "edi ",strlen(message) + 4);
     strncat(message, itoa(egg_num),strlen(message) + my_nblen(egg_num));

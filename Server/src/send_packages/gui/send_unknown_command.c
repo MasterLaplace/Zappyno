@@ -9,7 +9,7 @@
 
 void send_unknown_command(t_server *server, int egg_num)
 {
-    AUTO_FREE char *message = calloc(5 + my_nblen(egg_num),
+    AUTO_FREE char *message = calloc(6 + my_nblen(egg_num),
     sizeof(char));
     strncat(message, "suc",strlen(message) + 3);
     sprintf(message, "%s\n", message);
@@ -18,7 +18,7 @@ void send_unknown_command(t_server *server, int egg_num)
 
 void send_unknown_command_to_all(t_server *server, int egg_num)
 {
-    AUTO_FREE char *message = calloc(5 + my_nblen(egg_num),
+    AUTO_FREE char *message = calloc(6 + my_nblen(egg_num),
     sizeof(char));
     strncat(message, "suc",strlen(message) + 3);
     sprintf(message, "%s\n", message);

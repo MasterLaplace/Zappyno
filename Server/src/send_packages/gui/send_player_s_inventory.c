@@ -16,50 +16,50 @@ size_t count_inv_size(int *resources, int x, int y, int id)
     return count + my_nblen(x) + my_nblen(y) + my_nblen(id);
 }
 
-void send_player_s_inventory(t_server *server, char** array)
+char *make_inv_message(t_server *server, int id)
 {
-    int id = atoi(array[1]);
     int data = 0;
     int x = server->game.teams->players[id].pos_x;
     int y = server->game.teams->players[id].pos_y;
-    AUTO_FREE char *message = calloc(14 + count_inv_size(server->clients[id].resources,
+    char *message = calloc(16 + count_inv_size(server->clients[id].resources,
     x, y, id), sizeof(char));
-    strncat(message, "pin ",strlen(message) + 4);
-    strncat(message, itoa(id),strlen(message) + my_nblen(id));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(x), strlen(message) + my_nblen(x));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(y), strlen(message) + my_nblen(y));
-    strncat(message, " ",strlen(message) + 1);
+    sprintf(message, "pin %d %d %d ", id, x, y);
+    printf("coucou1\n");
     for (size_t i = 0; i != 7; i++) {
         data = server->game.teams->players[server->id].resources[i];
         strncat(message, itoa(data), strlen(message) + my_nblen(data));
-        strncat(message, " ",strlen(message) + 1);
+        strncat(message, " ", strlen(message) + 1);
     }
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+    printf("coucou2\n");
+    strncat(message, "\n", strlen(message) + 1);
+    printf("coucou3\n");
+    return message;
+}
+
+void send_player_s_inventory(t_server *server, char** array)
+{
+    int id = atoi(array[1]);
+    char *message;
+
+    if (is_connected_player(server, id)) {
+        message = make_inv_message(server, id);
+        send_to_client(server, message, server->id);
+    } else {
+        send_command_paramater(server);
+    }
+    free(message);
 }
 
 void send_player_s_inventory_to_all(t_server *server, char **array)
 {
     int id = atoi(array[1]);
-    int data = 0;
-    int x = server->game.teams->players[id].pos_x;
-    int y = server->game.teams->players[id].pos_y;
-    AUTO_FREE char *message = calloc(14 + count_inv_size(server->clients[id].resources,
-    x, y, id), sizeof(char));
-    strncat(message, "pin ",strlen(message) + 4);
-    strncat(message, itoa(id),strlen(message) + my_nblen(id));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(x), strlen(message) + my_nblen(x));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(y), strlen(message) + my_nblen(y));
-    strncat(message, " ",strlen(message) + 1);
-    for (size_t i = 0; i != 7; i++) {
-        data = server->game.teams->players[server->id].resources[i];
-        strncat(message, itoa(data), strlen(message) + my_nblen(data));
-        strncat(message, " ",strlen(message) + 1);
+    char *message;
+
+    if (is_connected_player(server, id)) {
+        message = make_inv_message(server, id);
+        send_to_all_clients(server, message);
+    } else {
+        send_command_paramater_to_all(server);
     }
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+        (message);
 }

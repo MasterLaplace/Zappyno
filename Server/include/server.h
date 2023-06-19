@@ -126,6 +126,8 @@ void freeze_participating_players(t_server *server, t_client* player);
 void perform_elevation(t_server *server);
 //
 void remove_required_resources(t_server *server);
+//
+bool is_connected_player(t_server *server, int id);
 
 
 #endif // SERVER_H
