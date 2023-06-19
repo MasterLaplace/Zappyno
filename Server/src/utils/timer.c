@@ -8,6 +8,27 @@
 #include "../../include/server.h"
 #include <time.h>
 
+bool has_timer_expired_gen_food(t_server *server, time_t duration)
+{
+    if (!server)
+        return !printf("No server\n");
+    if (!duration)
+        return false;
+    if (duration == -1) {
+        server->timer.start = 0;
+        return true;
+    }
+    //printf("start: %ld | end: %ld\n", server->timer.start, time(NULL));
+    if (difftime(time(NULL), server->timer.start) >=
+        duration) {
+        printf("Timer expired\n");
+        server->timer.start = 0;
+        return true;
+    }
+    return false;
+}
+
+
 bool has_timer_expired(t_client *player)
 {
     if (!player)

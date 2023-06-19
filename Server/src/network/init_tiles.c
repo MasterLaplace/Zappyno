@@ -7,6 +7,17 @@
 
 #include "../../include/server.h"
 
+static unsigned count_number_of_food_on_map_for_specific_type(t_server *server, e_resources type)
+{
+    unsigned count = 0;
+
+    for (unsigned i = 0; i < server->params->width * server->params->height; i++) {
+        if (server->game.tiles[i].resources[type] > 0)
+            count += server->game.tiles[i].resources[type];
+    }
+    return count;
+}
+
 static unsigned calculate_density(t_params *params, unsigned type)
 {
     switch (type) {
@@ -35,13 +46,13 @@ int *max_resources)
     unsigned total_tiles = server->params->width * server->params->height;
 
     for (unsigned j = 0; j < 7; j++) {
-        if (max_resources[j] < 0)
+        if (max_resources[j] <= 0)
             continue;
         unsigned max_rsc_on_tile = max_resources[j] / (total_tiles - i) + 1;
         unsigned resource_to_add = rand() % max_rsc_on_tile;
         if (resource_to_add > max_resources[j])
             resource_to_add = max_resources[j];
-        if (j < TOTAL_RESOURCES)
+        if (j < TOTAL_RESOURCES && count_number_of_food_on_map_for_specific_type(server, j) + resource_to_add <= calculate_density(server->params, j))
             TILES(tile_index).resources[j] += resource_to_add;
         max_resources[j] -= resource_to_add;
     }

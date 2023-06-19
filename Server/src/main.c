@@ -31,6 +31,23 @@ bool read_data_from_server(t_server *svr, unsigned client_id)
 {
     int sd = svr->clients[client_id].socket_fd;
 
+    if (has_timer_expired_gen_food(svr, svr->timer.duration_gen_food)) {
+        generate_food(svr);
+        for (int i = 0; i < svr->params->width * svr->params->height; i++) {
+            printf("Tile %d: x: %d y: %d | ", i, svr->game.tiles[i].x, svr->game.tiles[i].y);
+            printf("food: %d | ", svr->game.tiles[i].resources[0]);
+            printf("linemate: %d | ", svr->game.tiles[i].resources[1]);
+            printf("deraumere: %d | ", svr->game.tiles[i].resources[2]);
+            printf("sibur: %d | ", svr->game.tiles[i].resources[3]);
+            printf("mendiane: %d | ", svr->game.tiles[i].resources[4]);
+            printf("phiras: %d | ", svr->game.tiles[i].resources[5]);
+            printf("thystame: %d\n", svr->game.tiles[i].resources[6]);
+        }
+    }
+    if (has_timer_expired_gen_food(svr, svr->timer.remove_food)) {
+        svr->clients[svr->id].resources[0] -= 1;
+        printf("Food removed\n");
+    }
     if (has_timer_expired(&svr->clients[client_id])) {
         svr->clients[client_id].function(svr, svr->clients[client_id].params_function);
         svr->clients[client_id].is_freezed = false;
@@ -52,7 +69,6 @@ void handle_new_connection(t_server *svr)
     int new_socket;
 
     if ((new_socket = accept(svr->sockfd, NULL, NULL)) >= 0) {
-
         printf("New connection\n");
         add_client(svr, new_socket);
         send_to_client(svr, "WELCOME\n", svr->id);

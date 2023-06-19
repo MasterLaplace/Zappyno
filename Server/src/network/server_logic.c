@@ -11,24 +11,28 @@
 #include <time.h>
 
 ai_command ia_client[] = {
-    {"Look", recv_look, 1},
-    {"Forward", recv_forward, 1},
-    {"Right", recv_right, 1},
-    {"Left", recv_left, 1},
-    {"Inventory", recv_inventory, 1},
-    {"Connect_nbr", recv_connect_nbr, -1},
-    {"Take", recv_take, 1},
-    {"Set", recv_set, 1},
-    {"Broadcast", recv_broadcast, 1},
-    {"Fork", recv_fork, 1},
-    {"Eject", recv_eject, 1},
-    {"Incantation", recv_incantation, 300},
-    {NULL, NULL, 0}
+        {"Look", recv_look, 1},
+        {"Forward", recv_forward, 1},
+        {"Right", recv_right, 1},
+        {"Left", recv_left, 1},
+        {"Inventory", recv_inventory, 1},
+        {"Connect_nbr", recv_connect_nbr, -1},
+        {"Take", recv_take, 1},
+        {"Set", recv_set, 1},
+        {"Broadcast", recv_broadcast, 1},
+        {"Fork", recv_fork, 1},
+        {"Eject", recv_eject, 1},
+        {"Incantation", recv_incantation, 300},
+        {NULL, NULL, 0}
 };
 
 gui_command gui_client[] = {
-    {"msz", recv_map_size},
-    {0, NULL}
+        {"msz", recv_map_size},
+        {"ppo", send_player_s_position},
+        {"plv", send_player_s_level},
+        {"pin", send_player_s_inventory},
+        {"tna", send_name_of_all_the_teams},
+        {0, NULL}
 };
 
 static bool join_client(t_server *server, char **message)
@@ -59,7 +63,7 @@ static bool check_command_ai(t_server *server, char **message)
 {
     for (int i = 0; ia_client[i].command_id; i++) {
         if (!strncmp(ia_client[i].command_id, message[0],
-strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed) {
+                     strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed) {
             CLIENT(server->id).function = NULL;
             printf("Command found : %s\n", ia_client[i].command_id);
             CLIENT(server->id).function = ia_client[i].function_ai;
@@ -125,6 +129,7 @@ bool handle_client_data(t_server *server, int fd)
         ret = true;
     } else {
         if (!CLIENT(server->id).is_gui) {
+            //modify_inventory(server);
             ret = check_command_ai(server, message);
         } else {
             ret = check_command_gui(server, message);

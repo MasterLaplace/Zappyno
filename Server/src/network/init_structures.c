@@ -79,16 +79,10 @@ t_server *set_server_struct(t_params *params)
     server->params = params;
     server->game = set_game_struct(params);
     generate_food(server);
-    for (int i = 0; i < params->width * params->height; i++) {
-        printf("Tile %d: x: %d y: %d | ", i, server->game.tiles[i].x, server->game.tiles[i].y);
-        printf("food: %d | ", server->game.tiles[i].resources[0]);
-        printf("linemate: %d | ", server->game.tiles[i].resources[1]);
-        printf("deraumere: %d | ", server->game.tiles[i].resources[2]);
-        printf("sibur: %d | ", server->game.tiles[i].resources[3]);
-        printf("mendiane: %d | ", server->game.tiles[i].resources[4]);
-        printf("phiras: %d | ", server->game.tiles[i].resources[5]);
-        printf("thystame: %d\n", server->game.tiles[i].resources[6]);
-    }
+    server->timer.start = time(NULL);
+    server->timer.remove_food = server->params->freq * 126;
+    server->timer.duration_gen_food = server->params->freq * 20;
+    printf("Timer duration: %f\n", server->timer.duration_gen_food);
     return server;
 }
 

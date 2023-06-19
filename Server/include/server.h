@@ -44,6 +44,12 @@
     #include "game.h"
     #include "clean_up.h"
 
+typedef struct server_timer_s {
+    time_t start;
+    double duration_gen_food;
+    double remove_food;
+} server_timer_t;
+
 /**
  * @brief Structure that contains the server
  *
@@ -63,6 +69,7 @@ typedef struct s_server {
     t_client clients[SOMAXCONN];
     t_params *params;
     t_game game;
+    server_timer_t timer;
 } t_server;
 
 // Prototypes src/network/ | function made to setup the server
@@ -96,6 +103,8 @@ t_params set_param_struct(void);
 t_server *set_server_struct(t_params *params);
 //
 bool has_timer_expired(t_client *player);
+//
+bool has_timer_expired_gen_food(t_server *server, time_t duration);
 //
 void init(void) __attribute__((constructor));
 //

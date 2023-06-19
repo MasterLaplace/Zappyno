@@ -5,7 +5,7 @@
 ** send_join_error.c
 */
 
-#include "../../../include/send_package.h"
+#include "../../include/send_package.h"
 
 static char ErrorFlag[7][50] = {
     "ko\n",

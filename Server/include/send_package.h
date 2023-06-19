@@ -6,18 +6,18 @@
 */
 
 #ifndef SEND_PACKAGE_H_
-    #define SEND_PACKAGE_H_
-    #define min(a,b) ((a) < (b) ? (a) : (b))
-    #define ORIENTATION TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation
-    #define POS_X TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x
-    #define POS_Y TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y
+#define SEND_PACKAGE_H_
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#define ORIENTATION TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation
+#define POS_X TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x
+#define POS_Y TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y
 
-    #include "server.h"
-    #include "clean_up.h"
+#include "server.h"
+#include "clean_up.h"
 
 typedef struct tmp_s {
     int i;
-    int j
+    int j;
 } tmp_t;
 
 // CONNECTION DIRECTORY
@@ -56,11 +56,7 @@ void send_error(t_server *server, int id_error);
 
 //SEND DIRECTORY AI
 //------------------ \\
-// Send to all the clients the map size
-void send_map_size_to_all(t_server *server);
-// Send to the client the map size
-void send_map_size(t_server *server);
-//
+
 void send_look(t_server *server);
 void send_look_to_all(t_server *server);
 //
@@ -97,7 +93,11 @@ void send_eject_to_all(t_server *server);
 void send_incantation(t_server *server);
 //
 void send_dead(t_server *server);
+
+//SEND DIRECTORY GUI
+//------------------ \\
 // Send to all clients all teams names
+void send_name_of_all_the_teams(t_server *server, char** array);
 void send_name_of_all_the_teams_to_all(t_server *server, char** array);
 //
 void send_player_s_position(t_server *server, char** array);
@@ -125,9 +125,9 @@ void send_broadcast_gui(t_server *server, char *brodacst);
 void send_broadcast_gui_to_all(t_server *server, char *brodacst);
 //
 void send_start_of_an_incantation(t_server *server, tmp_t co, int l,
-int *players);
+                                  int *players);
 void send_start_of_an_incantation_to_all(t_server *server, tmp_t co, int l,
-int *players);
+                                         int *players);
 //
 void send_end_of_an_incantation(t_server *server, tmp_t co, char *res);
 void send_end_of_an_incantation_to_all(t_server *server, tmp_t co, char *res);
@@ -139,9 +139,9 @@ void send_ressource_collecting(t_server *server, int id);
 void send_ressource_collecting_to_all(t_server *server, int id);
 //
 void send_an_egg_was_laid_by_a_player(t_server *server, int egg_num, int x,
-int y);
+                                      int y);
 void send_an_egg_was_laid_by_a_player_to_all(t_server *server, int egg_num,
-int x, int y);
+                                             int x, int y);
 //
 void send_player_connection_for_an_egg(t_server *server, int egg_num);
 void send_player_connection_for_an_egg_to_all(t_server *server, int egg_num);
