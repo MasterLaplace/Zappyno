@@ -46,8 +46,7 @@
 
 typedef struct server_timer_s {
     time_t start;
-    double duration_gen_food;
-    double remove_food;
+    double duration;
 } server_timer_t;
 
 /**
@@ -62,6 +61,9 @@ typedef struct server_timer_s {
  * @param game The game structure
  */
 typedef struct s_server {
+    bool should_die;
+    bool death;
+    bool remove_food;
     int sockfd;
     int max_fd;
     fd_set readfds;
@@ -69,7 +71,8 @@ typedef struct s_server {
     t_client clients[SOMAXCONN];
     t_params *params;
     t_game game;
-    server_timer_t timer;
+    server_timer_t gen_food_timer;
+    server_timer_t remove_food_timer;
 } t_server;
 
 // Prototypes src/network/ | function made to setup the server
@@ -104,7 +107,7 @@ t_server *set_server_struct(t_params *params);
 //
 bool has_timer_expired(t_client *player);
 //
-bool has_timer_expired_gen_food(t_server *server, time_t duration);
+bool has_timer_expired_gen_food(server_timer_t *timer, double duration);
 //
 void init(void) __attribute__((constructor));
 //

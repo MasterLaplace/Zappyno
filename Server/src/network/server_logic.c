@@ -119,17 +119,12 @@ bool handle_client_data(t_server *server, int fd)
         remove_client(server, server->id);
         return false;
     }
-    printf("ok\n");
     ON_CLEANUP(free_double_array) char **message = stwa(buffer, " \n\t");
-    printf("ok2\n");
-    for (int i = 0; message[i]; i++)
-        printf("Message[%d] : %s\n", i, message[i]);
     if (!CLIENT(server->id).is_connected) {
         join_client(server, message);
         ret = true;
     } else {
         if (!CLIENT(server->id).is_gui) {
-            //modify_inventory(server);
             ret = check_command_ai(server, message);
         } else {
             ret = check_command_gui(server, message);

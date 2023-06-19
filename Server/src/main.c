@@ -27,39 +27,51 @@ void add_client(t_server *server, int new_socket)
     }
 }
 
-bool read_data_from_server(t_server *svr, unsigned client_id)
+bool check_death(t_server *server)
 {
-    int sd = svr->clients[client_id].socket_fd;
+    if (TEAM_INDEX == -1 || INDEX_IN_TEAM == -1)
+        return false;
+    if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].id == -1)
+        return false;
+    if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0] <= 0 && has_timer_expired_gen_food(&server->remove_food_timer, server->remove_food_timer.duration)) {
+        printf("Player %d died\n", server->id);
+        send_to_client(server, "dead\n", server->id);
+        remove_client(server, server->id);
+        return true;
+    }
+    return false;
+}
 
-    if (has_timer_expired_gen_food(svr, svr->timer.duration_gen_food)) {
-        generate_food(svr);
-        for (int i = 0; i < svr->params->width * svr->params->height; i++) {
-            printf("Tile %d: x: %d y: %d | ", i, svr->game.tiles[i].x, svr->game.tiles[i].y);
-            printf("food: %d | ", svr->game.tiles[i].resources[0]);
-            printf("linemate: %d | ", svr->game.tiles[i].resources[1]);
-            printf("deraumere: %d | ", svr->game.tiles[i].resources[2]);
-            printf("sibur: %d | ", svr->game.tiles[i].resources[3]);
-            printf("mendiane: %d | ", svr->game.tiles[i].resources[4]);
-            printf("phiras: %d | ", svr->game.tiles[i].resources[5]);
-            printf("thystame: %d\n", svr->game.tiles[i].resources[6]);
+bool read_data_from_server(t_server *server, unsigned client_id)
+{
+    int sd = server->clients[client_id].socket_fd;
+
+    if (check_death(server))
+        return true;
+    if (has_timer_expired_gen_food(&server->remove_food_timer, server->remove_food_timer.duration)) {
+        if (TEAM_INDEX != -1 && INDEX_IN_TEAM != -1) {
+            if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].id != -1) {
+                TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0] -= 1;
+                printf("Remove food\n");
+            }
         }
     }
-    if (has_timer_expired_gen_food(svr, svr->timer.remove_food)) {
-        svr->clients[svr->id].resources[0] -= 1;
-        printf("Food removed\n");
+    if (has_timer_expired_gen_food(&server->gen_food_timer, server->gen_food_timer.duration)) {
+        printf("Generate food\n");
+        generate_food(server);
     }
-    if (has_timer_expired(&svr->clients[client_id])) {
-        svr->clients[client_id].function(svr, svr->clients[client_id].params_function);
-        svr->clients[client_id].is_freezed = false;
-        svr->clients[client_id].function = NULL;
-        if (svr->clients[client_id].params_function != NULL)
-            free_double_array(&svr->clients[client_id].params_function);
-        svr->clients[client_id].params_function = NULL;
+    if (has_timer_expired(&server->clients[client_id])) {
+        server->clients[client_id].function(server, server->clients[client_id].params_function);
+        server->clients[client_id].is_freezed = false;
+        server->clients[client_id].function = NULL;
+        if (server->clients[client_id].params_function != NULL)
+            free_double_array(&server->clients[client_id].params_function);
+        server->clients[client_id].params_function = NULL;
     }
     if (sd == 0)
         return true;
-    if (FD_ISSET(sd, &svr->readfds)) {
-        return handle_client_data(svr, sd);
+    if (FD_ISSET(sd, &server->readfds)) {
+        return handle_client_data(server, sd);
     }
     return true;
 }

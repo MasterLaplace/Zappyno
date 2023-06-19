@@ -9,6 +9,19 @@
 #include "signal.h"
 #include <time.h>
 
+/*
+for (int i = 0; i < svr->params->width * svr->params->height; i++) {
+    printf("Tile %d: x: %d y: %d | ", i, svr->game.tiles[i].x, svr->game.tiles[i].y);
+    printf("food: %d | ", svr->game.tiles[i].resources[0]);
+    printf("linemate: %d | ", svr->game.tiles[i].resources[1]);
+    printf("deraumere: %d | ", svr->game.tiles[i].resources[2]);
+    printf("sibur: %d | ", svr->game.tiles[i].resources[3]);
+    printf("mendiane: %d | ", svr->game.tiles[i].resources[4]);
+    printf("phiras: %d | ", svr->game.tiles[i].resources[5]);
+    printf("thystame: %d\n", svr->game.tiles[i].resources[6]);
+}
+ */
+
 static t_map *set_tiles_struct(t_params *params)
 {
     unsigned size = (params->width * params->height);
@@ -60,6 +73,7 @@ static t_game set_game_struct(t_params *params)
             game.teams[i].players[j].pos_x = 0;//RANDINT(0, params->width - 1);
             game.teams[i].players[j].pos_y = 0;//RANDINT(0, params->height - 1);
             game.teams[i].players[j].is_an_egg = true;
+            game.teams[i].players[j].id = -1;
         }
     }
     game.tiles = set_tiles_struct(params);
@@ -79,10 +93,16 @@ t_server *set_server_struct(t_params *params)
     server->params = params;
     server->game = set_game_struct(params);
     generate_food(server);
-    server->timer.start = time(NULL);
-    server->timer.remove_food = server->params->freq * 126;
-    server->timer.duration_gen_food = server->params->freq * 20;
-    printf("Timer duration: %f\n", server->timer.duration_gen_food);
+    server->gen_food_timer.start = time(NULL);
+    server->gen_food_timer.duration = 20.0 / server->params->freq;
+    server->remove_food_timer.start = time(NULL);
+    server->remove_food_timer.duration = 126.0 / server->params->freq;
+    for (int i = 0; i < SOMAXCONN; i++) {
+        server->clients[i].id = -1;
+        server->clients[i].index_team = -1;
+        server->clients[i].index_in_team = -1;
+    }
+    printf("Timer remove food: %f\n", server->remove_food_timer.duration);
     return server;
 }
 

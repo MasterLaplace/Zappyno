@@ -25,7 +25,7 @@ int main() {
     // Server address information
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(4243);  // Replace with the actual server port
+    server_addr.sin_port = htons(4242);  // Replace with the actual server port
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Replace with the actual server IP
 
     // Connect to the server
