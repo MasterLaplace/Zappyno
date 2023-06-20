@@ -49,31 +49,13 @@ namespace Sf_sprite {
         Math::Vector getSize() const override { return Math::Vector(this->sprite.getTextureRect().width, this->sprite.getTextureRect().height); }
         Math::Vector getMaxSize() const override { return Math::Vector(this->maxSize.width, this->maxSize.height); }
         unsigned getTransparency() const override { return this->sprite.getColor().a; }
+        void animate(const unsigned &state = 0);
+        void animate_checkbox(bool &ischecked, const unsigned &state = 0);
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }
 
         SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos, Math::Vector scale, Math::Vector origin = {0, 0});
 
-        void animate(const unsigned &state = 0) {
-            sf::IntRect rect = this->sprite.getTextureRect();
-            unsigned end = this->offset_x * (this->max_offset_x - 1);
-
-            rect.left += this->offset_x;
-            rect.top = this->offset_y * state;
-            this->sprite.setTextureRect(rect);
-            if (rect.left >= int(end)) {
-                rect.left = 0;
-                this->sprite.setTextureRect(rect);
-            }
-        }
-
-        void animate_checkbox(bool &ischecked, const unsigned &state = 0) {
-            sf::IntRect rect = this->sprite.getTextureRect();
-
-            rect.left = this->offset_x * ischecked;
-            rect.top = this->offset_y * state;
-            this->sprite.setTextureRect(rect);
-        }
         void drawSprite() const override { this->window->draw(this->sprite); }
     };
 
