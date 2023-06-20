@@ -20,7 +20,6 @@
         <Image name="back_img_button" path="GUI/assets/back_button.png" offset="108, 106" max="1"/>
         <Image name="mute_img_button" path="GUI/assets/mute_check_box.png" offset="80, 80" max="1"/>
         <Image name="full_screen_img_button" path="GUI/assets/full_screen_check_box.png" offset="80, 80" max="1"/>
-        <Image name="volume_txt_img" path="GUI/assets/volume_txt.png"/>
     </Images>
     <Buttons>
         <!-- CALLBACK: -->
