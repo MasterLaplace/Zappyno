@@ -111,4 +111,4 @@ namespace Parser {
         std::cout << "OBJ file \"" << filename << "\" loaded in " << duration.count() << "ms" << std::endl;
         return newshape;
     }
-}
+} // namespace Parser

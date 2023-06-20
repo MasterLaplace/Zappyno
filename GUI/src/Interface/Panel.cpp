@@ -16,6 +16,7 @@ namespace Interface {
         for (auto &bar : _bars)
             bar.updateState();
     }
+
     void Panel::updatePanel(const Math::Vector &mousePos, int key, const bool &mousePressed) {
         for (auto &button : _buttons)
             button.animate(mousePos, mousePressed);
@@ -26,6 +27,7 @@ namespace Interface {
         for (auto &bar : _bars)
             bar.updateState();
     }
+
     std::vector<CALLBACK> Panel::getCallback() {
         std::vector<CALLBACK> callback;
         for (auto &button : _buttons)
@@ -36,4 +38,4 @@ namespace Interface {
                 callback.push_back(checkbox.getCallback());
         return callback;
     }
-}
+} // namespace Interface

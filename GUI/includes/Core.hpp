@@ -8,7 +8,7 @@
 #ifndef CORE_HPP_
     #define CORE_HPP_
     #define	EXIT_ERROR	84	/* Failing exit status.  */
-    #define FRAMERATE 60
+    #include "Protocol.hpp"
     #include "Client.hpp"
     #include "SfTransition.hpp"
     #include "Scene.hpp"
@@ -27,6 +27,8 @@ class Core {
         std::shared_ptr<sf::RenderWindow> _window;
         std::shared_ptr<GUI::Scene> _scene;
         GUI::SceneManager _sceneManager;
+        std::shared_ptr<Manager::Protocol> _protocol;
+        std::shared_ptr<Manager::Client> _client;
 };
 
 template<typename T>

@@ -36,39 +36,23 @@ namespace Sf_sprite {
         unsigned offset_y = 0;
         unsigned max_offset_x = 0;
 
-        void setOffset(Math::Vector offset) override {
-            this->offset_x = offset.x();
-            this->offset_y = offset.y();
-            this->sprite.setTextureRect(sf::IntRect(0, 0, offset.x(), offset.y()));
-        }
+        void setOffset(Math::Vector offset) override;
         void setMaxOffsetX(unsigned max_offset_x) { this->max_offset_x = max_offset_x; }
         void setPos(Math::Vector pos) override { this->pos = sf::Vector2f(pos.x(), pos.y()); sprite.setPosition(this->pos); }
         void setScale(Math::Vector scale) override { this->scale = sf::Vector2f(scale.x(), scale.y()); }
         void setOrigin(Math::Vector origin) override { this->origin = sf::Vector2f(origin.x(), origin.y()); }
         void setSize(Math::Vector size) override { this->sprite.setTextureRect(sf::IntRect(0, 0, size.x(), size.y())); }
+        void setTransparency(const unsigned &transparency) override;
         Math::Vector getPos() const override { return Math::Vector(this->pos.x, this->pos.y); }
         Math::Vector getScale() const override { return Math::Vector(this->scale.x, this->scale.y); }
         Math::Vector getOrigin() const override { return Math::Vector(this->origin.x, this->origin.y); }
         Math::Vector getSize() const override { return Math::Vector(this->sprite.getTextureRect().width, this->sprite.getTextureRect().height); }
         Math::Vector getMaxSize() const override { return Math::Vector(this->maxSize.width, this->maxSize.height); }
+        unsigned getTransparency() const override { return this->sprite.getColor().a; }
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }
 
-        SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos, Math::Vector scale, Math::Vector origin = {0, 0}) {
-            sf::Texture texture;
-            this->window = win;
-            texture.loadFromFile(pathname);
-            this->texture = texture;
-            auto size = this->texture.getSize();
-            this->maxSize = sf::IntRect(0, 0, size.x, size.y);
-            this->pos = sf::Vector2f(pos.x(), pos.y());
-            this->scale = sf::Vector2f(scale.x(), scale.y());
-            this->origin = sf::Vector2f(origin.x(), origin.y());
-            this->sprite.setTexture(this->texture);
-            this->sprite.setPosition(this->pos);
-            this->sprite.setScale(this->scale);
-            this->sprite.setOrigin(this->origin);
-        }
+        SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos, Math::Vector scale, Math::Vector origin = {0, 0});
 
         void animate(const unsigned &state = 0) {
             sf::IntRect rect = this->sprite.getTextureRect();

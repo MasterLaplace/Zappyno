@@ -11,6 +11,7 @@
     #include "Input.hpp"
     #include "CheckBox.hpp"
     #include "Bar.hpp"
+    #include "Chat.hpp"
 
 /**
  * @brief Panel class
@@ -45,12 +46,15 @@ namespace Interface {
             std::shared_ptr<ISprite> getSprite() const { return _sprite; }
             bool isDisplayed() const { return _isDisplayed; }
 
+            std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
+
             void addButton(const Interface::Button &button) { _buttons.push_back(button); }
             void addInput(const Interface::Input &input) { _inputs.push_back(input); }
             void addCheckbox(const Interface::Checkbox &checkbox) { _checkboxs.push_back(checkbox); }
             void addBar(const Interface::Bar &bar) { _bars.push_back(bar); }
-            template<typename T>
-            void drawPanel(T &win) {
+            void addChat(const Interface::Chat &chat) { _chat = std::make_shared<Interface::Chat>(chat); }
+            template<typename Win>
+            void drawPanel(Win &win) {
                 if (!_isDisplayed) return;
                 if (_sprite) _sprite->drawSprite();
                 for (auto &button : _buttons)
@@ -58,9 +62,11 @@ namespace Interface {
                 for (auto &checkbox : _checkboxs)
                     checkbox.drawCheckbox();
                 for (auto &input : _inputs)
-                    input.drawInput<T>(win);
+                    input.drawInput<Win>(win);
                 for (auto &bar : _bars)
                     bar.drawBar();
+                if (_chat)
+                    _chat->drawChat<Win>(win);
             }
             void updatePanel(const Math::Vector &mousePos, const bool &mousePressed = false);
             void updatePanel(const Math::Vector &mousePos, int key, const bool &mousePressed = false);
@@ -74,6 +80,7 @@ namespace Interface {
             std::vector<Interface::Checkbox> _checkboxs;
             std::vector<Interface::Input> _inputs;
             std::vector<Interface::Bar> _bars;
+            std::shared_ptr<Interface::Chat> _chat = nullptr;
             std::shared_ptr<ISprite> _sprite;
             Math::Vector _pos;
             Math::Vector _scale;

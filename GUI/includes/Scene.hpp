@@ -11,38 +11,43 @@
     #include "Mesh.hpp"
     #include "Xml.hpp"
     #include <SFML/Audio.hpp>
+    #include "Protocol.hpp"
+
+namespace Scene_Manager {
+    enum SceneType {
+        MENU,
+        GAME,
+        SETTING,
+        CREATE,
+        PAUSE,
+        CREDIT,
+        RESULT
+    };
+}
 
 namespace GUI {
     class Scene {
         public:
-            Scene() {}
+            Scene() = default;
+            Scene(Scene_Manager::SceneType sceneType) : _scenetype(sceneType) {}
             ~Scene() = default;
             Scene(Scene&) = default;
             Scene(Scene&&) = default;
             Scene(const Scene&) = default;
             Scene &operator=(const Scene&) = default;
 
-            void addPanel(const Interface::Panel &panel) {
-                _panels.push_back(panel);
-            }
 
-            void updateScene(const Math::Vector &mousePos, const bool &mousePressed = false) {
-                for (auto &panel : _panels)
-                    panel.updatePanel(mousePos, mousePressed);
+            Scene_Manager::SceneType &getSceneType() { return _scenetype; }
 
-            }
-            void updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed = false) {
-                for (auto &panel : _panels)
-                    panel.updatePanel(mousePos, key, mousePressed);
-            }
-            std::vector<Interface::CALLBACK> getCallback() {
-                std::vector<Interface::CALLBACK> callback;
-                for (auto &panel : _panels) {
-                    std::vector<Interface::CALLBACK> tmp = panel.getCallback();
-                    callback.insert(callback.end(), tmp.begin(), tmp.end());
-                }
-                return callback;
-            }
+            std::shared_ptr<Interface::Chat> getChat();
+
+            void addPanel(const Interface::Panel &panel) { _panels.push_back(panel); }
+
+            void updateScene(const Math::Vector &mousePos, const bool &mousePressed = false);
+            void updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed = false);
+
+            std::vector<Interface::CALLBACK> getCallback();
+
             template<typename T>
             void drawScene(T &win) {
                 for (auto &panel : _panels)
@@ -51,6 +56,7 @@ namespace GUI {
 
         protected:
         private:
+            Scene_Manager::SceneType _scenetype;
             std::vector<Interface::Panel> _panels;
     };
 
@@ -80,15 +86,15 @@ namespace GUI {
             SceneManager &operator=(const SceneManager&) = default;
 
             static void switchPanel(std::vector<Interface::Panel> &panels, const std::string &panelName);
-            static void switchScene(SceneType &actualScene, const SceneType &nextScene);
-            static std::string SceneTypeToString(const SceneType &sceneType);
+            static void switchScene(Scene_Manager::SceneType &actualScene, const Scene_Manager::SceneType &nextScene);
+            static std::string SceneTypeToString(const Scene_Manager::SceneType &sceneType);
             static std::string CallbackToString(const Interface::CALLBACK &callback);
             static Interface::CALLBACK StringToCallback(const std::string &callback);
             static sf::Color StringToSfColor(const std::string &color);
             static std::string findInTiles(std::vector<std::map<std::string, std::string>> tile, std::string compare, std::string key = "path");
             template<typename Win, typename Sprite>
-            std::shared_ptr<Scene> create_scene(const SceneType &sceneType, std::shared_ptr<Win> window) {
-                std::shared_ptr<Scene> scene = std::make_shared<Scene>();
+            std::shared_ptr<Scene> create_scene(const Scene_Manager::SceneType &sceneType, std::shared_ptr<Win> window) {
+                std::shared_ptr<Scene> scene = std::make_shared<Scene>(sceneType);
                 std::vector<std::map<std::string, std::string>> image = _xml.getTiles("GUI/assets/scene.xml", "Images");
                 std::vector<std::map<std::string, std::string>> font = _xml.getTiles("GUI/assets/scene.xml", "Fonts");
                 std::vector<std::map<std::string, std::string>> button = _xml.getTiles("GUI/assets/scene.xml", "Buttons");
@@ -121,8 +127,7 @@ namespace GUI {
                                                 Math::Vector scale(String::string_to_string_vector(it5["scale"], ", \t"));
                                                 Interface::Button _button = Interface::Button(std::make_shared<Sprite>(window, findInTiles(image, it5["img"]), pos, scale));
                                                 auto sprite = _button.getSprite();
-                                                std::vector<std::string> offsetComponents = String::string_to_string_vector(findInTiles(image, it5["img"], "offset"), ", \t");
-                                                sprite->setOffset(Math::Vector(std::stof(offsetComponents[0]), std::stof(offsetComponents[1])));
+                                                sprite->setOffset(Math::Vector(String::string_to_string_vector(findInTiles(image, it5["img"], "offset"), ", \t")));
                                                 sprite->setMaxOffsetX(std::stoi(findInTiles(image, it5["img"], "max")));
                                                 _button.setCallback(SceneManager::StringToCallback(it5["callback"]));
                                                 _panel.addButton(_button);
@@ -174,8 +179,9 @@ namespace GUI {
             }
 
             template <typename Win, typename Sprite>
-            void switchScene(std::shared_ptr<Win> window, std::shared_ptr<Scene> &scene) {
+            void switchScene(std::shared_ptr<Win> window, std::shared_ptr<Scene> &scene, std::shared_ptr<Manager::Protocol> &protocol) {
                 std::vector<Interface::CALLBACK> list_callback = scene->getCallback();
+                list_callback.push_back(protocol->getCallback());
                 for (auto it : list_callback) {
                     switch (it) {
                         case Interface::CALLBACK::EXIT:
@@ -188,22 +194,23 @@ namespace GUI {
                                 music.setVolume(0);
                             return;
                         case Interface::CALLBACK::GOTO_MENU:
-                            scene = create_scene<Win, Sprite>(SceneType::MENU, window);
+                            scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::MENU, window);
                             return;
                         case Interface::CALLBACK::GOTO_CREATE:
-                            scene = create_scene<Win, Sprite>(SceneType::CREATE, window);
+                            protocol->setWinnerTeam("");
+                            scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREATE, window);
                             return;
                         case Interface::CALLBACK::GOTO_GAME:
-                            scene = create_scene<Win, Sprite>(SceneType::GAME, window);
-                            return;
+                            scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::GAME, window);
+                            return protocol->setChat(scene->getChat());
                         case Interface::CALLBACK::GOTO_SETTING:
-                            scene = create_scene<Win, Sprite>(SceneType::SETTING, window);
+                            scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::SETTING, window);
                             return;
                         case Interface::CALLBACK::GOTO_RESULT:
-                            scene = create_scene<Win, Sprite>(SceneType::RESULT, window);
+                            scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::RESULT, window);
                             return;
                         case Interface::CALLBACK::GOTO_CREDIT:
-                            scene = create_scene<Win, Sprite>(SceneType::CREDIT, window);
+                            scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREDIT, window);
                             return;
                         default:
                             break;
