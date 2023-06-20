@@ -2,12 +2,13 @@
 ** EPITECH PROJECT, 2023
 ** B-YEP-400-REN-4-1-zappy
 ** File description:
-** Button
+** CheckBox
 */
 
-#ifndef BUTTON_HPP_
-    #define BUTTON_HPP_
+#ifndef CHECKBOX_HPP_
+    #define CHECKBOX_HPP_
     #include "ISprite.hpp"
+    #include "Button.hpp"
     #include <chrono>
     #include <memory>
 
@@ -27,21 +28,7 @@
  * }
  */
 namespace Interface {
-    enum CALLBACK {
-        NONE = -1,
-        GOTO_CREATE,
-        GOTO_GAME,
-        GOTO_SETTING,
-        GOTO_CREDIT,
-        GOTO_RESULT,
-        GOTO_MENU,
-        RESIZE,
-        EXIT,
-        MUTE_SOUND,
-        FULL_SCREEN,
-        OPEN_INVENTORY,
-    };
-    class Button {
+    class Checkbox {
         public:
             enum State {
                 IDLE,
@@ -50,26 +37,26 @@ namespace Interface {
                 RELEASED
             };
         public:
-            Button() = default;
-            Button(std::shared_ptr<ISprite> sprite) {
+            Checkbox() = default;
+            Checkbox(std::shared_ptr<ISprite> sprite) {
                 _sprite = sprite;
                 _pos = sprite->getPos();
                 _size = sprite->getSize();
                 _scale = sprite->getScale();
             }
-            ~Button() = default;
+            ~Checkbox() = default;
 
             void setPos(const Math::Vector &pos) { _pos = pos; }
             void setSize(const Math::Vector &size) { _size = size; }
             void setScale(const Math::Vector &scale) { _scale = scale; }
-            void setState(const State &state) { _state = state; }
             void setCallback(const CALLBACK &callback) { _callback = callback; }
             std::shared_ptr<ISprite> getSprite() const { return _sprite; }
             CALLBACK getCallback() const { return _callback; }
             State getState() const { return _state; }
             void updateState(const Math::Vector &mousePos, const bool &mousePressed = false);
             void animate(const Math::Vector &mousePos, const bool &mousePressed = false);
-            void drawButton() const { _sprite->drawSprite(); }
+            void animate_checkbox(const Math::Vector &mousePos, const bool &mousePressed = false);
+            void drawCheckbox() const { _sprite->drawSprite(); }
 
         protected:
         private:
@@ -79,7 +66,8 @@ namespace Interface {
             std::shared_ptr<ISprite> _sprite;
             State _state = IDLE;
             CALLBACK _callback = NONE;
+            bool ischecked = false;
     };
 } // namespace Interface
 
-#endif /* !BUTTON_HPP_ */
+#endif /* !CHECKBOX_HPP_ */

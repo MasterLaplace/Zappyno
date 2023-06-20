@@ -49,12 +49,13 @@ namespace Sf_sprite {
         Math::Vector getSize() const override { return Math::Vector(this->sprite.getTextureRect().width, this->sprite.getTextureRect().height); }
         Math::Vector getMaxSize() const override { return Math::Vector(this->maxSize.width, this->maxSize.height); }
         unsigned getTransparency() const override { return this->sprite.getColor().a; }
+        void animate(const unsigned &state = 0);
+        void animate_checkbox(bool &ischecked, const unsigned &state = 0);
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }
 
         SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos, Math::Vector scale, Math::Vector origin = {0, 0});
 
-        void animate(const unsigned &state = 0);
         void drawSprite() const override { this->window->draw(this->sprite); }
     };
 

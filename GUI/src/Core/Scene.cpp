@@ -91,7 +91,7 @@ namespace GUI {
     }
 
     Interface::CALLBACK SceneManager::StringToCallback(const std::string &callback) {
-        for (int i = 0; i < Interface::CALLBACK::EXIT; i++) {
+        for (int i = 0; i <= Interface::CALLBACK::OPEN_INVENTORY; i++) {
             if (callback == CallbackToString(static_cast<Interface::CALLBACK>(i)))
                 return static_cast<Interface::CALLBACK>(i);
         }

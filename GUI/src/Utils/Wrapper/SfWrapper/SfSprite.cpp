@@ -49,6 +49,14 @@ namespace Sf_sprite {
         }
     }
 
+    void SfSprite::animate_checkbox(bool &ischecked, const unsigned &state) {
+        sf::IntRect rect = this->sprite.getTextureRect();
+
+        rect.left = this->offset_x * ischecked;
+        rect.top = this->offset_y * state;
+        this->sprite.setTextureRect(rect);
+    }
+
     void update(SfSprite &sprite) {
         sprite.sprite.setPosition(sprite.pos);
         sprite.sprite.setScale(sprite.scale);
