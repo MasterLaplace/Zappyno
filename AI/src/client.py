@@ -30,10 +30,11 @@ class Client:
         self.__id: int = 0
         self.__state: State = State.UNINITIALIZED
         self.__communication = Communication(host, port)
-        self.__player = Player(self.__communication, self.__team, self.__id)
+        self.__player = Player(self.__id)
         self.__is_logged: bool = False
         self.__width: int = 0
         self.__height: int = 0
+        self.__message: str = ''
 
     def loop(self) -> None:
         """
@@ -64,14 +65,13 @@ class Client:
         """
         Handle read selector from select.
         """
-        message: str = ''
         received: str = self.__communication.receive()
 
         if received:
-            message += received
+            self.__message += received
         else:
             self.__communication.disconnect()
-        splitted: list = message.split('\n')
+        splitted: list = self.__message.split('\n')
         for line in splitted[:-1]:
             self.__handle_line(line)
 
@@ -100,17 +100,25 @@ class Client:
         elif self.__state != State.SAVED_INFOS:
             self.__store_infos(line)
         elif 'Elevation underway' in line:
-            print('Increase Player step')
+            self.__player.step = 8
         elif 'Current level:' in line:
             print('Current level')
         elif self.__state == State.SAVED_INFOS and 'message' in line:
+            if self.__player.delete_read:
+                self.__player.delete_read = False
+                self.__message = self.__message.split('\n')[-1]
+                return
+            self.__player.parse_broadcast(line)
+            self.__message = self.__message.split('\n')[-1]
             return
         elif 'ok' in line and 'Take' in self.__player.response and 'food' not in self.__player.response:
-            print('Update shared inventory')
+            self.__player.refresh_shared_inventory()
+            self.__player.new_object = True
         elif 'Inventory' in self.__player.response:
+            self.__player.parse_inventory(line)
             print('Parse and save player inventory')
         elif 'Look' in self.__player.response:
-            print('Look')
+            self.__player.fov = line
         elif 'Connect_nbr' in self.__player.response:
             self.__player.unused_slots = int(line)
             if self.__player.unused_slots > 0 and self.__player.fork and self.__id < 6:
@@ -118,6 +126,7 @@ class Client:
                     str(self.__id + 1)]):
                     self.__player.fork = False
                     print('A new IA has been forked')
+        self.__message = self.__message.split('\n')[-1]
         self.__player.is_running = True
 
     def __handle_death(self) -> None:
@@ -132,7 +141,7 @@ class Client:
         """
         Handle welcome message from the server.
         """
-        self.__player.response = self.__team + '\n'
+        self.__player.response = self.__team
 
     def __store_infos(self, line: str) -> None:
         """
