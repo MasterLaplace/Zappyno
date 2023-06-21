@@ -38,8 +38,9 @@ namespace Interface {
         RESIZE,
         EXIT,
         MUTE_SOUND,
-        FULL_SCREEN,
         OPEN_INVENTORY,
+        FULL_SCREEN,
+        FINAL
     };
     class Button {
         public:

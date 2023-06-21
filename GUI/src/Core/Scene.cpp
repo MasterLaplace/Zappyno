@@ -61,6 +61,7 @@ namespace GUI {
             case Scene_Manager::SceneType::RESULT:
                 return "result";
             default:
+                std::cout << "[SceneTypeToString] Scene not found" << std::endl;
                 return "NONE";
         }
     }
@@ -79,24 +80,29 @@ namespace GUI {
                 return "goto_result";
             case Interface::CALLBACK::GOTO_MENU:
                 return "goto_menu";
-            case Interface::CALLBACK::OPEN_INVENTORY:
-                return "open_inventory";
             case Interface::CALLBACK::RESIZE:
                 return "resize";
             case Interface::CALLBACK::MUTE_SOUND:
                 return "mute_sound";
             case Interface::CALLBACK::EXIT:
                 return "exit";
+            case Interface::CALLBACK::OPEN_INVENTORY:
+                return "open_inventory";
+            case Interface::CALLBACK::FINAL:
+                return "final";
         default:
+            std::cout << "[CallbackToString] Callback not found : " << callback << std::endl;
             return "NONE";
         }
     }
 
     Interface::CALLBACK SceneManager::StringToCallback(const std::string &callback) {
-        for (int i = 0; i <= Interface::CALLBACK::OPEN_INVENTORY; i++) {
+        std::cout << "[StringToCallback] Callback: " << callback << std::endl;
+        for (int i = 0; i <= Interface::CALLBACK::FINAL; i++) {
             if (callback == CallbackToString(static_cast<Interface::CALLBACK>(i)))
                 return static_cast<Interface::CALLBACK>(i);
         }
+        std::cout << "[StringToCallback] Callback not found" << std::endl;
         return Interface::CALLBACK::NONE;
     }
 

@@ -41,6 +41,8 @@ namespace GUI {
 
             std::shared_ptr<Interface::Chat> getChat();
 
+            std::vector<Interface::Panel> &getPanels() { return _panels; }
+
             void addPanel(const Interface::Panel &panel) { _panels.push_back(panel); }
 
             void updateScene(const Math::Vector &mousePos, const bool &mousePressed = false);
@@ -48,16 +50,19 @@ namespace GUI {
 
             std::vector<Interface::CALLBACK> getCallback();
 
-            template<typename T>
-            void drawScene(T &win) {
+                _background->drawSprite();
                 for (auto &panel : _panels)
                     panel.drawPanel(win);
             }
+
+            template<typename Win>
+            void setSprite(std::string path, Win &window) { _background = std::make_shared<Sf_sprite::SfSprite>(window, path, Math::Vector(1, 1)); }
 
         protected:
         private:
             Scene_Manager::SceneType _scenetype;
             std::vector<Interface::Panel> _panels;
+            std::shared_ptr<ISprite> _background = nullptr;
     };
 
     class SceneManager {
@@ -108,6 +113,7 @@ namespace GUI {
                     std::cout << "name scene: " << it["name"] << std::endl;
                     if (it["name"] == SceneManager::SceneTypeToString(sceneType)) {
                         auto ok = String::string_to_string_vector(it["panels"], ", \t");
+                        scene->setSprite(findInTiles(image, it["back"]), window);
                         for (auto it2 : ok) {
                             // loop on panel
                             for (auto it3 : panel) {
@@ -115,7 +121,14 @@ namespace GUI {
                                     std::cout << "name type: " << it3["type"] << std::endl;
                                     Math::Vector pos(String::string_to_string_vector(it3["pos"], ", \t"));
                                     Math::Vector scale(String::string_to_string_vector(it3["scale"], ", \t"));
-                                    Interface::Panel _panel = Interface::Panel(std::make_shared<Sprite>(window, findInTiles(image, it3["img"]), pos, scale));
+                                    std::string path = findInTiles(image, it3["img"]);
+                                    Interface::Panel _panel;
+                                    if (path != "")
+                                        _panel.setSprite(std::make_shared<Sprite>(window, path, pos, scale));
+                                    else {
+                                        _panel.setPos(pos);
+                                        _panel.setScale(scale);
+                                    }
                                     _panel.setType(it3["type"]);
                                     // loop on button
                                     auto buttons = String::string_to_string_vector(it3["buttons"], ", \t");
@@ -213,6 +226,12 @@ namespace GUI {
                         case Interface::CALLBACK::GOTO_CREDIT:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREDIT, window);
                             return;
+                        case Interface::CALLBACK::OPEN_INVENTORY:
+                            for (auto &it : scene->getPanels()) {
+                                if (it.getType() == "inventory")
+                                    return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY);
+                            }
+                            throw std::invalid_argument("Scene: Cannot find inventory panel");
                         default:
                             break;
                     }

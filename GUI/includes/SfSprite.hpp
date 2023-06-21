@@ -30,7 +30,7 @@ namespace Sf_sprite {
         sf::Vector2f origin;
         sf::Sprite sprite;
         sf::IntRect maxSize;
-        std::shared_ptr<sf::RenderWindow> window;
+        std::shared_ptr<sf::RenderWindow> window = nullptr;
         // Animation
         unsigned offset_x = 0;
         unsigned offset_y = 0;
@@ -54,7 +54,7 @@ namespace Sf_sprite {
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }
 
-        SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos, Math::Vector scale, Math::Vector origin = {0, 0});
+        SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos = {0, 0}, Math::Vector scale = {1, 1}, Math::Vector origin = {0, 0});
 
         void drawSprite() const override { this->window->draw(this->sprite); }
     };
