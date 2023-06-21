@@ -15,20 +15,3 @@ my_nblen(x) + my_nblen(y), sizeof(char));
     sprintf(message, "enw %d %d %d %d\n", egg_num, server->id, x, y);
     send_to_all_gui(server, message);
 }
-
-void send_an_egg_was_laid_by_a_player_to_all(t_server *server, int egg_num,
-int x, int y)
-{
-    AUTO_FREE char *message = calloc(9 + my_nblen(server->id) + my_nblen(egg_num) +
-    my_nblen(x) + my_nblen(y), sizeof(char));
-    strncat(message, "enw ",strlen(message) + 4);
-    strncat(message, itoa(egg_num),strlen(message) + my_nblen(egg_num));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(x),strlen(message) + my_nblen(x));
-    strncat(message, " ",strlen(message) + 1);
-    strncat(message, itoa(y),strlen(message) + my_nblen(y));
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
-}

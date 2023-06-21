@@ -11,7 +11,7 @@ bool is_connected_player(t_server *server, int id)
 {
     if (id > SOMAXCONN)
         return false;
-    if (server->clients[id].is_connected == true)
+    if (server->clients[id].is_connected && !server->clients[id].is_gui)
         return true;
     return false;
 }

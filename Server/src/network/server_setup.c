@@ -86,6 +86,7 @@ int setup_server(t_server *server, t_params *params)
  */
 void remove_client(t_server *server, int id)
 {
+    int tmp_id = id;
     close(CLIENT(id).socket_fd);
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
     memset(&CLIENT(id), 0, sizeof(t_client));
@@ -104,5 +105,5 @@ void remove_client(t_server *server, int id)
         }
     }
     server->game.teams[TEAM_INDEX].nb_players--;
-    send_to_client(server, "Goodbye\n", server->id);
+    CLIENT(tmp_id).dead = true;
 }

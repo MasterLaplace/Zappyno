@@ -28,23 +28,6 @@ size_t count_message_size(char **array, t_server *server)
 void send_name_of_all_the_teams(t_server *server, char** array)
 {
     (void)array;
-    char *message = calloc(
-            count_message_size(server->params->team_names, server), sizeof(char));
-
-    for (size_t i = 0; server->params->team_names[i] != NULL; i++) {
-        strncat(message, "tna ",strlen(message) + 4);
-        strncat(message, server->params->team_names[i],strlen(message)
-                                                       + strlen(server->params->team_names[i]));
-        strncat(message, "\n",strlen(message) + 1);
-    }
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
-    free(message);
-}
-
-void send_name_of_all_the_teams_to_all(t_server *server, char** array)
-{
-    (void)array;
     AUTO_FREE char *message = calloc(
             count_message_size(server->params->team_names, server), sizeof(char));
 
@@ -54,6 +37,5 @@ void send_name_of_all_the_teams_to_all(t_server *server, char** array)
                                                        + strlen(server->params->team_names[i]));
         strncat(message, "\n",strlen(message) + 1);
     }
-    sprintf(message, "%s", message);
-    send_to_all_clients(server, message);
+    send_to_gui(server, message, server->id);
 }

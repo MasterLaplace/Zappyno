@@ -10,6 +10,9 @@
 static int get_last_id(t_server *server)
 {
     for (int i = 0; i < SOMAXCONN; i++) {
+        printf("id : %d\n", CLIENT(i).id);
+    }
+    for (int i = 0; i < SOMAXCONN; i++) {
         if (i == 0 && CLIENT(i).id == -1)
             return 0;
         else if (CLIENT(i).id == -1)
@@ -20,10 +23,8 @@ static int get_last_id(t_server *server)
 
 void send_fork(t_server *server)
 {
-    int id = get_last_id(server);
-    for (int i = 0; i < SOMAXCONN; i++) {
-        printf("%d\n", server->clients[i].id);
-    }
+    int id = get_last_id(server) + 1;
+    printf("IDDDDDDDDDDD %d\n", id);
     TEAMS[TEAM_INDEX].max_players += 1;
     TEAMS = realloc(TEAMS, sizeof(t_teams) * TEAMS[TEAM_INDEX].max_players);
 
@@ -34,6 +35,8 @@ void send_fork(t_server *server)
     TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_y = RANDINT(0, server->params->height - 1);
     int x = TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_x;
     int y = TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_y;
+    CLIENT(id).is_forked = true;
+    TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].is_forked = true;
     CLIENT(id).is_an_egg = true;
     CLIENT(id).id = id;
     send_to_client(server, "ok\n", server->id);

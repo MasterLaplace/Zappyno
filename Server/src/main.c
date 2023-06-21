@@ -17,7 +17,7 @@
 void add_client(t_server *server, int new_socket)
 {
     for (int i = 0; i < SOMAXCONN; i++) {
-        if (CLIENT(i).socket_fd == 0) {
+        if (CLIENT(i).socket_fd == 0 && !CLIENT(i).dead) {
             CLIENT(i).socket_fd = new_socket;
             server->id = i;
             server->clients[i].params_function = NULL;
@@ -38,6 +38,7 @@ bool check_death(t_server *server)
         sprintf(str, "pdi %d\n", server->id);
         printf("Player %d died\n", server->id);
         send_to_all_gui(server, str);
+        send_to_client(server, "dead\n", server->id);
         remove_client(server, server->id);
         return true;
     }

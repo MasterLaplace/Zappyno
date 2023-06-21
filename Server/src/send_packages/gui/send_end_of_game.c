@@ -9,20 +9,14 @@
 
 void send_end_of_game(t_server *server, char *team_name)
 {
-    AUTO_FREE char *message = calloc(7 + my_nblen(server->id) + strlen(team_name),
-    sizeof(char));
-    strncat(message, "seg ",strlen(message) + 4);
-    strncat(message, team_name,strlen(message) + strlen(team_name));
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+    AUTO_FREE char *message = calloc(7 + strlen(team_name),sizeof(char));
+    sprintf(message, "seg %s\n", team_name);
+    send_to_gui(server, message, server->id);
 }
 
 void send_end_of_game_to_all(t_server *server, char *team_name)
 {
-    AUTO_FREE char *message = calloc(7 + my_nblen(server->id) + strlen(team_name),
-    sizeof(char));
-    strncat(message, "seg ",strlen(message) + 4);
-    strncat(message, team_name,strlen(message) + strlen(team_name));
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+    AUTO_FREE char *message = calloc(7 + strlen(team_name),sizeof(char));
+    sprintf(message, "seg %s\n", team_name);
+    send_to_all_gui(server, message);
 }

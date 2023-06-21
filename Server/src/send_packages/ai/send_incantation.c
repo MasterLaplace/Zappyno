@@ -90,6 +90,7 @@ void send_incantation(t_server *server)
     t_client* player = &CLIENT(server->id);
     int x = player->pos_x;
     int y = player->pos_y;
+    tmp_t tmp = {x, y};
     if (!verify_elevation_conditions(server)) {
         send_to_client(server, "ko\n", server->id);
         return;
@@ -97,6 +98,5 @@ void send_incantation(t_server *server)
     freeze_participating_players(server, player);
     perform_elevation(server);
     remove_required_resources(server);
-    tmp_t tmp = {x, y};
     send_end_of_an_incantation(server, tmp, player->level);
 }

@@ -39,16 +39,21 @@ static void add_to_team(t_server *server, int i)
             CLIENT(server->id).is_connected = true;
             CLIENT(server->id).is_gui = false;
             TEAMS[i].players[j].orientation = rand() % 4;
+            CLIENT(server->id).orientation = TEAMS[i].players[j].orientation;
             TEAMS[i].players[j].is_an_egg = false;
             TEAMS[i].players[j].level = 1;
             CLIENT(server->id).index_team = i;
             CLIENT(server->id).index_in_team = j;
-            CLIENT(server->id).id = server->id;
             TEAMS[i].players[j].id = server->id;
             init_inventory(TEAMS[i].players[j].resources);
             TILES(find_tile(server, TEAMS[i].players[j].pos_x,
 TEAMS[i].players[j].pos_y)).player++;
-            send_con_of_new_player(server, &TEAMS[i].players[j]);
+            printf("server->id = %d\n", server->id);
+            if (TEAMS[i].players[j].is_forked) {
+                send_player_connection_for_an_egg(server);
+            } else {
+                send_con_of_new_player(server, &TEAMS[i].players[j]);
+            }
             break;
         }
     }

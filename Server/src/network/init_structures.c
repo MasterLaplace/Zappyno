@@ -70,8 +70,8 @@ static t_game set_game_struct(t_params *params)
         if (game.teams[i].players == NULL)
             perror("Failed to allocate memory for ply"), exit(EXIT_FAILURE);
         for (int j = 0; j < params->clientsNb; j++) {
-            game.teams[i].players[j].pos_x = 0;//RANDINT(0, params->width - 1);
-            game.teams[i].players[j].pos_y = 0;//RANDINT(0, params->height - 1);
+            game.teams[i].players[j].pos_x = RANDINT(0, params->width - 1);
+            game.teams[i].players[j].pos_y = RANDINT(0, params->height - 1);
             game.teams[i].players[j].is_an_egg = true;
             game.teams[i].players[j].id = -1;
         }
@@ -111,6 +111,9 @@ t_server *set_server_struct(t_params *params)
         server->clients[i].id = -1;
         server->clients[i].index_team = -1;
         server->clients[i].index_in_team = -1;
+        server->clients[i].is_gui = false;
+        server->clients[i].is_forked = false;
+        server->clients[i].dead = false;
     }
     printf("Timer remove food: %f\n", server->remove_food_timer.duration);
     return server;

@@ -46,6 +46,8 @@ typedef struct s_client {
     bool is_freezed;         // Whether the client is freezed or not
     bool is_connected;      // Whether the client is connected or not
     bool is_an_egg;
+    bool is_forked;
+    bool dead;
     // TODO: add more client-specific data (player info, team info, etc.)
 } t_client;
 

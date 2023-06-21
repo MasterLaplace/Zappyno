@@ -9,7 +9,7 @@
 
 void send_content_of_a_tile(t_server *server, char **array)
 {
-    if (array[1] == NULL) {
+    if (array[1] == NULL || array[2] != NULL) {
         send_to_client(server, "sbp\n", server->id);
         return;
     }
@@ -33,5 +33,5 @@ void send_content_of_a_tile(t_server *server, char **array)
         server->game.tiles[index].resources[1], server->game.tiles[index].resources[2],
         server->game.tiles[index].resources[3], server->game.tiles[index].resources[4],
         server->game.tiles[index].resources[5], server->game.tiles[index].resources[6]);
-    send_to_client(server, message, server->id);
+    send_to_gui(server, message, server->id);
 }

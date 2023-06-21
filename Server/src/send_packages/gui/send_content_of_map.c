@@ -44,5 +44,5 @@ void send_content_of_map(t_server *server, __attribute__((unused)) char **array)
         );
         message = my_strcat(message, buffer);
     }
-    send_to_client(server, message, server->id);
+    send_to_gui(server, message, server->id);
 }

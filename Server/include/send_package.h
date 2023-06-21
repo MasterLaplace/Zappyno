@@ -146,7 +146,7 @@ void send_an_egg_was_laid_by_a_player(t_server *server, int egg_num, int x,
 void send_an_egg_was_laid_by_a_player_to_all(t_server *server, int egg_num,
                                              int x, int y);
 //
-void send_player_connection_for_an_egg(t_server *server, int egg_num);
+void send_player_connection_for_an_egg(t_server *server);
 void send_player_connection_for_an_egg_to_all(t_server *server, int egg_num);
 //
 void send_end_of_game(t_server *server, char *team_name);
@@ -155,8 +155,8 @@ void send_end_of_game_to_all(t_server *server, char *team_name);
 void send_message_from_the_server(t_server *server, char *message_);
 void send_message_from_the_server_to_all(t_server *server, char *message_);
 //
-void send_unknown_command(t_server *server, int egg_num);
-void send_unknown_command_to_all(t_server *server, int egg_num);
+void send_unknown_command(t_server *server);
+void send_unknown_command_to_all(t_server *server);
 //
 void send_command_paramater(t_server *server);
 void send_command_paramater_to_all(t_server *server);

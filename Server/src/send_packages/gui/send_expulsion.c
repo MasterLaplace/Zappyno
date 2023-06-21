@@ -11,18 +11,14 @@ void send_expulsion(t_server *server, char** array)
 {
     (void)(array);
     AUTO_FREE char *message = calloc(6 + my_nblen(server->id), sizeof(char));
-    strncat(message, "pex ",strlen(message) + 4);
-    strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+    sprintf(message, "pex %d\n", server->id);
+    send_to_gui(server, message, server->id);
 }
 
 void send_expulsion_to_all(t_server *server, char **array)
 {
     (void)(array);
     AUTO_FREE char *message = calloc(6 + my_nblen(server->id), sizeof(char));
-    strncat(message, "pex ",strlen(message) + 4);
-    strncat(message, itoa(server->id),strlen(message) + my_nblen(server->id));
-    sprintf(message, "%s\n", message);
-    send_to_client(server, message, server->id);
+    sprintf(message, "pex %d\n", server->id);
+    send_to_all_gui(server, message);
 }

@@ -22,7 +22,7 @@ ai_command ia_client[] = {
         {"Broadcast", recv_broadcast, 1},
         {"Fork", recv_fork, 1},
         {"Eject", recv_eject, 1},
-        {"Incantation", recv_incantation, 300},
+        {"Incantation", recv_incantation, 1},
         {NULL, NULL, 0}
 };
 
@@ -36,7 +36,7 @@ gui_command gui_client[] = {
         {"mct", send_content_of_map},
         {"sgt", send_time_unit},
         {"sst", recv_time_unit_change},
-        {0, NULL}
+        {NULL, NULL}
 };
 
 static bool join_client(t_server *server, char **message)
@@ -90,6 +90,7 @@ bool check_command_gui(t_server *server, char **message)
     for (int i = 0; gui_client[i].command_id > 0; i++) {
         if (!strncmp(gui_client[i].command_id, message[0],
                      strlen(gui_client[i].command_id))) {
+            printf("Command found : %s\n", gui_client[i].command_id);
             gui_client[i].function(server, message);
             return true;
         }
@@ -101,6 +102,7 @@ static void set_id_player(t_server *server, int fd)
 {
     for (register int i = 0; i < SOMAXCONN; i++) {
         if (CLIENT(i).socket_fd == fd) {
+            CLIENT(i).id = i;
             server->id = i;
             break;
         }

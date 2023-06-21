@@ -43,6 +43,8 @@
     #include "game.h"
     #include "clean_up.h"
 
+typedef struct tmp_s tmp_t;
+
 typedef struct server_timer_s {
     time_t start;
     double duration;
@@ -131,6 +133,8 @@ void perform_elevation(t_server *server);
 void remove_required_resources(t_server *server);
 //
 bool is_connected_player(t_server *server, int id);
+//
+tmp_t find_in_teams(t_server *server, int id);
 
 
 
