@@ -45,6 +45,9 @@ namespace Interface {
             void setDisplayed(const bool &isDisplayed) { _isDisplayed = isDisplayed; }
             std::shared_ptr<ISprite> getSprite() const { return _sprite; }
             bool isDisplayed() const { return _isDisplayed; }
+            void setType(const std::string &type) { _type = type; }
+
+            std::string getType() const { return _type; }
 
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
 
@@ -55,7 +58,9 @@ namespace Interface {
             void addChat(const Interface::Chat &chat) { _chat = std::make_shared<Interface::Chat>(chat); }
             template<typename Win>
             void drawPanel(Win &win) {
-                if (!_isDisplayed) return;
+                if (!_isDisplayed || (_callback == NONE && _type == "inventory")) {
+                    return;
+                }
                 if (_sprite) _sprite->drawSprite();
                 for (auto &button : _buttons)
                     button.drawButton();
@@ -85,6 +90,8 @@ namespace Interface {
             Math::Vector _pos;
             Math::Vector _scale;
             bool _isDisplayed = true;
+            Interface::CALLBACK _callback = NONE;
+            std::string _type;
     };
 } // namespace Interface
 

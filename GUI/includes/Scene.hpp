@@ -112,10 +112,11 @@ namespace GUI {
                             // loop on panel
                             for (auto it3 : panel) {
                                 if (it3["name"] == it2) {
-                                    std::cout << "name panel: " << it3["name"] << std::endl;
+                                    std::cout << "name type: " << it3["type"] << std::endl;
                                     Math::Vector pos(String::string_to_string_vector(it3["pos"], ", \t"));
                                     Math::Vector scale(String::string_to_string_vector(it3["scale"], ", \t"));
                                     Interface::Panel _panel = Interface::Panel(std::make_shared<Sprite>(window, findInTiles(image, it3["img"]), pos, scale));
+                                    _panel.setType(it3["type"]);
                                     // loop on button
                                     auto buttons = String::string_to_string_vector(it3["buttons"], ", \t");
                                     std::cout << "buttons: " << it3["buttons"] << std::endl;
@@ -172,7 +173,6 @@ namespace GUI {
                                 }
                             }
                         }
-                        break;
                     }
                 }
                 return scene;
@@ -181,7 +181,7 @@ namespace GUI {
             template <typename Win, typename Sprite>
             void switchScene(std::shared_ptr<Win> window, std::shared_ptr<Scene> &scene, std::shared_ptr<Manager::Protocol> &protocol) {
                 std::vector<Interface::CALLBACK> list_callback = scene->getCallback();
-                list_callback.push_back(protocol->getCallback());
+                // list_callback.push_back(protocol->getCallback());
                 for (auto it : list_callback) {
                     switch (it) {
                         case Interface::CALLBACK::EXIT:
@@ -197,12 +197,13 @@ namespace GUI {
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::MENU, window);
                             return;
                         case Interface::CALLBACK::GOTO_CREATE:
-                            protocol->setWinnerTeam("");
+                            // protocol->setWinnerTeam("");
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREATE, window);
                             return;
                         case Interface::CALLBACK::GOTO_GAME:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::GAME, window);
-                            return protocol->setChat(scene->getChat());
+                            // return protocol->setChat(scene->getChat());
+                            return;
                         case Interface::CALLBACK::GOTO_SETTING:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::SETTING, window);
                             return;

@@ -9,12 +9,16 @@
 
 namespace Interface {
     void Panel::updatePanel(const Math::Vector &mousePos, const bool &mousePressed) {
+        auto size = _sprite->getSize();
         for (auto &button : _buttons)
             button.animate(mousePos, mousePressed);
         for (auto &checkbox : _checkboxs)
             checkbox.animate_checkbox(mousePos, mousePressed);
         for (auto &bar : _bars)
             bar.updateState();
+        if (mousePressed && mousePos.x() <= _pos.x() && mousePos.x() >= _pos.x() + size.x() &&
+            mousePos.y() <= _pos.y() && mousePos.y() >= _pos.y() + size.y())
+            _callback = NONE;
     }
 
     void Panel::updatePanel(const Math::Vector &mousePos, int key, const bool &mousePressed) {
@@ -36,6 +40,11 @@ namespace Interface {
         for (auto &checkbox : _checkboxs)
             if (checkbox.getState() == Interface::Checkbox::RELEASED)
                 callback.push_back(checkbox.getCallback());
+        for (auto &callbacks : callback) {
+            if (callbacks == OPEN_INVENTORY && _type == "inventory") {
+                _callback = OPEN_INVENTORY;
+            }
+        }
         return callback;
     }
 } // namespace Interface

@@ -79,6 +79,8 @@ namespace GUI {
                 return "goto_result";
             case Interface::CALLBACK::GOTO_MENU:
                 return "goto_menu";
+            case Interface::CALLBACK::OPEN_INVENTORY:
+                return "open_inventory";
             case Interface::CALLBACK::RESIZE:
                 return "resize";
             case Interface::CALLBACK::MUTE_SOUND:
