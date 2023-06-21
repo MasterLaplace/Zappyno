@@ -26,6 +26,7 @@ int target_y)
     for (int i = 0; i < SOMAXCONN; i++) {
         if (TEAMS[TEAM_INDEX].players[i].pos_x == target_x &&
 TEAMS[TEAM_INDEX].players[i].pos_y == target_y && CLIENT(i).is_an_egg) {
+            send_death_of_an_egg(server, server->id);
             remove_client(server, server->id);
         }
     }

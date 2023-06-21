@@ -28,6 +28,10 @@ static void add_to_team(t_server *server, int i)
 {
     TEAMS[i].nb_players++;
     for (int j = 0; j < TEAMS[i].max_players; j++) {
+        if (TEAMS[i].players[j].socket_fd == 0 && server->id == -1) {
+            printf("server->id = %d\n", server->id);
+            CLIENT(server->id).id = server->id;
+        }
         if (TEAMS[i].players[j].socket_fd == 0) {
             TEAMS[i].players[j].socket_fd = CLIENT(server->id).socket_fd;
             CLIENT(server->id).pos_x = TEAMS[i].players[j].pos_x;
@@ -39,6 +43,7 @@ static void add_to_team(t_server *server, int i)
             TEAMS[i].players[j].level = 1;
             CLIENT(server->id).index_team = i;
             CLIENT(server->id).index_in_team = j;
+            CLIENT(server->id).id = server->id;
             TEAMS[i].players[j].id = server->id;
             init_inventory(TEAMS[i].players[j].resources);
             TILES(find_tile(server, TEAMS[i].players[j].pos_x,

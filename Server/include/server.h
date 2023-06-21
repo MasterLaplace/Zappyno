@@ -85,7 +85,7 @@ void send_to_client(t_server *, char *, int);
 // send_to_all_clients will send a message to all clients
 void send_to_all_clients(t_server *, char *);
 // receive_from_client will receive a message from a specific client
-char *receive_from_client(int fd);
+char *receive_from_client(t_server *server, int fd);
 //
 void send_to_all_gui(t_server *server, char * message);
 //

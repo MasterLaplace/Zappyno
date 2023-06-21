@@ -118,6 +118,9 @@ void send_expulsion_to_all(t_server *server, char** array);
 void send_egg_laying_by_the_player(t_server *server, char** array);
 void send_egg_laying_by_the_player_to_all(t_server *server, char** array);
 //
+void send_death_of_an_egg(t_server *server, int egg_num);
+void send_death_of_an_egg_to_all(t_server *server, int egg_num);
+//
 void send_death_of_a_player(t_server *server, char** array);
 void send_death_of_a_player_to_all(t_server *server, char** array);
 //

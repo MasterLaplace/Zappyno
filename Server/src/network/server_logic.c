@@ -88,7 +88,8 @@ static bool check_command_ai(t_server *server, char **message)
 bool check_command_gui(t_server *server, char **message)
 {
     for (int i = 0; gui_client[i].command_id > 0; i++) {
-        if (!strcmp(gui_client[i].command_id, message[0])) {
+        if (!strncmp(gui_client[i].command_id, message[0],
+                     strlen(gui_client[i].command_id))) {
             gui_client[i].function(server, message);
             return true;
         }
@@ -115,9 +116,12 @@ bool handle_client_data(t_server *server, int fd)
 {
     bool ret = false;
     set_id_player(server, fd);
-    AUTO_FREE char *buffer = receive_from_client(fd);
-    if (buffer == NULL || !*buffer)
-        return false;
+    AUTO_FREE char *buffer = receive_from_client(server, fd);
+    if (buffer == NULL || !*buffer || strlen(buffer) < 3) {
+        send_to_client(server, "ko\n", server->id);
+        send_to_gui(server, "suc\n", server->id);
+        return true;
+    }
     printf("Received : %s\n", buffer);
     if (!strcmp(buffer, "exit\n")) {
         remove_client(server, server->id);

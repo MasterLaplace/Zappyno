@@ -47,13 +47,14 @@ void send_to_all_clients(t_server *server, char * message)
     }
 }
 
-char *receive_from_client(int fd)
+char *receive_from_client(t_server *server, int fd)
 {
     char *message = calloc(1024, sizeof(char));
     ssize_t recv_result = read(fd, message, 1024);
 
     if (recv_result == -1) {
         if (errno == ECONNRESET) {
+            remove_client(server, server->id);
             printf("Client disconnected\n");
             return NULL;
         } else {
@@ -61,6 +62,7 @@ char *receive_from_client(int fd)
             exit(EXIT_FAILURE);
         }
     } else if (recv_result == 0) {
+        remove_client(server, server->id);
         printf("Client disconnected\n");
         return NULL;
     }

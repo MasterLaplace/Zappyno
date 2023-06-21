@@ -116,9 +116,16 @@ t_server *set_server_struct(t_params *params)
     return server;
 }
 
+void return_for_exit(__attribute__((unused))int sig)
+{
+    printf("Server is closing...\n");
+    exit(EXIT_SUCCESS);
+}
+
 void init(void)
 {
     printf("Server is starting...\n");
     srand(time(NULL));
-    signal(SIGPIPE, SIG_IGN);
+    signal(SIGPIPE, return_for_exit);
+    signal(SIGINT, return_for_exit);
 }
