@@ -7,7 +7,6 @@
 
 #ifndef SFSPRITE_HPP_
     #define SFSPRITE_HPP_
-    #include <SFML/Graphics.hpp>
     #include "ISprite.hpp"
     #include <memory>
 
@@ -39,8 +38,8 @@ namespace Sf_sprite {
         void setOffset(Math::Vector offset) override;
         void setMaxOffsetX(unsigned max_offset_x) { this->max_offset_x = max_offset_x; }
         void setPos(Math::Vector pos) override { this->pos = sf::Vector2f(pos.x(), pos.y()); sprite.setPosition(this->pos); }
-        void setScale(Math::Vector scale) override { this->scale = sf::Vector2f(scale.x(), scale.y()); }
-        void setOrigin(Math::Vector origin) override { this->origin = sf::Vector2f(origin.x(), origin.y()); }
+        void setScale(Math::Vector scale) override { this->scale = sf::Vector2f(scale.x(), scale.y()); sprite.setScale(this->scale); }
+        void setOrigin(Math::Vector origin) override { this->origin = sf::Vector2f(origin.x(), origin.y()); sprite.setOrigin(this->origin); }
         void setSize(Math::Vector size) override { this->sprite.setTextureRect(sf::IntRect(0, 0, size.x(), size.y())); }
         void setTransparency(const unsigned &transparency) override;
         Math::Vector getPos() const override { return Math::Vector(this->pos.x, this->pos.y); }

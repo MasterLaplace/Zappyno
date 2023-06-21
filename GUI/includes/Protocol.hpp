@@ -23,7 +23,8 @@
 namespace Manager {
     class Protocol {
         public:
-            Protocol() {
+            Protocol(std::shared_ptr<sf::RenderWindow> &window) {
+                _window = window;
                 commands["msz"] = [this](std::string &str) { msz(str); };
                 commands["bct"] = [this](std::string &str) { bct(str); };
                 commands["tna"] = [this](std::string &str) { tna(str); };
@@ -227,6 +228,29 @@ namespace Manager {
             void setTrantorians(std::vector<GUI::Trantorian> trantorians) { _trantorians = trantorians; }
             void setEggs(std::vector<GUI::Egg> eggs) { _eggs = eggs; }
 
+            void setScaleTile(double scale) { _scale = scale; }
+            double getScaleTile() const { return _scale; }
+
+            void updatePosition(Math::Vector pos) {
+                (void) pos;
+                unsigned x = 0;
+                unsigned y = 0;
+                for (auto &tile : _tiles) {
+                    if (x == _mapSize.x())
+                        x = 0, y++;
+                    if (_scale <= 0) {
+                        x++;
+                        continue;
+                    }
+                    auto size = tile.getSize();
+                    auto screen_size = _window->getSize();
+                    Math::Vector np = {((screen_size.x / 2) - ((size.x()*_scale) * _mapSize.x() / 2)) + (size.x()*_scale) * x, ((screen_size.y / 2) - ((size.y()*_scale) * _mapSize.y() / 2)) + (size.y()*_scale) * y};
+                    tile.setPos(np);
+                    tile.setScale({_scale, _scale});
+                    x++;
+                }
+            }
+
             std::vector<GUI::Trantorian> getTrantorians() const { return _trantorians; }
             std::vector<GUI::Egg> getEggs() const { return _eggs; }
             GUI::Trantorian getTrantorian(unsigned id) const;
@@ -245,18 +269,25 @@ namespace Manager {
 
             Interface::CALLBACK getCallback() const { return _gotoResult; }
 
+            void draw() {
+                for (auto &tile : _tiles)
+                    tile.drawTile();
+            }
+
         protected:
         private:
             std::vector<GUI::Tiles> _tiles;
             std::vector<GUI::Trantorian> _trantorians;
             std::vector<GUI::Egg> _eggs;
             Math::Vector _mapSize = {10, 10};
+            double _scale = 2;
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
             std::vector<std::string /*name*/> _teams;
             unsigned _timeUnit = 100;
             std::shared_ptr<Interface::Chat> _chat = nullptr;
             std::string _winnerTeam = "";
             Interface::CALLBACK _gotoResult = Interface::CALLBACK::NONE;
+            std::shared_ptr<sf::RenderWindow> _window = nullptr;
     };
 } // namespace Manager
 

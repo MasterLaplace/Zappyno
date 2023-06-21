@@ -78,7 +78,7 @@ Zappy/
 This project is licensed under the terms of the [MIT License](./LICENSE).
 
 Copyright © 2022-2023 :
-    
+
 [Master_Laplace](https://github.com/MasterLaplace),
 
 [M7T5M3P](https://github.com/M7T5M3P),

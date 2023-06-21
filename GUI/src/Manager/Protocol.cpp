@@ -8,6 +8,7 @@
 #include "../../includes/Protocol.hpp"
 #include <unordered_map>
 #include <algorithm>
+#include <memory>
 
 namespace Manager {
     void Protocol::parseCommand(std::string &str, std::shared_ptr<Client> client) {
@@ -47,11 +48,17 @@ namespace Manager {
         double x = std::stod(args[1]);
         double y = std::stod(args[2]);
         std::vector<unsigned> resources;
+        static sf::Texture texture;
 
         for (int i = 3; i < 10; i++)
             resources.push_back(std::stoi(args[i]));
-        if (_tiles.size() < _mapSize.x() * _mapSize.y())
-            return _tiles.push_back(GUI::Tiles({x, y}, resources));
+        if (_tiles.size() < _mapSize.x() * _mapSize.y()) {
+            std::string path = "GUI/assets/Map_tile_06.png";
+            texture.loadFromFile(path);
+            auto size = texture.getSize();
+            auto screen_size = _window->getSize();
+            return _tiles.push_back(GUI::Tiles(std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - ((size.x*_scale) * _mapSize.x() / 2)) + (size.x*_scale) * x, ((screen_size.y / 2) - ((size.y*_scale) * _mapSize.y() / 2)) + (size.y*_scale) * y), Math::Vector(_scale, _scale)), resources, _window));
+        }
         for (auto &tile : _tiles) {
             if (tile.getPos().x() == x && tile.getPos().y() == y)
                 return tile.setInventory(resources);
@@ -74,6 +81,7 @@ namespace Manager {
         GUI::Trantorian player;
 
         player.setId(id);
+        player.setSprite(std::make_shared<Sf_sprite::SfSprite>(_window, "GUI/assets/rock_assets/rock_0.png", Math::Vector(0, 0)));
         player.setPos({std::stod(args[2]), std::stod(args[3])});
         player.setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
         player.setLevel(std::stoi(args[5]));
@@ -190,12 +198,12 @@ namespace Manager {
         unsigned id = std::stoi(args[1]);
         std::string message = args[1] + ": ";
 
-                for (auto &player : getTrantorians()) {
-                    if (player.getId() == id) {
-                        player.setState(GUI::Trantorian::State::BROADCASTING);
-                        break;
-                    }
-                }
+        for (auto &player : getTrantorians()) {
+            if (player.getId() == id) {
+                player.setState(GUI::Trantorian::State::BROADCASTING);
+                break;
+            }
+        }
         // start from 2 to skip id and "pbc"
         for (unsigned i = 2; i < args.size(); i++)
             message += args[i] + " ";
@@ -253,7 +261,7 @@ namespace Manager {
                 player.removeFood(std::stoi(args[2]), 1);
                 if (player.getPos().x() > _mapSize.x() || player.getPos().y() > _mapSize.y())
                     throw std::runtime_error("[pdr] Player pos is out of map (id: " + std::to_string(id) + ")");
-                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].addFood(player.intToFoodString(std::stoi(args[2])), 1);
+                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].addFood(player.intToFoodString(std::stoi(args[2])));
                 return player.setState(GUI::Trantorian::State::DROPPING);
             }
         }
@@ -269,7 +277,7 @@ namespace Manager {
             if (player.getId() == id) {
                 if (player.getPos().x() > _mapSize.x() || player.getPos().y() > _mapSize.y())
                     throw std::runtime_error("[pgt] Player pos is out of map (id: " + std::to_string(id) + ")");
-                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].removeFood(player.intToFoodString(food), 1);
+                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].removeFood(player.intToFoodString(food));
                 player.addFood(food, 1);
                 return player.setState(GUI::Trantorian::State::TAKING);
             }

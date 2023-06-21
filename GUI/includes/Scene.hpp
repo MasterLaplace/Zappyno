@@ -50,7 +50,11 @@ namespace GUI {
 
             std::vector<Interface::CALLBACK> getCallback();
 
+            template<typename Win>
+            void drawScene(Win &win, std::shared_ptr<Manager::Protocol> &protocol) {
                 _background->drawSprite();
+                if (_scenetype == Scene_Manager::SceneType::GAME)
+                    protocol->draw();
                 for (auto &panel : _panels)
                     panel.drawPanel(win);
             }

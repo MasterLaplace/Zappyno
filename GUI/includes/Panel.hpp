@@ -47,6 +47,11 @@ namespace Interface {
             bool isDisplayed() const { return _isDisplayed; }
             void setType(const std::string &type) { _type = type; }
             void setCallback(const Interface::CALLBACK &callback) { _callback = callback; }
+            void setSprite(const std::shared_ptr<ISprite> &sprite) {
+                _sprite = sprite;
+                _pos = sprite->getPos();
+                _scale = sprite->getScale();
+            }
 
             std::string getType() const { return _type; }
 

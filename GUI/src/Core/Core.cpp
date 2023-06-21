@@ -19,8 +19,8 @@ Core::Core(const unsigned ac, const char *av[])
     if (!this->parseArgs(ac, av))
         throw std::invalid_argument("Core: Invalid arguments, run with -h or -help for more informations");
     _client = std::make_shared<Manager::Client>("127.0.0.1", std::stoi(av[2]));
-    _protocol = std::make_shared<Manager::Protocol>();
     _window = std::make_shared<sf::RenderWindow>();
+    _protocol = std::make_shared<Manager::Protocol>(_window);
     _window->create(sf::VideoMode(WIN_X, WIN_Y), "GUI", sf::Style::Default);
     _window->setFramerateLimit(_client->getFramerate());
     _window->setVerticalSyncEnabled(true);
@@ -53,6 +53,15 @@ void Core::run()
         while (_window->pollEvent(event)) {
             if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
                 _window->close();
+            if (event.type == sf::Event::MouseWheelScrolled) {
+                if (event.mouseWheelScroll.delta > 0) {
+                    _protocol->setScaleTile(_protocol->getScaleTile() + 0.1f);
+                    _protocol->updatePosition({double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)});
+                } else if (event.mouseWheelScroll.delta < 0) {
+                    _protocol->setScaleTile(_protocol->getScaleTile() - 0.1f);
+                    _protocol->updatePosition({double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)});
+                }
+            }
         }
 
         _window->clear();
@@ -66,7 +75,7 @@ void Core::run()
             _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         }
         _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
-        _scene->drawScene<sf::RenderWindow>(*_window);
+        _scene->drawScene<sf::RenderWindow>(*_window, _protocol);
 
         _window->display();
 
