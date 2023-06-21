@@ -272,6 +272,8 @@ namespace Manager {
             void draw() {
                 for (auto &tile : _tiles)
                     tile.drawTile();
+                for (auto &tile : _tiles)
+                    tile.drawFoods();
             }
 
         protected:

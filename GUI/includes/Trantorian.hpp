@@ -8,7 +8,9 @@
 #ifndef TRANTORIAN_HPP_
     #define TRANTORIAN_HPP_
     #include "Egg.hpp"
+    #include "ISprite.hpp"
     #include "Vector.hpp"
+    #include <memory>
     #include <map>
 
 namespace GUI {
@@ -40,15 +42,16 @@ namespace GUI {
 
             void setLevel(unsigned level) { _level = level; }
             void setId(unsigned id) { _id = id; }
-            void setPos(Math::Vector pos) { _pos = pos; _pos.z(_pos.y()), _pos.y(0); }
+            void setPos(Math::Vector pos) { _sprite->setPos(pos); }
             void setDir(Direction dir) { _dir = dir; }
             void setTeam(std::string team) { _team = team; }
             void setInventory(std::map<std::string, unsigned> inventory) { _inventory = inventory; }
             void setState(State state) { _state = state; }
+            void setSprite(std::shared_ptr<ISprite> sprite) { _sprite = sprite; }
 
             unsigned getLevel() const { return _level; }
             unsigned getId() const { return _id; }
-            Math::Vector getPos() const { return {_pos.x(), _pos.z()}; }
+            Math::Vector getPos() const { return _sprite->getPos(); }
             Direction getDir() const { return _dir; }
             std::string getTeam() const { return _team; }
             std::map<std::string, unsigned> getInventory() const { return _inventory; }
@@ -61,6 +64,7 @@ namespace GUI {
             void addFood(unsigned food, unsigned quantity) { _inventory[intToFoodString(food)] += quantity; }
             void removeFood(unsigned food, unsigned quantity) { _inventory[intToFoodString(food)] -= quantity; }
 
+            void drawTrantorian() { _sprite->drawSprite(); }
 
         protected:
         private:
@@ -71,6 +75,7 @@ namespace GUI {
             std::string _team;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
             State _state = IDLE;
+            std::shared_ptr<ISprite> _sprite = nullptr;
     };
     std::ostream &operator<<(std::ostream &os, const Trantorian &trantorian);
     std::ostream &operator<<(std::ostream &os, const Trantorian::Direction &dir);
