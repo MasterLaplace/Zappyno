@@ -247,6 +247,13 @@ namespace Manager {
                     Math::Vector np = {((screen_size.x / 2) - ((size.x()*_scale) * _mapSize.x() / 2)) + (size.x()*_scale) * x, ((screen_size.y / 2) - ((size.y()*_scale) * _mapSize.y() / 2)) + (size.y()*_scale) * y};
                     tile.setPos(np);
                     tile.setScale({_scale, _scale});
+                    for (auto &food : tile.getFoods()) {
+                        if (_scale <= 0)
+                            continue;
+                        auto ns = _scale * tile.getScaleRatio();
+                        food.setScale({ns, ns});
+                        food.setPos(np);
+                    }
                     x++;
                 }
             }

@@ -36,6 +36,13 @@ namespace GUI {
 
             std::string getName() { return FoodTypeToString(_type); }
 
+            Math::Vector getPos() { return _sprite->getPos(); }
+            void setPos(Math::Vector pos) { _sprite->setPos(pos); }
+            Math::Vector getSize() { return _sprite->getSize(); }
+            void setSize(Math::Vector size) { _sprite->setSize(size); }
+            Math::Vector getScale() { return _sprite->getScale(); }
+            void setScale(Math::Vector scale) { _sprite->setScale(scale); }
+
             std::string FoodTypeToString(const FoodType &type) {
                 switch (type) {
                     case FoodType::LINEMATE:
