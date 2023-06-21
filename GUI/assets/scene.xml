@@ -9,14 +9,19 @@
         <!-- <Image name="play_button" path="GUI/assets/play_button-removebg-preview.png" offset="251, 249" max="1"/> -->
         <Image name="home_menu" path="GUI/assets/home_menu_panel.png"/>
         <Image name="settings_menu" path="GUI/assets/settings_menu.png"/>
-        <Image name="game" path="GUI/assets/mars_floor.jpg"/>
+        <Image name="game" path="GUI/assets/mars_floor.png"/>
         <Image name="space_background" path="GUI/assets/space_back.jpg"/>
         <Image name="health_bar" path="GUI/assets/health_bar.png"/>
+        <Image name="chat_img" path="GUI/assets/chat_box.png"/>
+        <Image name="inventory_case_img" path="GUI/assets/inventory_case.png"/>
+        <Image name="inventory_user_img" path="GUI/assets/inventory_user.png"/>
         <Image name="create_game_img_button" path="GUI/assets/create_game_button.png" offset="500, 80" max="1"/>
         <Image name="settings_img_button" path="GUI/assets/settings_button.png" offset="500, 80" max="1"/>
         <Image name="credits_img_button" path="GUI/assets/credits_button.png" offset="500, 80" max="1"/>
         <Image name="game_img_button" path="GUI/assets/game_button.png" offset="500, 80" max="1"/>
         <Image name="exit_img_button" path="GUI/assets/exit_button.png" offset="500, 80" max="1"/>
+        <Image name="user_img_button" path="GUI/assets/user.png" offset="500, 80" max="1"/>
+        <Image name="case_img_button" path="GUI/assets/case.png" offset="500, 80" max="1"/>
         <Image name="back_img_button" path="GUI/assets/back_button.png" offset="108, 106" max="1"/>
         <Image name="mute_img_button" path="GUI/assets/mute_check_box.png" offset="80, 80" max="1"/>
         <Image name="full_screen_img_button" path="GUI/assets/full_screen_check_box.png" offset="80, 80" max="1"/>
@@ -29,6 +34,8 @@
         <Button name="credits_button" img="credits_img_button" pos="710, 634" scale="1, 1" callback="goto_credit"/>
         <Button name="exit_button" img="exit_img_button" pos="710, 745" scale="1, 1" callback="exit"/>
         <Button name="back_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_menu"/>
+        <Button name="user_button" img="user_img_button" pos="710, 518" scale="1, 1" callback="open_inventory"/>
+        <Button name="case_button" img="case_img_button" pos="710, 634" scale="1, 1" callback="open_inventory"/>
     </Buttons>
     <Checkboxs>
         <!-- CALLBACK: -->
@@ -43,16 +50,17 @@
         <Bar name="healh" img="health_bar" pos="710, 745" scale="1, 1" vertical="true"/>
     </Bars>
     <Panels>
-        <Panel name="background" img="space_background" pos="0, 0" scale="1, 1" inputs="ip" bars="healh"/>
-        <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" inputs="ip" bars="healh"/>
-        <Panel name="settings_panel" img="settings_menu" pos="426, 216" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" inputs="ip" bars="healh"/>
-        <Panel name="game_panel" img="game" pos="0, 0" scale="1, 1" buttons="" inputs="ip" bars="healh"/>
-        <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" inputs="ip" bars="healh"/>
-        <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" inputs="ip" bars="healh"/>
+        <Panel name="background" img="space_background" pos="0, 0" scale="1, 1" type=""/>
+        <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" type=""/>
+        <Panel name="settings_panel" img="settings_menu" pos="426, 216" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type=""/>
+        <Panel name="game_panel" img="game" pos="0, 0" scale="1, 1" buttons="user_button, case_button" type=""/>
+        <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" type=""/>
+        <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type=""/>
+        <Panel name="user_inventory_panel" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory"/>
     </Panels>
     <Scenes>
         <Scene name="menu" panels="background, home_panel"/>
-        <Scene name="create" panels="game_panel"/>
+        <Scene name="create" panels="game_panel, user_inventory_panel"/>
         <Scene name="setting" panels="background, settings_panel"/>
         <Scene name="credit" panels="background, credits_panel"/>
     </Scenes>
