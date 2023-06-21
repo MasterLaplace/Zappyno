@@ -56,13 +56,21 @@ void Core::run()
             if (event.type == sf::Event::MouseWheelScrolled) {
                 if (event.mouseWheelScroll.delta > 0) {
                     _protocol->setScaleTile(_protocol->getScaleTile() + 0.1f);
-                    _protocol->updatePosition({double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)});
+                    _protocol->updatePosition(/*{double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)}*/);
                 } else if (event.mouseWheelScroll.delta < 0) {
                     _protocol->setScaleTile(_protocol->getScaleTile() - 0.1f);
-                    _protocol->updatePosition({double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)});
+                    _protocol->updatePosition(/*{double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)}*/);
                 }
             }
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            _protocol->move_map({0, -5});
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            _protocol->move_map({0, 5});
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            _protocol->move_map({-5, 0});
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            _protocol->move_map({5, 0});
 
         _window->clear();
         // get the mouse position in the window

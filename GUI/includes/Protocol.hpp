@@ -227,8 +227,19 @@ namespace Manager {
             void setScaleTile(double scale) { _scale = scale; }
             double getScaleTile() const { return _scale; }
 
-            void updatePosition(Math::Vector pos) {
-                (void) pos;
+            void move_map(Math::Vector pos) {
+                for (auto &tile : _tiles) {
+                    tile.setPos(tile.getPos() + pos);
+                    for (auto &food : tile.getFoods())
+                        food.setPos(food.getPos() + pos);
+                    for (auto &trantorian : tile.getTrantorians())
+                        trantorian->setPos(trantorian->getPos() + pos);
+                    for (auto &egg : tile.getEggs())
+                        egg->setPos(egg->getPos() + pos);
+                }
+            }
+
+            void updatePosition() {
                 unsigned x = 0;
                 unsigned y = 0;
                 for (auto &tile : _tiles) {
@@ -248,7 +259,7 @@ namespace Manager {
                             continue;
                         auto ns = _scale * tile.getScaleRatio();
                         food.setScale({ns, ns});
-                        food.setPos(np);
+                        food.setPos({np.x() + (size.x() * _scale / 2) - (food.getSize().x() * ns / 2), np.y() + (size.y() * _scale / 2) - (food.getSize().y() * ns / 2)});
                     }
                     x++;
                 }
