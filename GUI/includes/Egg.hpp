@@ -8,25 +8,34 @@
 #ifndef EGG_HPP_
     #define EGG_HPP_
     #include "Vector.hpp"
+    #include "ISprite.hpp"
+    #include <memory>
 
 namespace GUI {
     class Egg {
         public:
-            Egg() = default;
+            Egg(std::shared_ptr<ISprite> sprite) { _sprite = sprite; }
             ~Egg() = default;
 
             void setId(unsigned id) { _id = id; }
-            void setPos(Math::Vector pos) { _pos = pos; }
             void setTeam(std::string team) { _team = team; }
 
+            Math::Vector getPos() { return _sprite->getPos(); }
+            void setPos(Math::Vector pos) { _sprite->setPos(pos); }
+            Math::Vector getSize() { return _sprite->getSize(); }
+            void setSize(Math::Vector size) { _sprite->setSize(size); }
+            Math::Vector getScale() { return _sprite->getScale(); }
+            void setScale(Math::Vector scale) { _sprite->setScale(scale); }
+
             unsigned getId() const { return _id; }
-            Math::Vector getPos() const { return _pos; }
             std::string getTeam() const { return _team; }
+
+            void drawEgg() { _sprite->drawSprite(); }
 
         protected:
         private:
+            std::shared_ptr<ISprite> _sprite = nullptr;
             unsigned _id;
-            Math::Vector _pos;
             std::string _team;
     };
 } // namespace GUI

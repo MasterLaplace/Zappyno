@@ -9,7 +9,6 @@
 #ifndef PROTOCOL_HPP_
     #define PROTOCOL_HPP_
     #include "Tiles.hpp"
-    #include "Trantorian.hpp"
     #include "StringManager.hpp"
     #include "Chat.hpp"
     #include "Button.hpp"
@@ -225,9 +224,6 @@ namespace Manager {
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
 
-            void setTrantorians(std::vector<GUI::Trantorian> trantorians) { _trantorians = trantorians; }
-            void setEggs(std::vector<GUI::Egg> eggs) { _eggs = eggs; }
-
             void setScaleTile(double scale) { _scale = scale; }
             double getScaleTile() const { return _scale; }
 
@@ -258,15 +254,20 @@ namespace Manager {
                 }
             }
 
-            std::vector<GUI::Trantorian> getTrantorians() const { return _trantorians; }
-            std::vector<GUI::Egg> getEggs() const { return _eggs; }
-            GUI::Trantorian getTrantorian(unsigned id) const;
+            void deleteEgg(unsigned id) {
+                for (auto &tile : _tiles) {
+                    for (auto it = tile.getEggs().begin(); it != tile.getEggs().end(); it++) {
+                        if ((*it)->getId() == id) {
+                            tile.getEggs().erase(it);
+                            return;
+                        }
+                    }
+                }
+            }
 
-            void addTrantorian(GUI::Trantorian trantorian) { _trantorians.push_back(trantorian); }
-            void addEgg(GUI::Egg egg) { _eggs.push_back(egg); }
-
-            void deleteTrantorian(unsigned id);
-            void deleteEgg(unsigned id);
+            GUI::Tiles &getTile(Math::Vector pos);
+            std::shared_ptr<GUI::Trantorian> getTile(unsigned id);
+            std::shared_ptr<GUI::Egg> getEgg(unsigned id);
 
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
             void setChat(std::shared_ptr<Interface::Chat> chat) { _chat = chat; }
@@ -274,22 +275,27 @@ namespace Manager {
             void setWinnerTeam(std::string team) { _winnerTeam = team; }
             std::string getWinnerTeam() const { return _winnerTeam; }
 
-            Interface::CALLBACK getCallback() const { return _gotoResult; }
+            std::vector<Interface::CALLBACK> getCallback() const {
+                std::vector<Interface::CALLBACK> callback;
+                callback.push_back(_gotoResult);
+                return callback;
+            }
 
             void draw() {
                 for (auto &tile : _tiles)
                     tile.drawTile();
-                for (auto &tile : _tiles)
+                for (auto &tile : _tiles) {
                     tile.drawFoods();
+                    tile.drawTrantorians();
+                    tile.drawEggs();
+                }
             }
 
         protected:
         private:
             std::vector<GUI::Tiles> _tiles;
-            std::vector<GUI::Trantorian> _trantorians;
-            std::vector<GUI::Egg> _eggs;
             Math::Vector _mapSize = {10, 10};
-            double _scale = 2;
+            double _scale = 1;
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
             std::vector<std::string /*name*/> _teams;
             unsigned _timeUnit = 100;

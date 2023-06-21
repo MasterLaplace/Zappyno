@@ -71,7 +71,6 @@ namespace GUI {
             unsigned _id;
             unsigned _level = 1;
             Direction _dir = NORTH;
-            Math::Vector _pos;
             std::string _team;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
             State _state = IDLE;

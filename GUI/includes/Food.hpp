@@ -81,9 +81,7 @@ namespace GUI {
                 return FoodType::NONE;
             }
 
-            void drawFoods() {
-                _sprite->drawSprite();
-            }
+            void drawFood() { _sprite->drawSprite(); }
 
         protected:
         private:
