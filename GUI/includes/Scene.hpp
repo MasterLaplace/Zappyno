@@ -57,7 +57,7 @@ namespace GUI {
                     protocol->draw();
                 for (auto &panel : _panels)
                     panel.drawPanel(win);
-            }
+            };
 
             template<typename Win>
             void setSprite(std::string path, Win &window) { _background = std::make_shared<Sf_sprite::SfSprite>(window, path, Math::Vector(1, 1)); }
@@ -112,6 +112,7 @@ namespace GUI {
                 std::vector<std::map<std::string, std::string>> bar = _xml.getTiles("GUI/assets/scene.xml", "Bars");
                 std::vector<std::map<std::string, std::string>> panel = _xml.getTiles("GUI/assets/scene.xml", "Panels");
                 std::vector<std::map<std::string, std::string>> scenes = _xml.getTiles("GUI/assets/scene.xml", "Scenes");
+                std::vector<std::map<std::string, std::string>> chat = _xml.getTiles("GUI/assets/scene.xml", "Chats");
                 // loop on scene
                 for (auto it : scenes) {
                     std::cout << "name scene: " << it["name"] << std::endl;
@@ -186,6 +187,22 @@ namespace GUI {
                                             }
                                         }
                                     }
+                                    // loop on chat
+                                    auto chats = String::string_to_string_vector(it3["chats"], ", \t");
+                                    std::cout << "inputs: " << it3["chat"] << std::endl;
+                                    for (auto it4 : chats) {
+                                        for (auto it5 : chat) {
+                                            if (it5["name"] == it4) {
+                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
+                                                auto limit = std::stoi(it5["limit"]);
+                                                Interface::Chat _chat(findInTiles(font, it5["font"]));
+                                                _chat.setLimit(limit);
+                                                _chat.setPos(pos);
+                                                _panel.addChat(_chat);
+                                            }
+                                        }
+                                    }
                                     scene->addPanel(_panel);
                                 }
                             }
@@ -219,7 +236,7 @@ namespace GUI {
                             return;
                         case Interface::CALLBACK::GOTO_GAME:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::GAME, window);
-                            // return protocol->setChat(scene->getChat());
+                            return protocol->setChat(scene->getChat());
                             return;
                         case Interface::CALLBACK::GOTO_SETTING:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::SETTING, window);

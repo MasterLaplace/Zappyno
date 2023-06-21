@@ -9,12 +9,13 @@
         <!-- <Image name="play_button" path="GUI/assets/play_button-removebg-preview.png" offset="251, 249" max="1"/> -->
         <Image name="home_menu" path="GUI/assets/home_menu_panel.png"/>
         <Image name="settings_menu" path="GUI/assets/settings_menu.png"/>
-        <Image name="game" path="GUI/assets/mars_floor.png"/>
+        <Image name="game" path="GUI/assets/mars_floor.jpeg"/>
         <Image name="space_background" path="GUI/assets/space_back.jpg"/>
         <Image name="health_bar" path="GUI/assets/health_bar.png"/>
         <Image name="chat_img" path="GUI/assets/chat_box.png"/>
         <Image name="inventory_case_img" path="GUI/assets/Inventory_case.png"/>
         <Image name="inventory_user_img" path="GUI/assets/Inventory_user.png"/>
+        <Image name="chat_box_img" path="GUI/assets/chat_box.png"/>
         <Image name="create_game_img_button" path="GUI/assets/create_game_button.png" offset="500, 80" max="1"/>
         <Image name="settings_img_button" path="GUI/assets/settings_button.png" offset="500, 80" max="1"/>
         <Image name="credits_img_button" path="GUI/assets/credits_button.png" offset="500, 80" max="1"/>
@@ -46,6 +47,9 @@
     <Inputs>
         <Input name="ip" img="table_panel" pos="0, 0" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
     </Inputs>
+    <Chats>
+        <Chat name="chat" pos="800, 700" limit="20" font="GUI/assets/OpenSans-Bold.ttf"/>
+    </Chats>
     <Bars>
         <Bar name="healh" img="health_bar" pos="710, 745" scale="1, 1" vertical="true"/>
     </Bars>
@@ -57,10 +61,11 @@
         <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" type="other"/>
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
         <Panel name="user_inventory_panel" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory"/>
+        <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1", chat="chat"/>
     </Panels>
     <Scenes>
         <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
-        <Scene name="game" panels="game_panel, user_inventory_panel" back="game"/>
+        <Scene name="game" panels="game_panel, user_inventory_panel, chat_box" back="game"/>
         <Scene name="setting" panels="settings_panel" back="space_background"/>
         <Scene name="credit" panels="credits_panel" back="space_background"/>
     </Scenes>
