@@ -122,8 +122,7 @@ class Client:
         elif 'Connect_nbr' in self.__player.response:
             self.__player.unused_slots = int(line)
             if self.__player.unused_slots > 0 and self.__player.fork and self.__id < 6:
-                with Popen(['python3', 'zappy_ai', '-p', str(self.__port), '-n', self.__team, '-i',
-                    str(self.__id + 1)]):
+                with Popen(['python3', 'zappy_ai', '-p', str(self.__port), '-n', self.__team, '-h', self.__host]):
                     self.__player.fork = False
                     print('A new IA has been forked')
         self.__message = self.__message.split('\n')[-1]
