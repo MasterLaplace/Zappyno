@@ -8,19 +8,23 @@
 #include "../../include/send_package.h"
 
 static char ErrorFlag[7][50] = {
-    "ko",
-    "ko Team is full",
-    "ko Team not exists",
-    "ko Join gui error",
-    "ko Join ai error",
-    "ko Map size error",
-    "ko Error",
+    "ko\n",
+    "ko Team is full\n",
+    "ko Team not exists\n",
+    "ko Join gui error\n",
+    "ko Join ai error\n",
+    "ko Map size error\n",
+    "ko Error\n",
 };
 
-void send_error(t_client *client, int error_id) {
-    send_to_client(client, ErrorFlag[error_id]);
+void send_error(t_server *server, int error_id)
+{
+    printf("Error: %s", ErrorFlag[error_id]);
+    send_to_client(server, ErrorFlag[error_id], server->id);
 }
 
-void send_error_to_all(t_client *clients, int error_id) {
-    send_to_all_clients(clients, ErrorFlag[error_id]);
+void send_error_to_all(t_server *server, int error_id)
+{
+    printf("Error: %s", ErrorFlag[error_id]);
+    send_to_all_clients(server, ErrorFlag[error_id]);
 }

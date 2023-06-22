@@ -29,7 +29,7 @@ fclean_AI:
 	@$(MAKE) fclean -C ./AI $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► FCLEAN AI 🧻 !\n"$(DEFAULT)
 
-server:
+server: fclean_Server
 	@$(MAKE) all -C ./Server $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► SERVER ⛽ !\n"$(DEFAULT)
 clean_Server:
