@@ -9,7 +9,9 @@
 NAME         = ../zappy_server
 COMPILER     = gcc
 SRC_DIR      = src/
+SRC_TEST_DIR = tests/
 SRC          = $(shell find $(SRC_DIR) -name '*.c')
+SRC_TEST     = $(shell find $(SRC_TEST_DIR) -name '*.c')
 
 OBJ          = $(SRC:.c=.o)
 INCLUDE      = -iquote ./include/
@@ -50,7 +52,8 @@ tests_run: fclean
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 	@printf "$(PBOLD) $(PBLUEC) RUNNING TESTS 🧪\n"
-	@$(COMPILER) -o ../zappy_server_tests $(SRC) $(TEST_FLAGS) $(FAST_FLAGS) $(INCLUDE)
+	@$(COMPILER) -o zappy_server_tests $(SRC) $(SRC_TEST) $(TEST_FLAGS) $(FAST_FLAGS) $(INCLUDE)
+	@./zappy_server_tests -h
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 

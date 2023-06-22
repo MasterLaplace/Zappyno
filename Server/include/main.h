@@ -22,4 +22,5 @@ HELP[] = "USAGE: ./zappy_server -p port -x width -y height"
     "\tfreq \tis the reciprocal of time unit"
     " for execution of actions\n";
 
+int main(int ac, char **av);
 #endif /* !MAIN_H */
