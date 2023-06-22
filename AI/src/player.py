@@ -1,45 +1,45 @@
 """
 Player class is used to store information about the player.
 """
-import json
-import math
+from json import loads, dumps
+from math import sqrt
 from random import choice
-import re
+from re import split
 from collections import Counter
 from enum import Enum
 from typing import Dict, List
 
 separator: str = '|'
 required_resources: List[Dict[str, int]] = [
-    {"linemate": 1},
-    {"linemate": 1, "deraumere": 1, "sibur": 1},
-    {"linemate": 2, "sibur": 1, "phiras": 2},
-    {"linemate": 1, "deraumere": 1, "sibur": 2, "phiras": 1},
-    {"linemate": 1, "deraumere": 2, "sibur": 1, "mendiane": 3},
-    {"linemate": 1, "deraumere": 2, "sibur": 3, "phiras": 1},
-    {"linemate": 2, "deraumere": 2, "sibur": 2, "mendiane": 2, "phiras": 2, "thystame": 1}
+    {'linemate': 1},
+    {'linemate': 1, 'deraumere': 1, 'sibur': 1},
+    {'linemate': 2, 'sibur': 1, 'phiras': 2},
+    {'linemate': 1, 'deraumere': 1, 'sibur': 2, 'phiras': 1},
+    {'linemate': 1, 'deraumere': 2, 'sibur': 1, 'mendiane': 3},
+    {'linemate': 1, 'deraumere': 2, 'sibur': 3, 'phiras': 1},
+    {'linemate': 2, 'deraumere': 2, 'sibur': 2, 'mendiane': 2, 'phiras': 2, 'thystame': 1}
 ]
 
 class Movement(Enum):
     """
     This class is used to store the different movement of the player.
     """
-    FORWARD = "Forward"
-    LEFT = "Left"
-    RIGHT = "Right"
+    FORWARD = 'Forward'
+    LEFT = 'Left'
+    RIGHT = 'Right'
 
 class Command(Enum):
     """
     This class is used to store the different command of the player.
     """
-    CONNECT_NBR = "Connect_nbr"
-    INVENTORY = "Inventory"
-    BROADCAST = "Broadcast "
-    LOOK = "Look"
-    TAKE = "Take "
-    SET = "Set "
-    INCANTATION = "Incantation"
-    FORK = "Fork"
+    CONNECT_NBR = 'Connect_nbr'
+    INVENTORY = 'Inventory'
+    BROADCAST = 'Broadcast '
+    LOOK = 'Look'
+    TAKE = 'Take '
+    SET = 'Set '
+    INCANTATION = 'Incantation'
+    FORK = 'Fork'
 
 class Player:
     """
@@ -51,8 +51,8 @@ class Player:
         self.__level: int = 1
         self.__inventory: Dict = {'food': 0, 'linemate': 0, 'deraumere': 0, 'sibur': 0, 'mendiane': 0, 'phiras': 0,
             'thystame': 0}
-        self.fov: str = ""
-        self.__to_take: str = ""
+        self.fov: str = ''
+        self.__to_take: str = ''
         self.__shared_inventory: Dict = {}
         self.__map: List[List] = [[]]
         self.is_running: bool = True
@@ -134,7 +134,7 @@ class Player:
         Fill the shared inventory.
         """
         client, _, inventory = inventory.split(separator)
-        self.__shared_inventory[client] = json.loads(inventory)
+        self.__shared_inventory[client] = loads(inventory)
         self.__shared_inventory[self.player_id] = self.__inventory
         total: Counter = Counter()
 
@@ -170,9 +170,9 @@ class Player:
         separated_look: list = self.fov.split(',')
         look_length: int = len(separated_look)
         for i in range(look_length):
-            data.append(' '.join(re.split(r'\'\W+', separated_look[i])[1:]))
+            data.append(' '.join(split(r'\'\W+', separated_look[i])[1:]))
         length: int = len(data)
-        nb_line: int = int(math.sqrt(length))
+        nb_line: int = int(sqrt(length))
         for i in range(nb_line):
             target_row = vertical_offset - horizontal_offset
             column = 0
@@ -324,9 +324,9 @@ class Player:
         from_tile = int(message[8])
         message = message[11:]
 
-        if "Inventory" in message:
+        if 'Inventory' in message:
             self.fill_shared_inventory(message[9:])
-        if "Incantation" in message:
+        if 'Incantation' in message:
             player_id: int = int(message.split(separator)[1])
             if self.__delete_broadcast:
                 self.__delete_broadcast = False
@@ -342,7 +342,7 @@ class Player:
                 return
             if self.__incantation:
                 self.move_to_broadcasted_tile(from_tile)
-        if "Ready" in message and self.__incantation:
+        if 'Ready' in message and self.__incantation:
             self.__number_incantation += 1
 
     def find_resource(self) -> str:
@@ -501,6 +501,6 @@ class Player:
         self.step = 10
 
     def __manage_step_10(self) -> None:
-        data: List = [Command.INVENTORY.value, self.player_id, self.__level, json.dumps(self.__inventory)]
+        data: List = [Command.INVENTORY.value, self.player_id, self.__level, dumps(self.__inventory)]
         self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
         self.step = 0
