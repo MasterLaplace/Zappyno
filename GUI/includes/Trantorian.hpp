@@ -43,6 +43,7 @@ namespace GUI {
             void setLevel(unsigned level) { _level = level; }
             void setId(unsigned id) { _id = id; }
             void setPos(Math::Vector pos) { _sprite->setPos(pos); }
+            void setScale(Math::Vector scale) { _sprite->setScale(scale); }
             void setDir(Direction dir) { _dir = dir; }
             void setTeam(std::string team) { _team = team; }
             void setInventory(std::map<std::string, unsigned> inventory) { _inventory = inventory; }

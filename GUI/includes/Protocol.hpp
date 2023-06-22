@@ -227,54 +227,10 @@ namespace Manager {
             void setScaleTile(double scale) { _scale = scale; }
             double getScaleTile() const { return _scale; }
 
-            void move_map(Math::Vector pos) {
-                for (auto &tile : _tiles) {
-                    tile.setPos(tile.getPos() + pos);
-                    for (auto &food : tile.getFoods())
-                        food.setPos(food.getPos() + pos);
-                    for (auto &trantorian : tile.getTrantorians())
-                        trantorian->setPos(trantorian->getPos() + pos);
-                    for (auto &egg : tile.getEggs())
-                        egg->setPos(egg->getPos() + pos);
-                }
-            }
+            void move_map(Math::Vector pos);
+            void updatePosition();
 
-            void updatePosition() {
-                unsigned x = 0;
-                unsigned y = 0;
-                for (auto &tile : _tiles) {
-                    if (x == _mapSize.x())
-                        x = 0, y++;
-                    if (_scale <= 0) {
-                        x++;
-                        continue;
-                    }
-                    auto size = tile.getSize();
-                    auto screen_size = _window->getSize();
-                    Math::Vector np = {((screen_size.x / 2) - ((size.x()*_scale) * _mapSize.x() / 2)) + (size.x()*_scale) * x, ((screen_size.y / 2) - ((size.y()*_scale) * _mapSize.y() / 2)) + (size.y()*_scale) * y};
-                    tile.setPos(np);
-                    tile.setScale({_scale, _scale});
-                    for (auto &food : tile.getFoods()) {
-                        if (_scale <= 0)
-                            continue;
-                        auto ns = _scale * tile.getScaleRatio();
-                        food.setScale({ns, ns});
-                        food.setPos({np.x() + (size.x() * _scale / 2) - (food.getSize().x() * ns / 2), np.y() + (size.y() * _scale / 2) - (food.getSize().y() * ns / 2)});
-                    }
-                    x++;
-                }
-            }
-
-            void deleteEgg(unsigned id) {
-                for (auto &tile : _tiles) {
-                    for (auto it = tile.getEggs().begin(); it != tile.getEggs().end(); it++) {
-                        if ((*it)->getId() == id) {
-                            tile.getEggs().erase(it);
-                            return;
-                        }
-                    }
-                }
-            }
+            void deleteEgg(unsigned id);
 
             GUI::Tiles &getTile(Math::Vector pos);
             std::shared_ptr<GUI::Trantorian> getTile(unsigned id);
@@ -292,15 +248,7 @@ namespace Manager {
                 return callback;
             }
 
-            void draw() {
-                for (auto &tile : _tiles)
-                    tile.drawTile();
-                for (auto &tile : _tiles) {
-                    tile.drawFoods();
-                    tile.drawTrantorians();
-                    tile.drawEggs();
-                }
-            }
+            void draw();
 
         protected:
         private:

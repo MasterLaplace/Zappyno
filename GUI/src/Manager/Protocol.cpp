@@ -394,4 +394,69 @@ namespace Manager {
         }
         return nullptr;
     }
+
+    void Protocol::deleteEgg(unsigned id) {
+        for (auto &tile : _tiles) {
+            for (auto it = tile.getEggs().begin(); it != tile.getEggs().end(); it++) {
+                if ((*it)->getId() == id) {
+                    tile.getEggs().erase(it);
+                    return;
+                }
+            }
+        }
+    }
+
+    void Protocol::move_map(Math::Vector pos) {
+        for (auto &tile : _tiles) {
+            tile.setPos(tile.getPos() + pos);
+            for (auto &food : tile.getFoods())
+                food.setPos(food.getPos() + pos);
+            for (auto &trantorian : tile.getTrantorians())
+                trantorian->setPos(trantorian->getPos() + pos);
+            for (auto &egg : tile.getEggs())
+                egg->setPos(egg->getPos() + pos);
+        }
+    }
+
+    void Protocol::updatePosition() {
+        unsigned x = 0;
+        unsigned y = 0;
+        Math::Vector map_size = _mapSize; /* map of 10x10 tiles */
+        Math::Vector midle_pos = _tiles[_tiles.size()/2 + map_size.x()/2].getPos();
+
+        for (auto& tile : _tiles) {
+            if (x == _mapSize.x()) {
+                x = 0;
+                y++;
+            }
+            if (_scale <= 0) {
+                x++;
+                continue;
+            }
+            tile.setScale({_scale, _scale});
+            Math::Vector sizeOfTile = tile.getSize();
+            Math::Vector sizeAfterScale = Math::Vector(sizeOfTile.x() * _scale, sizeOfTile.y() * _scale);
+
+            /*
+            * Calculate updated tile position by scale :
+                MiddlePos - ((SizeMapPxl * scale) / 2) + (SizeTile * scale) * x
+                MiddlePos - MiddleSizeMapPxl + PosTileInMapPxl
+            */
+            double updatedX = ((midle_pos.x()) - (sizeOfTile.x() * _mapSize.x() * _scale / 2)) + (sizeOfTile.x() * _scale) * x;
+            double updatedY = ((midle_pos.y()) - (sizeOfTile.y() * _mapSize.y() * _scale / 2)) + (sizeOfTile.y() * _scale) * y;
+
+            tile.setPos(Math::Vector(updatedX, updatedY));
+            x++;
+        }
+    }
+
+    void Protocol::draw() {
+        for (auto &tile : _tiles)
+            tile.drawTile();
+        for (auto &tile : _tiles) {
+            tile.drawFoods();
+            tile.drawTrantorians();
+            tile.drawEggs();
+        }
+    }
 } // namespace GUI
