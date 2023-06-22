@@ -98,8 +98,8 @@ class Player:
                     required[items] -= 1
         for ressources in required_resources[self.__level]:
             if ressources in data and data and required[ressources] > 0:
-                self.__commands.append(str(Command.SET) + ressources)
-                self.__commands.append(str(Command.LOOK))
+                self.__commands.append(Command.SET.value + ressources)
+                self.__commands.append(Command.LOOK.value)
                 return
         self.step = 7
         self.response = ''
@@ -125,8 +125,8 @@ class Player:
         for ressources in required_resources[self.__level]:
             if ressources in data and required[ressources] > 0:
                 return
-        self.response = str(Command.INCANTATION)
-        self.__commands = [str(Command.INCANTATION)]
+        self.response = Command.INCANTATION.value
+        self.__commands = [Command.INCANTATION.value]
         self.step = 7
 
     def fill_shared_inventory(self, inventory: str) -> None:
@@ -229,11 +229,11 @@ class Player:
         :param obj:
         :param command:
         """
-        self.__commands.append(Movement.LEFT)
+        self.__commands.append(Movement.LEFT.value)
         for _ in range(8 - object_coord[0]):
-            self.__commands.append(str(Movement.FORWARD))
-        self.__commands.append(str(Command.TAKE) + obj + "\n")
-        self.__commands.append(str(Command.INVENTORY))
+            self.__commands.append(Movement.FORWARD.value)
+        self.__commands.append(Command.TAKE.value + obj)
+        self.__commands.append(Command.INVENTORY.value)
 
     def movement_right(self, object_coord: List[int], obj: str):
         """
@@ -242,11 +242,11 @@ class Player:
         :param obj
         :param command:
         """
-        self.__commands.append(Movement.RIGHT)
+        self.__commands.append(Movement.RIGHT.value)
         for _ in range(8 - object_coord[0]):
-            self.__commands.append(Movement.FORWARD)
-        self.__commands.append(str(Command.TAKE) + obj + "\n")
-        self.__commands.append(str(Command.INVENTORY))
+            self.__commands.append(Movement.FORWARD.value)
+        self.__commands.append(Command.TAKE.value + obj)
+        self.__commands.append(Command.INVENTORY.value)
 
     def movement_forward(self, object_coord: List[int], obj: str):
         """
@@ -256,9 +256,9 @@ class Player:
         :param command:
         """
         for _ in range(8 - object_coord[1]):
-            self.__commands.append(Movement.FORWARD)
-        self.__commands.append(str(Command.TAKE) + obj + "\n")
-        self.__commands.append(str(Command.INVENTORY))
+            self.__commands.append(Movement.FORWARD.value)
+        self.__commands.append(Command.TAKE.value + obj)
+        self.__commands.append(Command.INVENTORY.value)
 
     def execute_action(self) -> None:
         """
@@ -268,19 +268,19 @@ class Player:
         self.create_map()
         object_coord: List[int] = self.search_object(self.__to_take)
         if not bool(object_coord):
-            self.__commands.append(str(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT])))
-            self.__commands.append(str(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT])))
-            self.__commands.append(str(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT])))
+            self.__commands.append(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]).value)
+            self.__commands.append(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]).value)
+            self.__commands.append(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]).value)
             return
         if object_coord[0] == 8 and object_coord[1] == 0:
-            self.__commands = [str(Command.TAKE) + self.__to_take + '\n']
+            self.__commands = [Command.TAKE.value + self.__to_take]
             return
         for _ in range(object_coord[0] - 8):
-            self.__commands.append(Movement.FORWARD)
+            self.__commands.append(Movement.FORWARD.value)
         if object_coord[0] == 0:
             self.movement_forward(object_coord, self.__to_take)
         if object_coord[1] == 0:
-            self.__commands.append(str(Command.TAKE) + self.__to_take + '\n')
+            self.__commands.append(Command.TAKE.value + self.__to_take)
         if object_coord[0] < 8:
             self.movement_left(object_coord, self.__to_take)
         if object_coord[0] > 8:
@@ -294,14 +294,14 @@ class Player:
             return
         self.__commands = []
         if tile == 0:
-            self.response = str(Command.BROADCAST) + ' Ready'
+            self.response = Command.BROADCAST.value + 'Ready'
             self.__ready = True
         elif tile in (2, 1, 8):
-            self.__commands.append(str(Movement.FORWARD) + '\n')
+            self.__commands.append(Movement.FORWARD.value)
         elif tile in (5, 6, 7):
-            self.__commands.append(str(Movement.RIGHT) + '\n')
+            self.__commands.append(Movement.RIGHT.value)
         else:
-            self.__commands.append(str(Movement.LEFT) + '\n')
+            self.__commands.append(Movement.LEFT.value)
 
     def parse_inventory(self, inventory: str):
         """
@@ -398,15 +398,15 @@ class Player:
                 return self.__manage_step_10()
 
     def __manage_uninitialized(self) -> None:
-        self.response = str(Command.CONNECT_NBR)
+        self.response = Command.CONNECT_NBR.value
         self.step = -1
 
     def __manage_initialized(self) -> None:
         if self.unused_slots > 0:
-            self.response = str(Command.FORK)
+            self.response = Command.FORK.value
             self.fork = True
         else:
-            self.response = str(Command.LOOK)
+            self.response = Command.LOOK.value
         self.step = 0
 
     def __manage_step_0(self) -> None:
@@ -414,7 +414,7 @@ class Player:
             self.response = self.__commands[0]
             self.__commands.pop(0)
         else:
-            self.response = str(Command.INVENTORY)
+            self.response = Command.INVENTORY.value
             self.step = 1
 
     def __manage_step_1(self) -> None:
@@ -422,11 +422,11 @@ class Player:
             data: List = []
             if not self.check_incantation_possible():
                 data = [Command.INCANTATION.value, self.player_id, self.__level]
-                self.response = str(Command.BROADCAST) + separator.join(str(e) for e in data)
+                self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
             else:
                 data = [Command.INCANTATION.value, self.player_id, self.__level]
                 self.__incantation = True
-                self.response = str(Command.BROADCAST) + separator.join(str(e) for e in data)
+                self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
                 self.step = 4
                 self.new_object = False
                 return
@@ -438,7 +438,7 @@ class Player:
         self.step = 2
 
     def __manage_step_2(self) -> None:
-        self.response = str(Command.LOOK)
+        self.response = Command.LOOK.value
         self.step = 3
 
     def __manage_step_3(self) -> None:
@@ -461,14 +461,14 @@ class Player:
             self.__delete_broadcast = True
             if len(self.__commands) == 0:
                 self.delete_read = True
-        elif str(Command.BROADCAST) in self.response and self.__ready:
+        elif Command.BROADCAST.value in self.response and self.__ready:
             self.step = 5
         else:
             self.response = ''
 
     def __manage_step_5(self) -> None:
         self.__delete_broadcast = False
-        self.response = str(Command.LOOK)
+        self.response = Command.LOOK.value
         self.step += 1
 
     def __manage_step_6(self) -> None:
@@ -481,26 +481,26 @@ class Player:
                 self.response = self.__commands[0]
                 self.__commands = self.__commands[1:]
             else:
-                self.response = str(Command.INVENTORY)
+                self.response = Command.INVENTORY.value
 
     def __manage_step_7(self) -> None:
         if self.__number_incantation < 6:
-            self.response = str(Command.CONNECT_NBR)
+            self.response = Command.CONNECT_NBR.value
             return
         if len(self.__commands) > 0:
             self.response = self.__commands[0]
             self.__commands = self.__commands[1:]
         else:
-            self.__commands = [str(Command.INVENTORY), str(Command.LOOK)]
+            self.__commands = [Command.INVENTORY.value, Command.LOOK.value]
 
     def __manage_step_8(self) -> None:
         self.response = ''
 
     def __manage_step_9(self) -> None:
-        self.response = str(Command.INVENTORY)
+        self.response = Command.INVENTORY.value
         self.step = 10
 
     def __manage_step_10(self) -> None:
         data: List = [Command.INVENTORY.value, self.player_id, self.__level, json.dumps(self.__inventory)]
-        self.response = str(Command.BROADCAST) + separator.join(str(e) for e in data)
+        self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
         self.step = 0
