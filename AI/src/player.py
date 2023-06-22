@@ -46,8 +46,8 @@ class Player:
     This class is used to store information about the player.
     It is used to store the team name, the communication object, the level of the player.
     """
-    def __init__(self, number: int):
-        self.__id = number
+    def __init__(self) -> None:
+        self.player_id = 0
         self.__level: int = 1
         self.__inventory: Dict = {'food': 0, 'linemate': 0, 'deraumere': 0, 'sibur': 0, 'mendiane': 0, 'phiras': 0,
             'thystame': 0}
@@ -67,6 +67,7 @@ class Player:
         self.unused_slots: int = 0
         self.fork: bool = True
         self.new_object: bool = False
+        self.available_slots: int = 0
 
     def check_incantation_possible(self) -> bool:
         """
@@ -134,7 +135,7 @@ class Player:
         """
         client, _, inventory = inventory.split(separator)
         self.__shared_inventory[client] = json.loads(inventory)
-        self.__shared_inventory[self.__id] = self.__inventory
+        self.__shared_inventory[self.player_id] = self.__inventory
         total: Counter = Counter()
 
         for key, value in self.__shared_inventory.items():
@@ -148,7 +149,7 @@ class Player:
         Refresh the shared inventory by updating the total value.
         """
         total: Counter = Counter()
-        self.__shared_inventory[self.__id] = self.__inventory
+        self.__shared_inventory[self.player_id] = self.__inventory
 
         for key, value in self.__shared_inventory.items():
             if key == 'total':
@@ -334,7 +335,7 @@ class Player:
                 self.step = 4
                 self.__commands = []
                 return
-            if self.__number_incantation >= 1 and player_id > self.__id:
+            if self.__number_incantation >= 1 and player_id > self.player_id:
                 self.__incantation = False
                 self.__number_incantation = 0
                 self.step = 0
@@ -401,7 +402,7 @@ class Player:
         self.step = -1
 
     def __manage_initialized(self) -> None:
-        if self.__id < 6 and self.unused_slots == 0:
+        if self.unused_slots > 0:
             self.response = str(Command.FORK)
             self.fork = True
         else:
@@ -420,10 +421,10 @@ class Player:
         if self.new_object:
             data: List = []
             if not self.check_incantation_possible():
-                data = [Command.INCANTATION, self.__id, self.__level]
+                data = [Command.INCANTATION.value, self.player_id, self.__level]
                 self.response = str(Command.BROADCAST) + separator.join(str(e) for e in data)
             else:
-                data = [Command.INCANTATION, self.__id, self.__level]
+                data = [Command.INCANTATION.value, self.player_id, self.__level]
                 self.__incantation = True
                 self.response = str(Command.BROADCAST) + separator.join(str(e) for e in data)
                 self.step = 4
@@ -500,6 +501,6 @@ class Player:
         self.step = 10
 
     def __manage_step_10(self) -> None:
-        data: List = [Command.INVENTORY, self.__id, self.__level, json.dumps(self.__inventory)]
+        data: List = [Command.INVENTORY.value, self.player_id, self.__level, json.dumps(self.__inventory)]
         self.response = str(Command.BROADCAST) + separator.join(str(e) for e in data)
         self.step = 0

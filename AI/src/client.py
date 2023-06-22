@@ -16,7 +16,7 @@ class State(Enum):
     """
     UNINITIALIZED = 0
     SENT_TEAM = 1
-    SAVED_SLOT = 2
+    SAVED_ID = 2
     SAVED_INFOS = 3
 
 class Client:
@@ -30,10 +30,8 @@ class Client:
         self.__id: int = 0
         self.__state: State = State.UNINITIALIZED
         self.__communication = Communication(host, port)
-        self.__player = Player(self.__id)
+        self.__player = Player()
         self.__is_logged: bool = False
-        self.__width: int = 0
-        self.__height: int = 0
         self.__message: str = ''
 
     def loop(self) -> None:
@@ -47,19 +45,6 @@ class Client:
                     self.__handle_read()
                 elif mask & EVENT_WRITE:
                     self.__handle_write()
-
-    def useless(self) -> None:
-        """
-        This temporary method is used to avoid the linter error.
-        """
-        print(self.__host)
-        print(self.__port)
-        print(self.__team)
-        print(self.__communication)
-        print(self.__player)
-        print(self.__is_logged)
-        print(self.__width)
-        print(self.__height)
 
     def __handle_read(self) -> None:
         """
@@ -82,10 +67,11 @@ class Client:
         if not self.__player.is_running:
             return
         if self.__is_logged:
-            print('Run/Play client')
+            self.__player.logical()
         if self.__player.response:
-            if not self.__is_logged and self.__player.response[:-1] == self.__team:
+            if not self.__is_logged and self.__player.response == self.__team:
                 self.__state = State.SENT_TEAM
+            # print(f'\tSending: {self.__id} -> {self.__player.response}')
             self.__communication.send(self.__player.response)
             self.__player.is_running = False
 
@@ -95,14 +81,14 @@ class Client:
         """
         if 'dead' in line:
             self.__handle_death()
-        elif 'WELCOME' in line and not self.__is_logged:
+        elif 'WELCOME' in line and self.__state == State.UNINITIALIZED:
             self.__handle_welcome()
         elif self.__state != State.SAVED_INFOS:
             self.__store_infos(line)
         elif 'Elevation underway' in line:
             self.__player.step = 8
         elif 'Current level:' in line:
-            print('Current level')
+            print(f'Current level: {line}')
         elif self.__state == State.SAVED_INFOS and 'message' in line:
             if self.__player.delete_read:
                 self.__player.delete_read = False
@@ -116,15 +102,14 @@ class Client:
             self.__player.new_object = True
         elif 'Inventory' in self.__player.response:
             self.__player.parse_inventory(line)
-            print('Parse and save player inventory')
         elif 'Look' in self.__player.response:
             self.__player.fov = line
         elif 'Connect_nbr' in self.__player.response:
             self.__player.unused_slots = int(line)
-            if self.__player.unused_slots > 0 and self.__player.fork and self.__id < 6:
-                with Popen(['python3', 'zappy_ai', '-p', str(self.__port), '-n', self.__team, '-h', self.__host]):
-                    self.__player.fork = False
-                    print('A new IA has been forked')
+            if self.__player.unused_slots > 0 and self.__player.fork:
+                Popen(['python3', 'zappy_ai', '-p', str(self.__port), '-n', self.__team, '-h', self.__host])
+                self.__player.fork = False
+                print('A new IA has been forked')
         self.__message = self.__message.split('\n')[-1]
         self.__player.is_running = True
 
@@ -146,18 +131,17 @@ class Client:
         """
         Store the width and the height of the map received from the server.
         """
-        splitted = line.split()
-
         if 'message' in line:
             return
         if self.__state == State.SENT_TEAM:
-            # self.__player.empty_slot = int(line)
+            self.__id = int(line)
+            self.__player.player_id = self.__id
+            self.__player.available_slots = self.__id
             self.__player.response = ''
-            self.__state = State.SAVED_SLOT
+            self.__state = State.SAVED_ID
             return
-        self.__width = int(splitted[0])
-        self.__height = int(splitted[1])
         self.__player.response = ''
         self.__player.is_running = True
         self.__state = State.SAVED_INFOS
         self.__is_logged = True
+        print('Logged in!', self.__id)
