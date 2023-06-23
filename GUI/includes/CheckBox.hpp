@@ -54,7 +54,6 @@ namespace Interface {
             CALLBACK getCallback() const { return _callback; }
             State getState() const { return _state; }
             void updateState(const Math::Vector &mousePos, const bool &mousePressed = false);
-            void animate(const Math::Vector &mousePos, const bool &mousePressed = false);
             void animate_checkbox(const Math::Vector &mousePos, const bool &mousePressed = false);
             void drawCheckbox() const { _sprite->drawSprite(); }
 

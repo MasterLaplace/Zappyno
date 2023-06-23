@@ -9,6 +9,7 @@
     #define TRANTORIAN_HPP_
     #include "Egg.hpp"
     #include "ISprite.hpp"
+    #include "CheckBox.hpp"
     #include "Vector.hpp"
     #include <memory>
     #include <map>

@@ -497,11 +497,15 @@ namespace Manager {
         }
         for (auto &level : levels)
             level.second = level.second / division;
-        std::sort(levels.begin(), levels.end(), [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b)->bool {
+
+        std::vector<std::pair<std::string, int>> sortedLevels(levels.begin(), levels.end());
+
+        std::sort(sortedLevels.begin(), sortedLevels.end(), [](const auto& a, const auto& b) {
             return a.second < b.second;
         });
-        for (auto &level : levels) {
-            result.push_back(level.first + " > players : " + std::to_string(scores[level.first]));
+
+        for (const auto &level : sortedLevels) {
+            result.push_back(level.first + " > players: " + std::to_string(scores[level.first]));
         }
         return result;
     }

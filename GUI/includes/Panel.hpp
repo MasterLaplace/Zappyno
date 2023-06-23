@@ -7,7 +7,6 @@
 
 #ifndef PANEL_HPP_
     #define PANEL_HPP_
-    #include "Button.hpp"
     #include "Input.hpp"
     #include "CheckBox.hpp"
     #include "Bar.hpp"

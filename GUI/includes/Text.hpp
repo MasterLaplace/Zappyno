@@ -13,7 +13,7 @@
 namespace Interface {
     class Text {
         public:
-            Text(const std::string &font) { 
+            Text(const std::string &font) {
                 std::cout << "HELLO: " << font << std::endl;
                 _text.font = Sf_text::createFont(font); }
             Text(const Text &other) = default;
