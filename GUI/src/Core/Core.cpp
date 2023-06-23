@@ -73,6 +73,7 @@ void Core::run()
             _protocol->move_map({5, 0});
 
         _window->clear();
+
         // get the mouse position in the window
         sf::Vector2i pixelPos = sf::Mouse::getPosition(*_window);
         Math::Vector mousePos = {double(pixelPos.x), double(pixelPos.y)};

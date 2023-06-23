@@ -72,6 +72,13 @@ namespace GUI {
             std::shared_ptr<ISprite> _background = nullptr;
     };
 
+    static std::vector<std::string /*music path*/> MUSIC = {
+        {"GUI/assets/sounds/Main_Title.ogg"},
+        {"GUI/assets/sounds/Outer_Wilds.ogg"},
+        {"GUI/assets/sounds/Timber_Hearth.ogg"},
+        {"GUI/assets/sounds/14.3_Billion_Years.ogg"},
+    };
+
     class SceneManager {
         public:
             enum SceneType {
@@ -86,16 +93,17 @@ namespace GUI {
         public:
             SceneManager() {
                 _xml.loadFile("GUI/assets/scene.xml");
-                if (!music.openFromFile("GUI/assets/sounds/Outer_Wilds.ogg"))
+                if (!music.openFromFile(MUSIC[0]))
                     throw std::invalid_argument("Core: Cannot load music file");
                 music.play();
-                music.setLoop(true);
             }
-            ~SceneManager() = default;
+            ~SceneManager() { music.stop(); }
             SceneManager(SceneManager&) = default;
             SceneManager(SceneManager&&) = default;
             SceneManager(const SceneManager&) = default;
             SceneManager &operator=(const SceneManager&) = default;
+
+            sf::Music &getMusic() { return music; }
 
             static void switchPanel(std::vector<Interface::Panel> &panels, const std::string &panelName);
             static void switchScene(Scene_Manager::SceneType &actualScene, const Scene_Manager::SceneType &nextScene);
@@ -242,6 +250,15 @@ namespace GUI {
                 std::vector<Interface::CALLBACK> list_callback = scene->getCallback();
                 auto callcackP = protocol->getCallback();
                 list_callback.insert(list_callback.end(), callcackP.begin(), callcackP.end());
+                try {
+                    if (music.getStatus() == sf::SoundSource::Stopped) {
+                        if (!music.openFromFile(MUSIC[RAND(0, 3)]))
+                            throw std::invalid_argument("Core: Cannot load music file");
+                        music.play();
+                    }
+                } catch (std::exception &e) {
+                    std::cerr << e.what() << std::endl;
+                }
                 for (auto it : list_callback) {
                     switch (it) {
                         case Interface::CALLBACK::EXIT:
@@ -257,7 +274,7 @@ namespace GUI {
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::MENU, window);
                             return;
                         case Interface::CALLBACK::GOTO_CREATE:
-                            // protocol->setWinnerTeam("");
+                            protocol->setWinnerTeam("");
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREATE, window);
                             return;
                         case Interface::CALLBACK::GOTO_GAME:
