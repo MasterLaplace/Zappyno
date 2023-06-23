@@ -53,6 +53,15 @@ void Core::run()
         while (_window->pollEvent(event)) {
             if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
                 _window->close();
+            if (event.type == sf::Event::KeyReleased) {
+                if (event.key.code == sf::Keyboard::F1) {
+                    auto &now = _sceneManager.getMusic();
+                    if (now.getStatus() == sf::Music::Status::Paused)
+                        now.play();
+                    else
+                        now.pause();
+                }
+            }
             if (event.type == sf::Event::MouseWheelScrolled) {
                 if (event.mouseWheelScroll.delta > 0) {
                     _protocol->setScaleTile(_protocol->getScaleTile() + 0.1f);
