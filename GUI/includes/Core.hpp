@@ -25,6 +25,7 @@ class Core {
     protected:
     private:
         std::shared_ptr<sf::RenderWindow> _window;
+        Sf_transition::Transition star = Sf_transition::Transition(Sf_transition::Transition::TransitionType::STARFIELD, std::numeric_limits<int>::max());
         std::shared_ptr<GUI::Scene> _scene;
         GUI::SceneManager _sceneManager;
         std::shared_ptr<Manager::Protocol> _protocol;
