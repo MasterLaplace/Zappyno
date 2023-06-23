@@ -76,6 +76,7 @@ $ make clean
 | --- | --- |
 | <kbd>`...`</kbd> | ... |
 | <kbd>`ESC`</kbd> | Quit |
+| <kbd>`F1`</kbd>  | Pause Music |
 
 
 <div id='tree'>
