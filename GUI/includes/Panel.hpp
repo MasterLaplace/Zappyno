@@ -12,6 +12,7 @@
     #include "CheckBox.hpp"
     #include "Bar.hpp"
     #include "Chat.hpp"
+    #include "Text.hpp"
 
 /**
  * @brief Panel class
@@ -46,6 +47,11 @@ namespace Interface {
             std::shared_ptr<ISprite> getSprite() const { return _sprite; }
             bool isDisplayed() const { return _isDisplayed; }
             void setType(const std::string &type) { _type = type; }
+            void setTextUser(std::shared_ptr<std::vector<Interface::Text>> text) { if (_text_user) return; _text_user = text; }
+            void setTextCase(std::shared_ptr<std::vector<Interface::Text>> text) { if (_text_case) return; _text_case = text; }
+            void setUserData(std::vector<unsigned> data);
+            void setCaseData(std::vector<unsigned> data);
+
             void setCallback(const Interface::CALLBACK &callback) { _callback = callback; }
             void setSprite(const std::shared_ptr<ISprite> &sprite) {
                 _sprite = sprite;
@@ -57,14 +63,19 @@ namespace Interface {
 
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
 
+            std::shared_ptr<std::vector<Interface::Text>> getTextUser() const { return _text_user; }
+            std::shared_ptr<std::vector<Interface::Text>> getTextCase() const { return _text_case; }
+
             void addButton(const Interface::Button &button) { _buttons.push_back(button); }
             void addInput(const Interface::Input &input) { _inputs.push_back(input); }
             void addCheckbox(const Interface::Checkbox &checkbox) { _checkboxs.push_back(checkbox); }
             void addBar(const Interface::Bar &bar) { _bars.push_back(bar); }
             void addChat(const Interface::Chat &chat) { _chat = std::make_shared<Interface::Chat>(chat); }
+            void addTextUser(const Interface::Text &text) { _text_user->push_back(text); }
+            void addTextCase(const Interface::Text &text) { _text_case->push_back(text); }
             template<typename Win>
             void drawPanel(Win &win) {
-                if (!_isDisplayed || (_callback == NONE && _type == "inventory")) return;
+                if (!_isDisplayed || (_callback == NONE && _type == "inventory_user") || (_callback == NONE && _type == "inventory_case")) return;
                 if (_sprite) { _sprite->drawSprite(); }
                 for (auto &button : _buttons)
                     button.drawButton();
@@ -74,6 +85,13 @@ namespace Interface {
                     input.drawInput<Win>(win);
                 for (auto &bar : _bars)
                     bar.drawBar();
+                if (_text_user) {
+                    for (auto &text : *_text_user)
+                        text.drawText<Win>(win);
+                }
+                if (_text_case)
+                    for (auto &text : *_text_case)
+                        text.drawText<Win>(win);
                 if (_chat)
                     _chat->drawChat<Win>(win);
             }
@@ -89,6 +107,8 @@ namespace Interface {
             std::vector<Interface::Checkbox> _checkboxs;
             std::vector<Interface::Input> _inputs;
             std::vector<Interface::Bar> _bars;
+            std::shared_ptr<std::vector<Interface::Text>> _text_user = nullptr;
+            std::shared_ptr<std::vector<Interface::Text>> _text_case = nullptr;
             std::shared_ptr<Interface::Chat> _chat = nullptr;
             std::shared_ptr<ISprite> _sprite = nullptr;
             Math::Vector _pos;

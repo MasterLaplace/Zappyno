@@ -13,6 +13,7 @@
     #include "Chat.hpp"
     #include "Button.hpp"
     #include "Client.hpp"
+    #include "Text.hpp"
     #include <functional>
 
 /**
@@ -283,6 +284,31 @@ namespace Manager {
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
             void setChat(std::shared_ptr<Interface::Chat> chat) { _chat = chat; }
 
+            void setTextInventoryUser(std::shared_ptr<std::vector<Interface::Text>> text_user) { _text_user = text_user; }
+            void setTextInventoryCase(std::shared_ptr<std::vector<Interface::Text>> text_case) { _text_case = text_case; }
+
+            std::vector<unsigned> getUserData(unsigned id) {
+                std::vector<unsigned> data(7);
+                if (_tiles.size() > id || _tiles.empty())
+                    return std::vector<unsigned>(7, 0);
+                for (auto food : _tiles[id].getFoods()) {
+                    data[static_cast<size_t>(food.getType())]++;
+                }
+                std::cout << "[getuserdata]" << std::endl;
+                return data;
+            }
+
+            std::vector<unsigned> getCaseData(unsigned id) {
+                std::vector<unsigned> data(7);
+                if (_tiles.size() > id || _tiles.empty())
+                    return std::vector<unsigned>(7, 0);
+                for (auto food : _tiles[id].getFoods()) {
+                    data[static_cast<size_t>(food.getType())]++;
+                }
+                std::cout << "[getcasedata]" << std::endl;
+                return data;
+            }
+
             void setWinnerTeam(std::string team) { _winnerTeam = team; }
             std::string getWinnerTeam() const { return _winnerTeam; }
 
@@ -314,6 +340,8 @@ namespace Manager {
             std::string _winnerTeam = "";
             Interface::CALLBACK _gotoResult = Interface::CALLBACK::NONE;
             std::shared_ptr<sf::RenderWindow> _window = nullptr;
+            std::shared_ptr<std::vector<Interface::Text>> _text_user = nullptr;
+            std::shared_ptr<std::vector<Interface::Text>> _text_case = nullptr;
     };
 } // namespace Manager
 

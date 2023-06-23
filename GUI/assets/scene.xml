@@ -4,6 +4,7 @@
     <Fonts>
         <Font name="arial" path="GUI/assets/arial.ttf"/>
         <Font name="open_sans_bold_italic" path="GUI/assets/OpenSans-ExtraBoldItalic.ttf"/>
+        <Font name="open_sans_bold" path="GUI/assets/OpenSans-Bold.ttf"/>
     </Fonts>
     <Images>
         <!-- <Image name="play_button" path="GUI/assets/play_button-removebg-preview.png" offset="251, 249" max="1"/> -->
@@ -35,8 +36,8 @@
         <Button name="credits_button" img="credits_img_button" pos="710, 634" scale="1, 1" callback="goto_credit"/>
         <Button name="exit_button" img="exit_img_button" pos="710, 745" scale="1, 1" callback="exit"/>
         <Button name="back_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_menu"/>
-        <Button name="user_button" img="user_img_button" pos="710, 518" scale="1, 1" callback="open_inventory"/>
-        <Button name="case_button" img="case_img_button" pos="710, 634" scale="1, 1" callback="open_inventory"/>
+        <Button name="user_button" img="user_img_button" pos="410, 50" scale="1, 1" callback="open_inventory_user"/>
+        <Button name="case_button" img="case_img_button" pos="1010, 50" scale="1, 1" callback="open_inventory_case"/>
     </Buttons>
     <Checkboxs>
         <!-- CALLBACK: -->
@@ -48,11 +49,29 @@
         <Input name="ip" img="table_panel" pos="0, 0" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
     </Inputs>
     <Chats>
-        <Chat name="chat" pos="800, 700" limit="20" font="GUI/assets/OpenSans-Bold.ttf"/>
+        <Chat name="chat" pos="800, 700" limit="20" font="open_sans_bold_italic"/>
     </Chats>
     <Bars>
         <Bar name="healh" img="health_bar" pos="710, 745" scale="1, 1" vertical="true"/>
     </Bars>
+    <Texts>
+        <!-- user -->
+        <Text name="food" pos="166, 222" font="open_sans_bold_italic"/>
+        <Text name="linemate" pos="166, 374" font="open_sans_bold_italic"/>
+        <Text name="deraumere" pos="166, 506" font="open_sans_bold_italic"/>
+        <Text name="sibur" pos="166, 637" font="open_sans_bold_italic"/>
+        <Text name="mendiane" pos="166, 769" font="open_sans_bold_italic"/>
+        <Text name="phiras" pos="166, 919" font="open_sans_bold_italic"/>
+        <Text name="thystame" pos="166, 1035" font="open_sans_bold_italic"/>
+        <!-- case -->
+        <Text name="food_case" pos="166, 178" font="open_sans_bold_italic"/>
+        <Text name="linemate_case" pos="166, 328" font="open_sans_bold_italic"/>
+        <Text name="deraumere_case" pos="166, 460" font="open_sans_bold_italic"/>
+        <Text name="sibur_case" pos="166, 591" font="open_sans_bold_italic"/>
+        <Text name="mendiane_case" pos="166, 723" font="open_sans_bold_italic"/>
+        <Text name="phiras_case" pos="166, 873" font="open_sans_bold_italic"/>
+        <Text name="thystame_case" pos="166, 989" font="open_sans_bold_italic"/>
+    </Texts>
     <Panels>
         <!-- type: "inventory", "other" -->
         <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" type="other"/>
@@ -60,12 +79,13 @@
         <Panel name="game_panel" img="" pos="0, 0" scale="1, 1" buttons="user_button, case_button" type="other"/>
         <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" type="other"/>
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
-        <Panel name="user_inventory_panel" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory"/>
+        <Panel name="user_inventory_panel" texts="food, thystame, linemate, deraumere, sibur, mendiane, phiras" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>
+        <Panel name="case_inventory_panel" texts="food_case, thystame_case, linemate_case, deraumere_case, sibur_case, mendiane_case, phiras_case" img="inventory_case_img" pos="0, 0" scale="1, 1" type="inventory_case"/>
         <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1", chat="chat"/>
     </Panels>
     <Scenes>
         <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
-        <Scene name="game" panels="game_panel, user_inventory_panel, chat_box" back="game"/>
+        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, chat_box" back="game"/>
         <Scene name="setting" panels="settings_panel" back="space_background"/>
         <Scene name="credit" panels="credits_panel" back="space_background"/>
     </Scenes>

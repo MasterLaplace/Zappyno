@@ -41,6 +41,9 @@ namespace GUI {
 
             std::shared_ptr<Interface::Chat> getChat();
 
+            std::shared_ptr<std::vector<Interface::Text>> getTextInventoryUser();
+            std::shared_ptr<std::vector<Interface::Text>> getTextInventoryCase();
+
             std::vector<Interface::Panel> &getPanels() { return _panels; }
 
             void addPanel(const Interface::Panel &panel) { _panels.push_back(panel); }
@@ -113,6 +116,7 @@ namespace GUI {
                 std::vector<std::map<std::string, std::string>> panel = _xml.getTiles("GUI/assets/scene.xml", "Panels");
                 std::vector<std::map<std::string, std::string>> scenes = _xml.getTiles("GUI/assets/scene.xml", "Scenes");
                 std::vector<std::map<std::string, std::string>> chat = _xml.getTiles("GUI/assets/scene.xml", "Chats");
+                std::vector<std::map<std::string, std::string>> text = _xml.getTiles("GUI/assets/scene.xml", "Texts");
                 // loop on scene
                 for (auto it : scenes) {
                     std::cout << "name scene: " << it["name"] << std::endl;
@@ -203,6 +207,27 @@ namespace GUI {
                                             }
                                         }
                                     }
+                                    // loop on text
+                                    if (_panel.getType() == "inventory_user")
+                                        _panel.setTextUser(std::make_shared<std::vector<Interface::Text>>());
+                                    else if (_panel.getType() == "inventory_case")
+                                        _panel.setTextCase(std::make_shared<std::vector<Interface::Text>>());
+                                    auto texts = String::string_to_string_vector(it3["texts"], ", \t");
+                                    std::cout << "inputs: " << it3["text"] << std::endl;
+                                    for (auto it4 : texts) {
+                                        for (auto it5 : text) {
+                                            if (it5["name"] == it4) {
+                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
+                                                Interface::Text _text(findInTiles(font, it5["font"]));
+                                                _text.setPos(pos);
+                                                if (_panel.getType() == "inventory_user")
+                                                    _panel.addTextUser(_text);
+                                                else if (_panel.getType() == "inventory_case")
+                                                    _panel.addTextCase(_text);
+                                            }
+                                        }
+                                    }
                                     scene->addPanel(_panel);
                                 }
                             }
@@ -236,7 +261,9 @@ namespace GUI {
                             return;
                         case Interface::CALLBACK::GOTO_GAME:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::GAME, window);
-                            return protocol->setChat(scene->getChat());
+                            protocol->setChat(scene->getChat());
+                            protocol->setTextInventoryUser(scene->getTextInventoryUser());
+                            protocol->setTextInventoryCase(scene->getTextInventoryCase());
                             return;
                         case Interface::CALLBACK::GOTO_SETTING:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::SETTING, window);
@@ -247,12 +274,22 @@ namespace GUI {
                         case Interface::CALLBACK::GOTO_CREDIT:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREDIT, window);
                             return;
-                        case Interface::CALLBACK::OPEN_INVENTORY:
+                        case Interface::CALLBACK::OPEN_INVENTORY_USER:
                             for (auto &it : scene->getPanels()) {
-                                if (it.getType() == "inventory")
-                                    return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY);
+                                if (it.getType() == "inventory_user") {
+                                    it.setUserData(protocol->getUserData(0));
+                                    return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_USER);
+                                }
                             }
-                            throw std::invalid_argument("Scene: Cannot find inventory panel");
+                            throw std::invalid_argument("Scene: Cannot find inventory user panel");
+                        case Interface::CALLBACK::OPEN_INVENTORY_CASE:
+                            for (auto &it : scene->getPanels()) {
+                                if (it.getType() == "inventory_case") {
+                                    it.setCaseData(protocol->getCaseData(0));
+                                    return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_CASE);
+                                }
+                            }
+                            throw std::invalid_argument("Scene: Cannot find inventory case panel");
                         default:
                             break;
                     }

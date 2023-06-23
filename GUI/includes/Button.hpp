@@ -38,7 +38,8 @@ namespace Interface {
         RESIZE,
         EXIT,
         MUTE_SOUND,
-        OPEN_INVENTORY,
+        OPEN_INVENTORY_USER,
+        OPEN_INVENTORY_CASE,
         FULL_SCREEN,
         FINAL
     };
