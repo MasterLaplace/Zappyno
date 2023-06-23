@@ -93,6 +93,7 @@ void Core::run()
             _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         }
         _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
+        _scene->drawScene<sf::RenderWindow>(*_window, _protocol);
 
         if (!star.isFinished() && _scene->getSceneType() == Scene_Manager::SceneType::MENU)
             star.DoTransition(*_window);

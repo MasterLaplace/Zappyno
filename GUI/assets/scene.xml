@@ -81,7 +81,7 @@
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
         <Panel name="user_inventory_panel" texts="food, thystame, linemate, deraumere, sibur, mendiane, phiras" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>
         <Panel name="case_inventory_panel" texts="food_case, thystame_case, linemate_case, deraumere_case, sibur_case, mendiane_case, phiras_case" img="inventory_case_img" pos="0, 0" scale="1, 1" type="inventory_case"/>
-        <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1", chat="chat"/>
+        <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1" chat="chat"/>
     </Panels>
     <Scenes>
         <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
