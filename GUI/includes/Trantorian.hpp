@@ -53,10 +53,15 @@ namespace GUI {
             unsigned getLevel() const { return _level; }
             unsigned getId() const { return _id; }
             Math::Vector getPos() const { return _sprite->getPos(); }
+            Math::Vector getScale() const { return _sprite->getScale(); }
+            Math::Vector getSize() const { return _sprite->getSize(); }
             Direction getDir() const { return _dir; }
             std::string getTeam() const { return _team; }
             std::map<std::string, unsigned> getInventory() const { return _inventory; }
             State getState() const { return _state; }
+
+            Math::Vector getOriginalPos() { return _pos; }
+            void setOriginalPos(Math::Vector pos) { _sprite->setPos(pos); }
 
             double DirToRandian();
 
@@ -72,6 +77,7 @@ namespace GUI {
             unsigned _id;
             unsigned _level = 1;
             Direction _dir = NORTH;
+            Math::Vector _pos;
             std::string _team;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
             State _state = IDLE;

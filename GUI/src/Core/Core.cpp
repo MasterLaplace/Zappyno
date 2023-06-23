@@ -56,10 +56,10 @@ void Core::run()
             if (event.type == sf::Event::MouseWheelScrolled) {
                 if (event.mouseWheelScroll.delta > 0) {
                     _protocol->setScaleTile(_protocol->getScaleTile() + 0.1f);
-                    _protocol->updatePosition(/*{double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)}*/);
+                    _protocol->updatePosition();
                 } else if (event.mouseWheelScroll.delta < 0) {
                     _protocol->setScaleTile(_protocol->getScaleTile() - 0.1f);
-                    _protocol->updatePosition(/*{double(event.mouseWheelScroll.x), double(event.mouseWheelScroll.y)}*/);
+                    _protocol->updatePosition();
                 }
             }
         }
