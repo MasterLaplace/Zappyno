@@ -477,6 +477,35 @@ namespace Manager {
         }
     }
 
+    std::vector<std::string> Protocol::getScore() {
+        std::map<std::string, int> scores;
+        std::map<std::string, int> levels;
+        std::vector<std::string> result;
+        int division = 0;
+        for (auto &tile : _tiles) {
+            for (auto &trantorian : tile.getTrantorians()) {
+                if (scores.find(trantorian->getTeam()) == scores.end())
+                    scores[trantorian->getTeam()] = 1;
+                else
+                    scores[trantorian->getTeam()]++;
+                if (levels.find(trantorian->getTeam()) == levels.end())
+                    levels[trantorian->getTeam()] = trantorian->getLevel();
+                else 
+                    levels[trantorian->getTeam()] += trantorian->getLevel();
+                division++;
+            }
+        }
+        for (auto &level : levels)
+            level.second = level.second / division;
+        std::sort(levels.begin(), levels.end(), [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b)->bool {
+            return a.second < b.second;
+        });
+        for (auto &level : levels) {
+            result.push_back(level.first + " > players : " + std::to_string(scores[level.first]));
+        }
+        return result;
+    }
+
     void Protocol::draw() {
         for (auto &tile : _tiles)
             tile.drawTile();

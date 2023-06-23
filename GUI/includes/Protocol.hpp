@@ -236,6 +236,7 @@ namespace Manager {
             GUI::Tiles &getTile(Math::Vector pos);
             std::shared_ptr<GUI::Trantorian> getTile(unsigned id);
             std::shared_ptr<GUI::Egg> getEgg(unsigned id);
+            std::vector<std::string> getScore();
 
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
             void setChat(std::shared_ptr<Interface::Chat> chat) { _chat = chat; }
