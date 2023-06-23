@@ -240,7 +240,8 @@ namespace GUI {
             template <typename Win, typename Sprite>
             void switchScene(std::shared_ptr<Win> window, std::shared_ptr<Scene> &scene, std::shared_ptr<Manager::Protocol> &protocol) {
                 std::vector<Interface::CALLBACK> list_callback = scene->getCallback();
-                // list_callback.push_back(protocol->getCallback());
+                auto callcackP = protocol->getCallback();
+                list_callback.insert(list_callback.end(), callcackP.begin(), callcackP.end());
                 for (auto it : list_callback) {
                     switch (it) {
                         case Interface::CALLBACK::EXIT:

@@ -30,7 +30,7 @@ namespace GUI {
             Tiles(std::shared_ptr<ISprite> sprite, std::vector<unsigned> &inventory, std::shared_ptr<sf::RenderWindow> &window);
             ~Tiles() = default;
 
-            Math::Vector getRandPos();
+            Math::Vector getRandPos(std::string path, double scale = 1);
 
             void setPos(Math::Vector pos) { _sprite->setPos(pos); }
             void setScale(Math::Vector scale) { _sprite->setScale(scale); }

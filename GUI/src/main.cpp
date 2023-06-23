@@ -7,6 +7,11 @@
 
 #include "../includes/Core.hpp"
 
+void init(void) __attribute__((constructor));
+void init(void) {
+    srand(time(NULL));
+}
+
 int main(const int ac, const char *av[])
 {
     try {

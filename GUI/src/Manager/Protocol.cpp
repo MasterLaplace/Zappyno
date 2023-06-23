@@ -11,7 +11,8 @@
 #include <memory>
 
 namespace Manager {
-    void Protocol::parseCommand(std::string &str, std::shared_ptr<Client> client) {
+    void Protocol::parseCommand(std::string &str, std::shared_ptr<Client> client)
+    {
         auto args = String::string_to_string_vector(str, "\n");
 
         std::unordered_map<std::string, std::vector<std::string>> map;
@@ -29,9 +30,8 @@ namespace Manager {
 
         for (auto &entry : reversedMap) {
             for (auto &value : entry.second) {
-                if (commands.find(entry.first) != commands.end()) {
+                if (commands.find(entry.first) != commands.end())
                     commands[entry.first](value);
-                }
             }
         }
     }
@@ -57,7 +57,7 @@ namespace Manager {
             texture.loadFromFile(path);
             auto size = texture.getSize();
             auto screen_size = _window->getSize();
-            return _tiles.push_back(GUI::Tiles(std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - ((size.x*_scale) * _mapSize.x() / 2)) + (size.x*_scale) * x, ((screen_size.y / 2) - ((size.y*_scale) * _mapSize.y() / 2)) + (size.y*_scale) * y), Math::Vector(_scale, _scale)), resources, _window));
+            return _tiles.push_back(GUI::Tiles(std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - ((size.x * _scale) * _mapSize.x() / 2)) + (size.x * _scale) * x, ((screen_size.y / 2) - ((size.y * _scale) * _mapSize.y() / 2)) + (size.y * _scale) * y), Math::Vector(_scale, _scale)), resources, _window));
         }
         for (auto &tile : _tiles) {
             if (tile.getPos().x() == x && tile.getPos().y() == y)
@@ -393,5 +393,97 @@ namespace Manager {
             }
         }
         return nullptr;
+    }
+
+    void Protocol::deleteEgg(unsigned id) {
+        for (auto &tile : _tiles) {
+            for (auto it = tile.getEggs().begin(); it != tile.getEggs().end(); it++) {
+                if ((*it)->getId() == id) {
+                    tile.getEggs().erase(it);
+                    return;
+                }
+            }
+        }
+    }
+
+    void Protocol::move_map(Math::Vector pos) {
+        for (auto &tile : _tiles) {
+            tile.setPos(tile.getPos() + pos);
+            for (auto &food : tile.getFoods())
+                food.setPos(food.getPos() + pos);
+            for (auto &trantorian : tile.getTrantorians())
+                trantorian->setPos(trantorian->getPos() + pos);
+            for (auto &egg : tile.getEggs())
+                egg->setPos(egg->getPos() + pos);
+        }
+    }
+
+    void Protocol::updatePosition() {
+        unsigned x = 0;
+        unsigned y = 0;
+        Math::Vector midle_pos = _tiles[_tiles.size() / 2 + _mapSize.x() / 2].getPos();
+
+        for (auto &tile : _tiles) {
+            if (x == _mapSize.x()) {
+                x = 0;
+                y++;
+            }
+            if (_scale <= 0) {
+                x++;
+                continue;
+            }
+            tile.setScale({_scale, _scale});
+            Math::Vector sizeOfTile = tile.getSize();
+            Math::Vector sizeAfterScale = Math::Vector(sizeOfTile.x() * _scale, sizeOfTile.y() * _scale);
+            Math::Vector diff = Math::Vector((sizeAfterScale.x() - sizeOfTile.x()) / 2, (sizeAfterScale.y() - sizeOfTile.y()) / 2);
+
+            /*
+            * Calculate updated tile position by scale :
+                MiddlePos - ((SizeMapPxl * scale) / 2) + (SizeTile * scale) * x
+                MiddlePos - MiddleSizeMapPxl + PosTileInMapPxl
+            */
+            double updatedX = ((midle_pos.x()) - (sizeOfTile.x() * _mapSize.x() * _scale / 2)) + (sizeOfTile.x() * _scale) * x;
+            double updatedY = ((midle_pos.y()) - (sizeOfTile.y() * _mapSize.y() * _scale / 2)) + (sizeOfTile.y() * _scale) * y;
+
+            tile.setPos(Math::Vector(updatedX, updatedY));
+            for (auto &trantorian : tile.getTrantorians())
+            {
+                trantorian->setScale({_scale * tile.getScaleRatio(), _scale * tile.getScaleRatio()});
+                auto origin = trantorian->getOriginalPos();
+                /*                          posTile  +   offest    *  scale */
+                double TrantorianUpdatedX = updatedX + (origin.x() * _scale);
+                double TrantorianUpdatedY = updatedY + (origin.y() * _scale);
+                trantorian->setPos({TrantorianUpdatedX, TrantorianUpdatedY});
+            }
+            for (auto &food : tile.getFoods())
+            {
+                food.setScale({_scale * tile.getScaleRatio(), _scale * tile.getScaleRatio()});
+                auto origin = food.getOriginalPos();
+                /*                    posTile  +   offest    *  scale */
+                double FoodUpdatedX = updatedX + (origin.x() * _scale);
+                double FoodUpdatedY = updatedY + (origin.y() * _scale);
+                food.setPos({FoodUpdatedX, FoodUpdatedY});
+            }
+            for (auto &egg : tile.getEggs())
+            {
+                egg->setScale({_scale * tile.getScaleRatio(), _scale * tile.getScaleRatio()});
+                auto origin = egg->getOriginalPos();
+                /*                   posTile  +   offest    *  scale */
+                double EggUpdatedX = updatedX + (origin.x() * _scale);
+                double EggUpdatedY = updatedY + (origin.y() * _scale);
+                egg->setPos({EggUpdatedX, EggUpdatedY});
+            }
+            x++;
+        }
+    }
+
+    void Protocol::draw() {
+        for (auto &tile : _tiles)
+            tile.drawTile();
+        for (auto &tile : _tiles) {
+            tile.drawFoods();
+            tile.drawTrantorians();
+            tile.drawEggs();
+        }
     }
 } // namespace GUI
