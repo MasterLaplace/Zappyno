@@ -8,6 +8,7 @@
 #include "../../includes/Protocol.hpp"
 #include <unordered_map>
 #include <algorithm>
+#include <memory>
 
 namespace Manager {
     void Protocol::parseCommand(std::string &str, std::shared_ptr<Client> client) {
@@ -47,11 +48,17 @@ namespace Manager {
         double x = std::stod(args[1]);
         double y = std::stod(args[2]);
         std::vector<unsigned> resources;
+        static sf::Texture texture;
 
         for (int i = 3; i < 10; i++)
             resources.push_back(std::stoi(args[i]));
-        if (_tiles.size() < _mapSize.x() * _mapSize.y())
-            return _tiles.push_back(GUI::Tiles({x, y}, resources));
+        if (_tiles.size() < _mapSize.x() * _mapSize.y()) {
+            std::string path = "GUI/assets/Map_tile_06.png";
+            texture.loadFromFile(path);
+            auto size = texture.getSize();
+            auto screen_size = _window->getSize();
+            return _tiles.push_back(GUI::Tiles(std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - ((size.x*_scale) * _mapSize.x() / 2)) + (size.x*_scale) * x, ((screen_size.y / 2) - ((size.y*_scale) * _mapSize.y() / 2)) + (size.y*_scale) * y), Math::Vector(_scale, _scale)), resources, _window));
+        }
         for (auto &tile : _tiles) {
             if (tile.getPos().x() == x && tile.getPos().y() == y)
                 return tile.setInventory(resources);
@@ -71,15 +78,16 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " #"); // Can generate bug if team name contains #
         unsigned id = std::stoi(args[1]);
-        GUI::Trantorian player;
+        auto player = std::make_shared<GUI::Trantorian>();
 
-        player.setId(id);
-        player.setPos({std::stod(args[2]), std::stod(args[3])});
-        player.setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
-        player.setLevel(std::stoi(args[5]));
-        player.setTeam(args[6]);
-        if (_tiles.size() >= player.getPos().x() * player.getPos().y())
-            return addTrantorian(player);
+        player->setId(id);
+        player->setSprite(std::make_shared<Sf_sprite::SfSprite>(_window, "GUI/assets/rock_assets/rock_0.png", Math::Vector(0, 0)));
+        player->setPos({std::stod(args[2]), std::stod(args[3])});
+        player->setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
+        player->setLevel(std::stoi(args[5]));
+        player->setTeam(args[6]);
+        if (_tiles.size() >= player->getPos().x() * player->getPos().y())
+            return _tiles[_mapSize.x() * player->getPos().y() + player->getPos().x()].addTrantorian(player);
         throw std::runtime_error("[pnw] Player pos not found in map (id: " + std::to_string(id) + ")");
     }
 
@@ -87,14 +95,13 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
-        Math::Vector pos = {std::stod(args[2]), std::stod(args[3])};
+        Math::Vector npos = {std::stod(args[2]), std::stod(args[3])};
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id) {
-                player.setPos({std::stod(args[2]), std::stod(args[3])});
-                player.setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
-                return;
-            }
+        auto trantorian = getTile(id);
+        if (trantorian) {
+            trantorian->setPos(npos);
+            trantorian->setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
+            return;
         }
         throw std::runtime_error("[ppo] Player not found in map (id: " + std::to_string(id) + ")");
     }
@@ -104,10 +111,9 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id)
-                return player.setLevel(std::stoi(args[2]));
-        }
+        auto trantorian = getTile(id);
+        if (trantorian)
+            return trantorian->setLevel(std::stoi(args[2]));
         throw std::runtime_error("[plv] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
@@ -124,10 +130,9 @@ namespace Manager {
         inventory["phiras"] = std::stoi(args[9]);
         inventory["thystame"] = std::stoi(args[10]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id)
-                return player.setInventory(inventory);
-        }
+        auto trantorian = getTile(id);
+        if (trantorian)
+            return trantorian->setInventory(inventory);
         throw std::runtime_error("[pin] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
@@ -136,50 +141,47 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id) {
-                Math::Vector pos = player.getPos();
-                GUI::Trantorian::Direction dir = player.getDir();
-                Math::Vector newPos = pos;
+        auto trantorian = getTile(id);
+        if (trantorian) {
+            Math::Vector pos = trantorian->getPos();
+            GUI::Trantorian::Direction dir = trantorian->getDir();
+            Math::Vector newPos = pos;
 
-                // get new pos by dir
-                switch (dir) {
-                    case GUI::Trantorian::Direction::NORTH:
-                        newPos.operator[](1) -= 1;
-                        break;
-                    case GUI::Trantorian::Direction::EAST:
-                        newPos.operator[](0) += 1;
-                        break;
-                    case GUI::Trantorian::Direction::SOUTH:
-                        newPos.operator[](1) += 1;
-                        break;
-                    case GUI::Trantorian::Direction::WEST:
-                        newPos.operator[](0) -= 1;
-                        break;
-                }
-
-                // check limit map
-                if (newPos.x() < 0)
-                    newPos.operator[](0) = _mapSize.x() - 1;
-                else if (newPos.y() < 0)
-                    newPos.operator[](1) = _mapSize.y() - 1;
-                else if (newPos.x() >= _mapSize.x())
-                    newPos.operator[](0) = 0;
-                else if (newPos.y() >= _mapSize.y())
-                    newPos.operator[](1) = 0;
-
-                // apply new pos
-                for (auto &p : getTrantorians()) {
-                    if (p.getPos() == pos && p.getId() != id)
-                        p.setPos(newPos);
-                }
-                // destroy egg if on pos
-                for (auto &egg : getEggs()) {
-                    if (egg.getPos() == pos)
-                        deleteEgg(egg.getId());
-                }
-                return player.setState(GUI::Trantorian::State::EXPULSING);
+            // get new pos by dir
+            switch (dir) {
+                case GUI::Trantorian::Direction::NORTH:
+                    newPos.operator[](1) -= 1;
+                    break;
+                case GUI::Trantorian::Direction::EAST:
+                    newPos.operator[](0) += 1;
+                    break;
+                case GUI::Trantorian::Direction::SOUTH:
+                    newPos.operator[](1) += 1;
+                    break;
+                case GUI::Trantorian::Direction::WEST:
+                    newPos.operator[](0) -= 1;
+                    break;
             }
+
+            // check limit map
+            if (newPos.x() < 0)
+                newPos.operator[](0) = _mapSize.x() - 1;
+            else if (newPos.y() < 0)
+                newPos.operator[](1) = _mapSize.y() - 1;
+            else if (newPos.x() >= _mapSize.x())
+                newPos.operator[](0) = 0;
+            else if (newPos.y() >= _mapSize.y())
+                newPos.operator[](1) = 0;
+
+            // apply new pos
+            auto tile = getTile(pos);
+            for (auto &p : tile.getTrantorians()) {
+                if (p->getPos() == pos && p->getId() != id)
+                    p->setPos(newPos);
+            }
+            // destroy egg if on pos
+            tile.removeEggs();
+            return trantorian->setState(GUI::Trantorian::State::EXPULSING);
         }
         throw std::runtime_error("[pex] Player not found in map (id: " + std::to_string(id) + ")");
     }
@@ -190,12 +192,9 @@ namespace Manager {
         unsigned id = std::stoi(args[1]);
         std::string message = args[1] + ": ";
 
-                for (auto &player : getTrantorians()) {
-                    if (player.getId() == id) {
-                        player.setState(GUI::Trantorian::State::BROADCASTING);
-                        break;
-                    }
-                }
+        auto trantorian = getTile(id);
+        if (trantorian)
+            trantorian->setState(GUI::Trantorian::State::BROADCASTING);
         // start from 2 to skip id and "pbc"
         for (unsigned i = 2; i < args.size(); i++)
             message += args[i] + " ";
@@ -210,9 +209,10 @@ namespace Manager {
         unsigned id = std::stoi(args[1]);
         Math::Vector pos = {std::stod(args[2]), std::stod(args[3])};
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id && player.getPos() == pos)
-                player.setState(GUI::Trantorian::State::INCANTING);
+        auto tile = getTile(pos);
+        for (auto &trantorian : tile.getTrantorians()) {
+            if (trantorian->getId() == id && trantorian->getPos() == pos)
+                trantorian->setState(GUI::Trantorian::State::INCANTING);
         }
     }
 
@@ -222,12 +222,13 @@ namespace Manager {
         Math::Vector pos = {std::stod(args[1]), std::stod(args[2])};
         bool success = std::stoi(args[3]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getPos() == pos) {
+        auto tile = getTile(pos);
+        for (auto &trantorian : tile.getTrantorians()) {
+            if (trantorian->getPos() == pos) {
                 if (success)
-                    player.setState(GUI::Trantorian::State::IDLE); // Temporary
+                    trantorian->setState(GUI::Trantorian::State::IDLE); // Temporary
                 else
-                    player.setState(GUI::Trantorian::State::DYING); // Temporary
+                    trantorian->setState(GUI::Trantorian::State::DYING); // Temporary
             }
         }
     }
@@ -237,10 +238,10 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id)
-                return player.setState(GUI::Trantorian::State::FORKING);
-        }
+        auto trantorian = getTile(id);
+        if (trantorian)
+            return trantorian->setState(GUI::Trantorian::State::FORKING);
+        throw std::runtime_error("[pfk] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
     void Protocol::pdr(std::string &str)
@@ -248,15 +249,15 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id) {
-                player.removeFood(std::stoi(args[2]), 1);
-                if (player.getPos().x() > _mapSize.x() || player.getPos().y() > _mapSize.y())
-                    throw std::runtime_error("[pdr] Player pos is out of map (id: " + std::to_string(id) + ")");
-                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].addFood(player.intToFoodString(std::stoi(args[2])), 1);
-                return player.setState(GUI::Trantorian::State::DROPPING);
-            }
+        auto trantorian = getTile(id);
+        if (trantorian) {
+            trantorian->removeFood(std::stoi(args[2]), 1);
+            if (trantorian->getPos().x() > _mapSize.x() || trantorian->getPos().y() > _mapSize.y())
+                throw std::runtime_error("[pdr] Player pos is out of map (id: " + std::to_string(id) + ")");
+            _tiles[trantorian->getPos().y() * _mapSize.x() + trantorian->getPos().x()].addFood(trantorian->intToFoodString(std::stoi(args[2])));
+            return trantorian->setState(GUI::Trantorian::State::DROPPING);
         }
+        throw std::runtime_error("[pdr] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
     void Protocol::pgt(std::string &str)
@@ -265,14 +266,13 @@ namespace Manager {
         unsigned id = std::stoi(args[1]);
         unsigned food = std::stoi(args[2]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id) {
-                if (player.getPos().x() > _mapSize.x() || player.getPos().y() > _mapSize.y())
-                    throw std::runtime_error("[pgt] Player pos is out of map (id: " + std::to_string(id) + ")");
-                _tiles[player.getPos().y() * _mapSize.x() + player.getPos().x()].removeFood(player.intToFoodString(food), 1);
-                player.addFood(food, 1);
-                return player.setState(GUI::Trantorian::State::TAKING);
-            }
+        auto trantorian = getTile(id);
+        if (trantorian) {
+            if (trantorian->getPos().x() > _mapSize.x() || trantorian->getPos().y() > _mapSize.y())
+                throw std::runtime_error("[pgt] Player pos is out of map (id: " + std::to_string(id) + ")");
+            _tiles[trantorian->getPos().y() * _mapSize.x() + trantorian->getPos().x()].removeFood(trantorian->intToFoodString(food));
+            trantorian->addFood(food, 1);
+            return trantorian->setState(GUI::Trantorian::State::TAKING);
         }
         throw std::runtime_error("[pgt] Player not found in map (id: " + std::to_string(id) + ")");
     }
@@ -282,11 +282,9 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id) {
-                return player.setState(GUI::Trantorian::State::DYING);
-            }
-        }
+        auto trantorian = getTile(id);
+        if (trantorian)
+            return trantorian->setState(GUI::Trantorian::State::DYING);
         throw std::runtime_error("[pdi] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
@@ -295,14 +293,14 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[2]);
 
-        for (auto &player : getTrantorians()) {
-            if (player.getId() == id) {
-                GUI::Egg egg;
-                egg.setId(std::stoi(args[1]));
-                egg.setPos({std::stod(args[3]), std::stod(args[4])});
-                egg.setTeam(player.getTeam());
-                return addEgg(egg);
-            }
+        auto tile = getTile({std::stod(args[3]), std::stod(args[4])});
+        auto trantorian = tile.getTrantorian(id);
+        if (trantorian) {
+            auto egg = std::make_shared<GUI::Egg>(std::make_shared<Sf_sprite::SfSprite>(_window, "GUI/assets/egg.jpg", Math::Vector(RAND(std::stod(args[3]), std::stoi(args[3]) + 50), RAND(std::stod(args[4]), std::stoi(args[4]) + 50)), Math::Vector(0.5, 0.5)));
+            egg->setId(std::stoi(args[1]));
+            egg->setPos({std::stod(args[3]), std::stod(args[4])});
+            egg->setTeam(trantorian->getTeam());
+            return tile.addEgg(egg);
         }
         throw std::runtime_error("[enw] Player not found in map (id: " + std::to_string(id) + ")");
     }
@@ -312,7 +310,8 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
-        for (auto &egg : getEggs()) { if (egg.getId() == id) return; }
+        if (getEgg(id))
+            return;
         throw std::runtime_error("[ebo] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
@@ -321,10 +320,9 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
-        for (auto &egg : getEggs()) {
-            if (egg.getId() == id)
-                return deleteEgg(id);
-        }
+        auto egg = getEgg(id);
+        if (egg)
+            return deleteEgg(id);
         throw std::runtime_error("[edi] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
@@ -373,29 +371,27 @@ namespace Manager {
         throw std::runtime_error("[" + str + "] Invalid argument");
     }
 
-    GUI::Trantorian Protocol::getTrantorian(unsigned id) const {
-        for (auto &trantorian : _trantorians) {
-            if (trantorian.getId() == id)
-                return trantorian;
-        }
-        throw std::runtime_error("[Protocol] Trantorian not found");
+    GUI::Tiles &Protocol::getTile(Math::Vector pos) {
+        if (pos.x() > _mapSize.x() || pos.y() > _mapSize.y())
+            throw std::runtime_error("[getTile] Pos is out of map (x: " + std::to_string(pos.x()) + ", y: " + std::to_string(pos.y()) + ")");
+        return _tiles[pos.y() * _mapSize.x() + pos.x()];
     }
-
-    void Protocol::deleteTrantorian(unsigned id) {
-        for (auto it = _trantorians.begin(); it != _trantorians.end(); it++) {
-            if (it->getId() == id) {
-                _trantorians.erase(it);
-                break;
+    std::shared_ptr<GUI::Trantorian> Protocol::getTile(unsigned id) {
+        for (auto &tile : _tiles) {
+            for (auto &player : tile.getTrantorians()) {
+                if (player->getId() == id)
+                    return player;
             }
         }
+        return nullptr;
     }
-
-    void Protocol::deleteEgg(unsigned id) {
-        for (auto it = _eggs.begin(); it != _eggs.end(); it++) {
-            if (it->getId() == id) {
-                _eggs.erase(it);
-                break;
+    std::shared_ptr<GUI::Egg> Protocol::getEgg(unsigned id) {
+        for (auto &tile : _tiles) {
+            for (auto &egg : tile.getEggs()) {
+                if (egg->getId() == id)
+                    return egg;
             }
         }
+        return nullptr;
     }
 } // namespace GUI

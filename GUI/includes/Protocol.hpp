@@ -9,11 +9,11 @@
 #ifndef PROTOCOL_HPP_
     #define PROTOCOL_HPP_
     #include "Tiles.hpp"
-    #include "Trantorian.hpp"
     #include "StringManager.hpp"
     #include "Chat.hpp"
     #include "Button.hpp"
     #include "Client.hpp"
+    #include "Text.hpp"
     #include <functional>
 
 /**
@@ -23,7 +23,8 @@
 namespace Manager {
     class Protocol {
         public:
-            Protocol() {
+            Protocol(std::shared_ptr<sf::RenderWindow> &window) {
+                _window = window;
                 commands["msz"] = [this](std::string &str) { msz(str); };
                 commands["bct"] = [this](std::string &str) { bct(str); };
                 commands["tna"] = [this](std::string &str) { tna(str); };
@@ -224,39 +225,123 @@ namespace Manager {
             void setMapSize(std::string &str) { _mapSize = Math::Vector(String::string_to_string_vector(str, " ")); }
             Math::Vector getMapSize() const { return _mapSize; }
 
-            void setTrantorians(std::vector<GUI::Trantorian> trantorians) { _trantorians = trantorians; }
-            void setEggs(std::vector<GUI::Egg> eggs) { _eggs = eggs; }
+            void setScaleTile(double scale) { _scale = scale; }
+            double getScaleTile() const { return _scale; }
 
-            std::vector<GUI::Trantorian> getTrantorians() const { return _trantorians; }
-            std::vector<GUI::Egg> getEggs() const { return _eggs; }
-            GUI::Trantorian getTrantorian(unsigned id) const;
+            void move_map(Math::Vector pos) {
+                for (auto &tile : _tiles) {
+                    tile.setPos(tile.getPos() + pos);
+                    for (auto &food : tile.getFoods())
+                        food.setPos(food.getPos() + pos);
+                    for (auto &trantorian : tile.getTrantorians())
+                        trantorian->setPos(trantorian->getPos() + pos);
+                    for (auto &egg : tile.getEggs())
+                        egg->setPos(egg->getPos() + pos);
+                }
+            }
 
-            void addTrantorian(GUI::Trantorian trantorian) { _trantorians.push_back(trantorian); }
-            void addEgg(GUI::Egg egg) { _eggs.push_back(egg); }
+            void updatePosition() {
+                unsigned x = 0;
+                unsigned y = 0;
+                for (auto &tile : _tiles) {
+                    if (x == _mapSize.x())
+                        x = 0, y++;
+                    if (_scale <= 0) {
+                        x++;
+                        continue;
+                    }
+                    auto size = tile.getSize();
+                    auto screen_size = _window->getSize();
+                    Math::Vector np = {((screen_size.x / 2) - ((size.x()*_scale) * _mapSize.x() / 2)) + (size.x()*_scale) * x, ((screen_size.y / 2) - ((size.y()*_scale) * _mapSize.y() / 2)) + (size.y()*_scale) * y};
+                    tile.setPos(np);
+                    tile.setScale({_scale, _scale});
+                    for (auto &food : tile.getFoods()) {
+                        if (_scale <= 0)
+                            continue;
+                        auto ns = _scale * tile.getScaleRatio();
+                        food.setScale({ns, ns});
+                        food.setPos({np.x() + (size.x() * _scale / 2) - (food.getSize().x() * ns / 2), np.y() + (size.y() * _scale / 2) - (food.getSize().y() * ns / 2)});
+                    }
+                    x++;
+                }
+            }
 
-            void deleteTrantorian(unsigned id);
-            void deleteEgg(unsigned id);
+            void deleteEgg(unsigned id) {
+                for (auto &tile : _tiles) {
+                    for (auto it = tile.getEggs().begin(); it != tile.getEggs().end(); it++) {
+                        if ((*it)->getId() == id) {
+                            tile.getEggs().erase(it);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            GUI::Tiles &getTile(Math::Vector pos);
+            std::shared_ptr<GUI::Trantorian> getTile(unsigned id);
+            std::shared_ptr<GUI::Egg> getEgg(unsigned id);
 
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
             void setChat(std::shared_ptr<Interface::Chat> chat) { _chat = chat; }
 
+            void setTextInventoryUser(std::shared_ptr<std::vector<Interface::Text>> text_user) { _text_user = text_user; }
+            void setTextInventoryCase(std::shared_ptr<std::vector<Interface::Text>> text_case) { _text_case = text_case; }
+
+            std::vector<unsigned> getUserData(unsigned id) {
+                std::vector<unsigned> data(7);
+                if (_tiles.size() > id || _tiles.empty())
+                    return std::vector<unsigned>(7, 0);
+                for (auto food : _tiles[id].getFoods()) {
+                    data[static_cast<size_t>(food.getType())]++;
+                }
+                std::cout << "[getuserdata]" << std::endl;
+                return data;
+            }
+
+            std::vector<unsigned> getCaseData(unsigned id) {
+                std::vector<unsigned> data(7);
+                if (_tiles.size() > id || _tiles.empty())
+                    return std::vector<unsigned>(7, 0);
+                for (auto food : _tiles[id].getFoods()) {
+                    data[static_cast<size_t>(food.getType())]++;
+                }
+                std::cout << "[getcasedata]" << std::endl;
+                return data;
+            }
+
             void setWinnerTeam(std::string team) { _winnerTeam = team; }
             std::string getWinnerTeam() const { return _winnerTeam; }
 
-            Interface::CALLBACK getCallback() const { return _gotoResult; }
+            std::vector<Interface::CALLBACK> getCallback() const {
+                std::vector<Interface::CALLBACK> callback;
+                callback.push_back(_gotoResult);
+                return callback;
+            }
+
+            void draw() {
+                for (auto &tile : _tiles)
+                    tile.drawTile();
+                for (auto &tile : _tiles) {
+                    tile.drawFoods();
+                    tile.drawTrantorians();
+                    tile.drawEggs();
+                }
+            }
 
         protected:
         private:
             std::vector<GUI::Tiles> _tiles;
-            std::vector<GUI::Trantorian> _trantorians;
-            std::vector<GUI::Egg> _eggs;
             Math::Vector _mapSize = {10, 10};
+            double _scale = 1;
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
             std::vector<std::string /*name*/> _teams;
             unsigned _timeUnit = 100;
             std::shared_ptr<Interface::Chat> _chat = nullptr;
             std::string _winnerTeam = "";
             Interface::CALLBACK _gotoResult = Interface::CALLBACK::NONE;
+            std::shared_ptr<sf::RenderWindow> _window = nullptr;
+            std::shared_ptr<std::vector<Interface::Text>> _text_user = nullptr;
+            std::shared_ptr<std::vector<Interface::Text>> _text_case = nullptr;
     };
 } // namespace Manager
 

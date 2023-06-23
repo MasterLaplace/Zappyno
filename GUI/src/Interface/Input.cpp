@@ -22,11 +22,11 @@ namespace Interface {
             return;
         if (_state == CLICKED && key >= 0 && key <= 25)
             _text += char(key + 65);
-        if (_state == CLICKED && key == 57)
+        else if (_state == CLICKED && key == 57)
             _text += ' ';
-        if (_state == CLICKED && key == 50)
+        else if (_state == CLICKED && key == 50)
             _text += '.';
-        if (_state == CLICKED && ((key >= 26 && key <= 35) || (key >= 75 && key <= 84)))
-            _text += char(key - ((key >= 75)?75:26) + '0');
+        else if (_state == CLICKED && ((key >= 26 && key <= 35) || (key >= 75 && key <= 84)))
+            _text += char(key - ((key >= 75) ? 75 : 26) + '0');
     }
 } // namespace Interface

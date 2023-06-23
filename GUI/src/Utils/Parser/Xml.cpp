@@ -8,11 +8,6 @@
 #include "../../../includes/Xml.hpp"
 
 namespace Parser {
-    /**
-     * @brief load the xml file and store the attributes in a map
-     *
-     * @param pathname the path to the xml file
-     */
     void Xml::loadFile(std::string pathname)
     {
         if (pathname.empty() || _attributes.find(pathname) != _attributes.end())

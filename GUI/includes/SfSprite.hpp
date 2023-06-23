@@ -7,7 +7,6 @@
 
 #ifndef SFSPRITE_HPP_
     #define SFSPRITE_HPP_
-    #include <SFML/Graphics.hpp>
     #include "ISprite.hpp"
     #include <memory>
 
@@ -30,7 +29,7 @@ namespace Sf_sprite {
         sf::Vector2f origin;
         sf::Sprite sprite;
         sf::IntRect maxSize;
-        std::shared_ptr<sf::RenderWindow> window;
+        std::shared_ptr<sf::RenderWindow> window = nullptr;
         // Animation
         unsigned offset_x = 0;
         unsigned offset_y = 0;
@@ -39,8 +38,8 @@ namespace Sf_sprite {
         void setOffset(Math::Vector offset) override;
         void setMaxOffsetX(unsigned max_offset_x) { this->max_offset_x = max_offset_x; }
         void setPos(Math::Vector pos) override { this->pos = sf::Vector2f(pos.x(), pos.y()); sprite.setPosition(this->pos); }
-        void setScale(Math::Vector scale) override { this->scale = sf::Vector2f(scale.x(), scale.y()); }
-        void setOrigin(Math::Vector origin) override { this->origin = sf::Vector2f(origin.x(), origin.y()); }
+        void setScale(Math::Vector scale) override { this->scale = sf::Vector2f(scale.x(), scale.y()); sprite.setScale(this->scale); }
+        void setOrigin(Math::Vector origin) override { this->origin = sf::Vector2f(origin.x(), origin.y()); sprite.setOrigin(this->origin); }
         void setSize(Math::Vector size) override { this->sprite.setTextureRect(sf::IntRect(0, 0, size.x(), size.y())); }
         void setTransparency(const unsigned &transparency) override;
         Math::Vector getPos() const override { return Math::Vector(this->pos.x, this->pos.y); }
@@ -54,7 +53,7 @@ namespace Sf_sprite {
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }
 
-        SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos, Math::Vector scale, Math::Vector origin = {0, 0});
+        SfSprite(std::shared_ptr<sf::RenderWindow> &win, const std::string &pathname, Math::Vector pos = {0, 0}, Math::Vector scale = {1, 1}, Math::Vector origin = {0, 0});
 
         void drawSprite() const override { this->window->draw(this->sprite); }
     };

@@ -50,8 +50,8 @@ namespace Interface {
             Math::Vector getSize() const { return _size; }
             unsigned getState() const { return _state; }
 
-            template<typename T>
-            void drawInput(T &window) {
+            template<typename Win>
+            void drawInput(Win &window) {
                 _sfText.str = _text;
                 Sf_text::DrawText(window, _sfText);
             }

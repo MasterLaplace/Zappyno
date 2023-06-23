@@ -19,6 +19,24 @@ namespace GUI {
         return nullptr;
     }
 
+    std::shared_ptr<std::vector<Interface::Text>> Scene::getTextInventoryUser() {
+        for (auto &panel : _panels) {
+            auto text = panel.getTextUser();
+            if (text != nullptr && panel.getType() == "inventory_user")
+                return text;
+        }
+        return nullptr;
+    }
+
+    std::shared_ptr<std::vector<Interface::Text>> Scene::getTextInventoryCase() {
+        for (auto &panel : _panels) {
+            auto text = panel.getTextCase();
+            if (text != nullptr && panel.getType() == "inventory_case")
+                return text;
+        }
+        return nullptr;
+    }
+
     void Scene::updateScene(const Math::Vector &mousePos, const bool &mousePressed) {
         for (auto &panel : _panels)
             panel.updatePanel(mousePos, mousePressed);
@@ -61,6 +79,7 @@ namespace GUI {
             case Scene_Manager::SceneType::RESULT:
                 return "result";
             default:
+                std::cout << "[SceneTypeToString] Scene not found" << std::endl;
                 return "NONE";
         }
     }
@@ -85,16 +104,25 @@ namespace GUI {
                 return "mute_sound";
             case Interface::CALLBACK::EXIT:
                 return "exit";
+            case Interface::CALLBACK::OPEN_INVENTORY_USER:
+                return "open_inventory_user";
+            case Interface::CALLBACK::OPEN_INVENTORY_CASE:
+                return "open_inventory_case";
+            case Interface::CALLBACK::FINAL:
+                return "final";
         default:
+            std::cout << "[CallbackToString] Callback not found : " << callback << std::endl;
             return "NONE";
         }
     }
 
     Interface::CALLBACK SceneManager::StringToCallback(const std::string &callback) {
-        for (int i = 0; i <= Interface::CALLBACK::OPEN_INVENTORY; i++) {
+        std::cout << "[StringToCallback] Callback: " << callback << std::endl;
+        for (int i = 0; i <= Interface::CALLBACK::FINAL; i++) {
             if (callback == CallbackToString(static_cast<Interface::CALLBACK>(i)))
                 return static_cast<Interface::CALLBACK>(i);
         }
+        std::cout << "[StringToCallback] Callback not found" << std::endl;
         return Interface::CALLBACK::NONE;
     }
 

@@ -7,7 +7,9 @@
 
 #ifndef ISPRITE_HPP_
     #define ISPRITE_HPP_
+    #include <SFML/Graphics.hpp>
     #include "Vector.hpp"
+    #include <memory>
 
 class ISprite {
     public:
