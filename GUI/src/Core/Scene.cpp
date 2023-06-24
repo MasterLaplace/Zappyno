@@ -108,6 +108,8 @@ namespace GUI {
                 return "open_inventory_user";
             case Interface::CALLBACK::OPEN_INVENTORY_CASE:
                 return "open_inventory_case";
+            case Interface::CALLBACK::OPEN_PAUSE:
+                return "open_pause";
             case Interface::CALLBACK::FINAL:
                 return "final";
         default:

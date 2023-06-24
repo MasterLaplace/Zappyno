@@ -40,6 +40,7 @@ namespace Interface {
         MUTE_SOUND,
         OPEN_INVENTORY_USER,
         OPEN_INVENTORY_CASE,
+        OPEN_PAUSE,
         FULL_SCREEN,
         FINAL
     };

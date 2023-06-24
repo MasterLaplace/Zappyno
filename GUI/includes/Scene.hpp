@@ -303,6 +303,13 @@ namespace GUI {
                         case Interface::CALLBACK::GOTO_CREDIT:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREDIT, window);
                             return;
+                        case Interface::CALLBACK::OPEN_PAUSE:
+                            for (auto &it : scene->getPanels()) {
+                                if (it.getType() == "pause") {
+                                    return it.setCallback(Interface::CALLBACK::OPEN_PAUSE);
+                                }
+                            }
+                            throw std::invalid_argument("Core: Cannot find pause panel");
                         case Interface::CALLBACK::OPEN_INVENTORY_USER:
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_user") {
