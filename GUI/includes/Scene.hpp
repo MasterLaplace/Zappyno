@@ -270,6 +270,17 @@ namespace GUI {
                             else
                                 music.setVolume(0);
                             return;
+                        case Interface::CALLBACK::RESIZE:
+                            if (_isFullscreen) {
+                                _isFullscreen = false;
+                                window->close();
+                                window->create(sf::VideoMode(1920, 1080), "GUI", sf::Style::Default);
+                            } else {
+                                _isFullscreen = true;
+                                window->close();
+                                window->create(sf::VideoMode(1920, 1080), "GUI", sf::Style::Fullscreen);
+                            }
+                            return;
                         case Interface::CALLBACK::GOTO_MENU:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::MENU, window);
                             return;
@@ -318,6 +329,8 @@ namespace GUI {
         private:
             Parser::Xml _xml;
             sf::Music music;
+            bool _isFullscreen = false;
+            Math::Vector _winSize = {1920, 1080};
     };
 }
 
