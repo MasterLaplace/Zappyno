@@ -54,7 +54,6 @@ namespace GUI {
         if (_scenetype == Scene_Manager::SceneType::GAME) {
             if (key == sf::Keyboard::Escape)
                 _callback = Interface::CALLBACK::OPEN_PAUSE;
-            }
         }
     }
 
