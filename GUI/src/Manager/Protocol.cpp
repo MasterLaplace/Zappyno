@@ -494,7 +494,7 @@ namespace Manager {
                     scores[trantorian->getTeam()]++;
                 if (levels.find(trantorian->getTeam()) == levels.end())
                     levels[trantorian->getTeam()] = trantorian->getLevel();
-                else 
+                else
                     levels[trantorian->getTeam()] += trantorian->getLevel();
                 division++;
             }
