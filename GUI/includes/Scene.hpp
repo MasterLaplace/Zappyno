@@ -36,6 +36,7 @@ namespace GUI {
             Scene(const Scene&) = default;
             Scene &operator=(const Scene&) = default;
 
+            void setPause(bool isPause) { _isPause = isPause; }
 
             Scene_Manager::SceneType &getSceneType() { return _scenetype; }
 
@@ -71,6 +72,7 @@ namespace GUI {
             std::vector<Interface::Panel> _panels;
             std::shared_ptr<ISprite> _background = nullptr;
             Interface::CALLBACK _callback = Interface::CALLBACK::NONE;
+            bool _isPause = false;
     };
 
     static std::vector<std::string /*music path*/> MUSIC = {
@@ -263,14 +265,13 @@ namespace GUI {
                 for (auto it : list_callback) {
                     switch (it) {
                         case Interface::CALLBACK::EXIT:
-                            window->close();
-                            return;
+                            return window->close();
                         case Interface::CALLBACK::MUTE_SOUND:
                             if (music.getVolume() == 0)
                                 music.setVolume(100);
                             else
                                 music.setVolume(0);
-                            return;
+                            break;
                         case Interface::CALLBACK::RESIZE:
                             if (_isFullscreen) {
                                 _isFullscreen = false;
@@ -281,7 +282,7 @@ namespace GUI {
                                 window->close();
                                 window->create(sf::VideoMode(1920, 1080), "GUI", sf::Style::Fullscreen);
                             }
-                            return;
+                            break;
                         case Interface::CALLBACK::GOTO_MENU:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::MENU, window);
                             return;
@@ -305,28 +306,35 @@ namespace GUI {
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREDIT, window);
                             return;
                         case Interface::CALLBACK::OPEN_PAUSE:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "pause") {
+                                    scene->setPause(true);
                                     return it.setCallback(Interface::CALLBACK::OPEN_PAUSE);
                                 }
                             }
-                            throw std::invalid_argument("Core: Cannot find pause panel");
+                            break;
                         case Interface::CALLBACK::OPEN_INVENTORY_USER:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_user") {
                                     it.setUserData(protocol->getUserData(0));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_USER);
                                 }
                             }
-                            throw std::invalid_argument("Scene: Cannot find inventory user panel");
+                            break;
                         case Interface::CALLBACK::OPEN_INVENTORY_CASE:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_case") {
                                     it.setCaseData(protocol->getCaseData(0));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_CASE);
                                 }
                             }
-                            throw std::invalid_argument("Scene: Cannot find inventory case panel");
+                            break;
                         default:
                             break;
                     }

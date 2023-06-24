@@ -89,6 +89,7 @@ void Core::run()
         sf::Vector2i pixelPos = sf::Mouse::getPosition(*_window);
         Math::Vector mousePos = {double(pixelPos.x), double(pixelPos.y)};
 
+        try {
         if (event.type == sf::Event::KeyReleased || sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             _scene->updateScene(mousePos, event.key.code, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         } else {
@@ -99,6 +100,9 @@ void Core::run()
 
         if (!star.isFinished() && _scene->getSceneType() == Scene_Manager::SceneType::MENU)
             star.DoTransition(*_window);
+        } catch (const std::exception &e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
 
         _window->display();
 

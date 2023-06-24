@@ -38,15 +38,21 @@ namespace GUI {
     }
 
     void Scene::updateScene(const Math::Vector &mousePos, const bool &mousePressed) {
-        for (auto &panel : _panels)
+        for (auto &panel : _panels) {
+            if (panel.getType() == "pause" && !_isPause && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
             panel.updatePanel(mousePos, mousePressed);
+    }
     }
 
     void Scene::updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed) {
-        for (auto &panel : _panels)
+        for (auto &panel : _panels) {
+            if (panel.getType() == "pause" && !_isPause && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
             panel.updatePanel(mousePos, key, mousePressed);
+        }
         if (_scenetype == Scene_Manager::SceneType::GAME) {
-            if (key == sf::Keyboard::Escape) {
+            if (key == sf::Keyboard::Escape)
                 _callback = Interface::CALLBACK::OPEN_PAUSE;
             }
         }
