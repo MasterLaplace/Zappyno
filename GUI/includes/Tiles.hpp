@@ -66,7 +66,7 @@ namespace GUI {
             std::vector<Food> _food;
             std::vector<std::shared_ptr<GUI::Trantorian>> _trantorians;
             std::vector<std::shared_ptr<GUI::Egg>> _eggs;
-            double scaleRatio = 0.1;
+            double scaleRatio = 0.05;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
     };
     std::ostream &operator<<(std::ostream &os, Tiles &tile);
