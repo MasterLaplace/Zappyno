@@ -17,7 +17,22 @@ cd ninja
 python3 configure.py --bootstrap
 
 # Install Ninja globally
-sudo cp ninja /usr/local/bin/
+read -r -p "Do you want to copy ninja to /usr/local/bin/ ? (y/n)" input
+
+case $input in
+    [yY][eE][sS]|[yY])
+		sudo cp ninja /usr/local/bin/
+    ;;
+
+    [nN][oO]|[nN])
+        echo "Ok, see you next time"
+    ;;
+
+    *)
+        echo "Invalid input... Good bye."
+        exit 1
+    ;;
+esac
 
 # Clean up the temporary files
 cd ..
