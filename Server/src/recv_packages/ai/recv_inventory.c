@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_inventory(t_server *server, char **message)
+void recv_inventory(t_server *server, UNUSED char **message)
 {
-    (void)message;
+    printf("Recv inventory\n");
     send_inventory(server);
 }

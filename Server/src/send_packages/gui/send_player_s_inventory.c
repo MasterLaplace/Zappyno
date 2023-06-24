@@ -24,10 +24,16 @@ char *make_inv_message(t_server *server, int id)
     int y = server->game.teams[pos.i].players[pos.j].pos_y;
     char *message = calloc(16 + count_inv_size(server->clients[id].resources,
     x, y, id), sizeof(char));
+    char *tmp = NULL;
+    if (!message)
+        return NULL;
     sprintf(message, "pin %d %d %d ", id, x, y);
     for (size_t i = 0; i < 7; i++) {
         data = server->game.teams[pos.i].players[pos.j].resources[i];
-        strncat(message, itoa(data), strlen(message) + my_nblen(data));
+        tmp = itoa(data);
+        if (!tmp)
+            return NULL;
+        strncat(message, tmp, strlen(message) + my_nblen(data));
         strncat(message, " ", strlen(message) + 1);
     }
     strncat(message, "\n", strlen(message) + 1);
@@ -39,9 +45,10 @@ void send_player_s_inventory(t_server *server, char** array)
     if (array[1] == NULL)
         return send_command_paramater(server);
     int id = atoi(array[1]);
-
     if (!is_connected_player(server, id))
         return send_command_paramater(server);
     AUTO_FREE char *message = make_inv_message(server, id);
+    if (!message)
+        return;
     send_to_gui(server, message, server->id);
 }

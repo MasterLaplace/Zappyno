@@ -29,8 +29,6 @@ static void modify_direction(t_server *server)
 void send_right(t_server *server)
 {
     modify_direction(server);
-    printf("Orientation player : %d\n",
-           TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation);
     send_to_client(server, "ok\n", server->id);
 }
 

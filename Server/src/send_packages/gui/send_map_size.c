@@ -10,15 +10,9 @@
 void send_map_size(t_server *server, char** array)
 {
     AUTO_FREE char *message = calloc(100, sizeof(char));
+    if (!message)
+        return;
     sprintf(message, "msz %d %d\n", server->params->width,
 server->params->height);
     send_to_gui(server, message, server->id);
-}
-
-void send_map_size_to_all(t_server *server, char** array)
-{
-    AUTO_FREE char *message = calloc(100, sizeof(char));
-    sprintf(message, "msz %d %d\n", server->params->width,
-server->params->height);
-    send_to_all_gui(server, message);
 }

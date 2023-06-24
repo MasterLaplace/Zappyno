@@ -95,7 +95,10 @@ void send_incantation(t_server *server)
         send_to_client(server, "ko\n", server->id);
         return;
     }
-    freeze_participating_players(server, player);
+    if (!freeze_participating_players(server, player)) {
+        send_to_client(server, "ko\n", server->id);
+        return;
+    }
     perform_elevation(server);
     remove_required_resources(server);
     send_end_of_an_incantation(server, tmp, player->level);

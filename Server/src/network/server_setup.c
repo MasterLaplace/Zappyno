@@ -65,18 +65,18 @@ int listen_socket(t_server *server, t_params *params)
  * @param params
  * @return 0 if success, -1 if error
  */
-int setup_server(t_server *server, t_params *params)
+bool setup_server(t_server *server, t_params *params)
 {
     server->sockfd = create_socket();
     if (server->sockfd < 0)
-        return (-1);
+        return false;
     if (bind_socket(server, params) < 0)
-        return (-1);
+        return false;
     if (listen_socket(server, params) < 0)
-        return (-1);
+        return false;
     server->max_fd = server->sockfd;
     printf("Server setup complete\n");
-    return (0);
+    return true;
 }
 
 /**
@@ -86,24 +86,24 @@ int setup_server(t_server *server, t_params *params)
  */
 void remove_client(t_server *server, int id)
 {
-    int tmp_id = id;
     close(CLIENT(id).socket_fd);
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
     memset(&CLIENT(id), 0, sizeof(t_client));
     server->max_fd = server->sockfd;
     for (int i = 0; i < SOMAXCONN; i++) {
-        if (CLIENT(i).socket_fd > server->max_fd) {
+        if (CLIENT(i).socket_fd > server->max_fd)
             server->max_fd = CLIENT(i).socket_fd;
-        }
     }
     for (int i = 0; i < server->params->num_teams; i++) {
         if (!server->game.teams[i].players)
             continue;
-        if (server->game.teams[i].players[INDEX_IN_TEAM].params_function) {
-            free_double_array(&server->game.teams[i].players[INDEX_IN_TEAM].params_function);
-            server->game.teams[i].players[INDEX_IN_TEAM].socket_fd = 0;
-        }
+        if (server->game.teams[i].players[INDEX_IN_TEAM].params_function)
+            free_double_array(
+&server->game.teams[i].players[INDEX_IN_TEAM].params_function);
     }
-    server->game.teams[TEAM_INDEX].nb_players--;
-    CLIENT(tmp_id).dead = true;
+    memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0,
+sizeof(t_client));
+    if (server->game.teams[TEAM_INDEX].nb_players > 0)
+        server->game.teams[TEAM_INDEX].nb_players--;
+    CLIENT(id).dead = true;
 }

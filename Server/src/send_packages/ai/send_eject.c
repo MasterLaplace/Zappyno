@@ -7,7 +7,20 @@
 
 #include "../../../include/send_package.h"
 
-static bool check_for_eject(t_server *server, int orientation, int target_x,
+static bool send_message_eject(t_server *server, t_client *client, int i)
+{
+    char *message = calloc(my_nblen(client->id) + 10, sizeof(char));
+    if (!message) {
+        send_error(server, 0);
+        return false;
+    }
+    sprintf(message, "pex %d\n", client->id);
+    send_to_client(server, message, i);
+    free(message);
+    return true;
+}
+
+static bool check_for_eject(t_server *server, int target_x,
 int target_y)
 {
     bool eject = false;
@@ -16,11 +29,7 @@ int target_y)
         if (client->index_team != TEAM_INDEX &&
             client->pos_x == TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x &&
             client->pos_y == TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y) {
-            eject = true;
-            char *message = calloc(my_nblen(client->id) + 10, sizeof(char));
-            sprintf(message, "pex %d\n", client->id);
-            send_to_client(server, message, i);
-            free(message);
+            eject &= send_message_eject(server, client, i);
         }
     }
     for (int i = 0; i < SOMAXCONN; i++) {
@@ -46,14 +55,9 @@ void send_eject(t_server *server)
         case SOUTH: target_y = wrap_y(y + 1, server->params->height); break;
         case WEST: target_x = wrap_x(x - 1, server->params->width); break;
     }
-    eject = check_for_eject(server, orientation, target_x, target_y);
+    eject = check_for_eject(server, target_x, target_y);
     if (!eject)
         send_error(server, 0);
     else
         send_to_client(server, "ok\n", server->id);
-}
-
-void send_eject_to_all(t_server *server)
-{
-
 }

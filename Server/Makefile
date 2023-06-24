@@ -12,6 +12,7 @@ SRC_DIR      = src/
 SRC_TEST_DIR = tests/
 SRC          = $(shell find $(SRC_DIR) -name '*.c')
 SRC_TEST     = $(shell find $(SRC_TEST_DIR) -name '*.c')
+SRC_TEST    += $(shell find $(SRC_DIR) -name '*.c')
 
 OBJ          = $(SRC:.c=.o)
 INCLUDE      = -iquote ./include/
@@ -31,9 +32,11 @@ $(NAME): $(OBJ)
 	$(eval counter=$(shell echo $$(($(counter)+1))))
 	$(eval percentage=$(shell echo $$((($(counter) * 100) /\
 	$(TOTAL_FILES)))))
-	@printf "$(PYELLOW)$(PBOLD)↦🔹[%s] ($(percentage)%%)$(PRESET)" "$(subst $(shell pwd)/,,$<)"
+	@printf "$(PYELLOW)$(PBOLD)↦🔹[%s] \
+	($(percentage)%%)$(PRESET)" "$(subst $(shell pwd)/,,$<)"
 	@$(COMPILER) -c $(C_FLAGS) $(FAST_FLAGS) $(INCLUDE) $< -o $@
-	@printf "\r$(PGREEN)$(PBOLD)↦🔹[%s] ($(percentage)%%)$(PRESET)\n" "$(subst $(shell pwd)/,,$<)"; \
+	@printf "\r$(PGREEN)$(PBOLD)↦🔹[%s] \
+	($(percentage)%%)$(PRESET)\n" "$(subst $(shell pwd)/,,$<)"; \
 
 clean:
 	@make -s CLEAN_TEXT
@@ -52,8 +55,8 @@ tests_run: fclean
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 	@printf "$(PBOLD) $(PBLUEC) RUNNING TESTS 🧪\n"
-	@$(COMPILER) -o zappy_server_tests $(SRC) $(SRC_TEST) $(TEST_FLAGS) $(FAST_FLAGS) $(INCLUDE)
-	@./zappy_server_tests -h
+	@$(COMPILER) -o zy_test $(SRC_TEST) $(TEST_FLAGS) $(FAST_FLAGS) $(INCLUDE)
+	@./zy_test -h
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 

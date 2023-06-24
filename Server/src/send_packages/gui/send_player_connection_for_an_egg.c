@@ -10,6 +10,8 @@
 void send_player_connection_for_an_egg(t_server *server)
 {
     AUTO_FREE char *message = calloc(7 + my_nblen(server->id), sizeof(char));
+    if (!message)
+        return;
     sprintf(message, "ebo %d\n", server->id);
     send_to_all_gui(server, message);
 }

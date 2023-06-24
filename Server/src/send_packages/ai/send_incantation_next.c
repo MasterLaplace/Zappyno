@@ -7,13 +7,15 @@
 
 #include "../../../include/send_package.h"
 
-void freeze_participating_players_next(t_server *server, t_client* player,
+bool freeze_participating_players_next(t_server *server, t_client* player,
 int j)
 {
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     int x = player->pos_x;
     int y = player->pos_y;
     int *players = calloc(TEAMS[j].max_players, sizeof(int));
+    if (!players)
+        return false;
     int index = 0;
 
     for (int i = 0; i < TEAMS[j].max_players; i++) {
@@ -29,11 +31,13 @@ int j)
     send_start_of_an_incantation(server, tmp, (level + 1), players);
 }
 
-void freeze_participating_players(t_server *server, t_client* player)
+bool freeze_participating_players(t_server *server, t_client* player)
 {
     for (int j = 0; j < server->params->num_teams; j++) {
-        freeze_participating_players_next(server, player, j);
+        if (!freeze_participating_players_next(server, player, j))
+            return false;
     }
+    return true;
 }
 
 void perform_elevation_next(t_server *server, int j, int level,

@@ -9,6 +9,8 @@
 #include "../../include/send_package.h"
 #include "../../include/game.h"
 #include <time.h>
+#include <errno.h>
+
 
 ai_command ia_client[] = {
         {"Look", recv_look, 1},
@@ -26,86 +28,80 @@ ai_command ia_client[] = {
         {NULL, NULL, 0}
 };
 
-gui_command gui_client[] = {
-        {"msz", send_map_size},
-        {"ppo", send_player_s_position},
-        {"plv", send_player_s_level},
-        {"pin", send_player_s_inventory},
-        {"tna", send_name_of_all_the_teams},
-        {"bct", send_content_of_a_tile},
-        {"mct", send_content_of_map},
-        {"sgt", send_time_unit},
-        {"sst", recv_time_unit_change},
-        {NULL, NULL}
-};
-
-static bool join_client(t_server *server, char **message)
+static void check_command_ai_next(t_server *server, char **message, int i)
 {
-    if (!strcmp(message[0], "GRAPHIC")) {
-        CLIENT(server->id).is_gui = true;
-        recv_check_to_add_gui(server, message);
-        return true;
-    }
-    return recv_check_to_add_to_team(server, message);
+    CLIENT(server->id).function = NULL;
+    CLIENT(server->id).function = ia_client[i].function_ai;
+    CLIENT(server->id).timer.start = time(NULL);
+    if (CLIENT(server->id).timer.start == -1)
+        return;
+    CLIENT(server->id).timer.duration = ia_client[i].time;
+    printf("Timer set to %f\n", CLIENT(server->id).timer.duration);
+    if (CLIENT(server->id).params_function != NULL)
+        free_double_array(&CLIENT(server->id).params_function);
+    CLIENT(server->id).params_function = copy_array(message);
+    if (!CLIENT(server->id).params_function)
+        return;
 }
 
-char **copy_array(char **array)
-{
-    int size = 0;
-    for (; array[size]; size++);
-    char **new_array = malloc(sizeof(char *) * (size + 1));
-
-    if (!new_array)
-        return NULL;
-    for (int i = 0; array[i]; i++)
-        new_array[i] = strdup(array[i]);
-    new_array[size] = NULL;
-    return new_array;
-}
-
-static bool check_command_ai(t_server *server, char **message)
+static void check_command_ai(t_server *server, char **message)
 {
     for (int i = 0; ia_client[i].command_id; i++) {
         if (!strncmp(ia_client[i].command_id, message[0],
-                     strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed) {
-            CLIENT(server->id).function = NULL;
+strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed &&
+ia_client[i].time == -1.0) {
             printf("Command found : %s\n", ia_client[i].command_id);
-            CLIENT(server->id).function = ia_client[i].function_ai;
-            printf("ok\n");
-            CLIENT(server->id).timer.start = time(NULL);
-            printf("ok2\n");
-            CLIENT(server->id).timer.duration = ia_client[i].time;
-            if (CLIENT(server->id).params_function != NULL)
-                free_double_array(&CLIENT(server->id).params_function);
-            CLIENT(server->id).params_function = copy_array(message);
-            printf("ok3\n");
-            return true;
+            ia_client[i].function_ai(server, message);
+            return;
+        }
+        if (!strncmp(ia_client[i].command_id, message[0],
+strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed) {
+            printf("Command found : %s\n", ia_client[i].command_id);
+            check_command_ai_next(server, message, i);
+            return;
         }
     }
-    return false;
 }
 
-bool check_command_gui(t_server *server, char **message)
+static void receive_from_client_next(t_server *server, char *message,
+int current_buf_len, int message_len)
 {
-    for (int i = 0; gui_client[i].command_id > 0; i++) {
-        if (!strncmp(gui_client[i].command_id, message[0],
-                     strlen(gui_client[i].command_id))) {
-            printf("Command found : %s\n", gui_client[i].command_id);
-            gui_client[i].function(server, message);
-            return true;
-        }
+    server->clients[server->id].buffer = realloc(
+server->clients[server->id].buffer,current_buf_len + message_len + 1);
+    if (!server->clients[server->id].buffer)
+        return;
+    ON_CLEANUP(free_double_array) char **mes = stwa(strcat(
+server->clients[server->id].buffer, message), " \n\t");
+    if (!mes)
+        return;
+    if (!CLIENT(server->id).is_connected) {
+        join_client(server, mes);
+    } else {
+        if (!CLIENT(server->id).is_gui)
+            check_command_ai(server, mes);
+        else
+            check_command_gui(server, mes);
     }
-    return false;
+    if (server->clients[server->id].buffer != NULL) {
+        free(server->clients[server->id].buffer);
+        server->clients[server->id].buffer = calloc(1, 1);
+    }
 }
 
-static void set_id_player(t_server *server, int fd)
+void receive_from_client(t_server *server, char *message)
 {
-    for (register int i = 0; i < SOMAXCONN; i++) {
-        if (CLIENT(i).socket_fd == fd) {
-            CLIENT(i).id = i;
-            server->id = i;
-            break;
-        }
+    size_t current_buf_len = 0;
+    size_t mes_len = strlen(message);
+    if (server->clients[server->id].buffer != NULL)
+        current_buf_len = strlen(server->clients[server->id].buffer);
+    if (!strstr(message, "\n")) {
+        server->clients[server->id].buffer = realloc(
+server->clients[server->id].buffer,current_buf_len + mes_len + 1);
+        if (!server->clients[server->id].buffer)
+            return;
+        strcat(server->clients[server->id].buffer, message);
+    } else {
+        receive_from_client_next(server, message, current_buf_len, mes_len);
     }
 }
 
@@ -114,33 +110,26 @@ static void set_id_player(t_server *server, int fd)
  * @param server
  * @param fd
  */
-bool handle_client_data(t_server *server, int fd)
+void handle_client_data(t_server *server, int fd)
 {
-    bool ret = false;
     set_id_player(server, fd);
-    AUTO_FREE char *buffer = receive_from_client(server, fd);
-    if (buffer == NULL || !*buffer || strlen(buffer) < 3) {
-        send_to_client(server, "ko\n", server->id);
-        send_to_gui(server, "suc\n", server->id);
-        return true;
-    }
-    printf("Received : %s\n", buffer);
-    if (!strcmp(buffer, "exit\n")) {
-        remove_client(server, server->id);
-        return false;
-    }
-    ON_CLEANUP(free_double_array) char **message = stwa(buffer, " \n\t");
-    if (!CLIENT(server->id).is_connected) {
-        join_client(server, message);
-        ret = true;
-    } else {
-        if (!CLIENT(server->id).is_gui) {
-            ret = check_command_ai(server, message);
+    char message[2];
+    int valread;
+    if ((valread = read(fd, message, 2)))
+        message[valread] = '\0';
+    if (valread == -1) {
+        if (errno == ECONNRESET) {
+            return remove_client(server, server->id);
         } else {
-            ret = check_command_gui(server, message);
+            perror("recv");
+            return;
         }
+    } else if (valread == 0) {
+        return remove_client(server, server->id);
+    } else {
+        if (*message == '\n')
+            return;
+        receive_from_client(server, message);
     }
-    if (!ret)
-        send_error(server, 0);
-    return true;
+    return;
 }

@@ -7,6 +7,7 @@
 
 #ifndef SERVER_H
     #define SERVER_H
+    #define UNUSED __attribute__((unused))
     #define EXIT_ERROR 84
     #define BUFFER_SIZE 1024
     #define TEAMS server->game.teams
@@ -37,6 +38,7 @@
     #include <sys/types.h>
     #include <arpa/inet.h>
     #include <netinet/in.h>
+    #include <stdint.h>
 
     #include "params.h"
     #include "client.h"
@@ -77,9 +79,9 @@ typedef struct s_server {
 } t_server;
 
 // Prototypes src/network/ | function made to setup the server
-int setup_server(t_server *server, t_params *params);
+bool setup_server(t_server *server, t_params *params);
 // Prototypes src/network/ | function made to handle the server
-bool handle_client_data(t_server *server, int fd);
+void handle_client_data(t_server *server, int fd);
 // remove_client will remove a client from the server
 void remove_client(t_server *server, int id);
 // send_to_client will send a message to a specific client
@@ -87,7 +89,7 @@ void send_to_client(t_server *, char *, int);
 // send_to_all_clients will send a message to all clients
 void send_to_all_clients(t_server *, char *);
 // receive_from_client will receive a message from a specific client
-char *receive_from_client(t_server *server, int fd);
+void receive_from_client(t_server *server, char *message);
 //
 void send_to_all_gui(t_server *server, char * message);
 //
@@ -104,9 +106,7 @@ int wrap_y(int y, int height);
 //
 int set_timer(void);
 //
-void generate_food(t_server *server);
-//
-t_params set_param_struct(void);
+bool generate_food(t_server *server);
 //
 t_server *set_server_struct(t_params *params);
 //
@@ -126,7 +126,7 @@ void free_server(t_server **server);
 //
 void free_double_array(char ***array);
 //
-void freeze_participating_players(t_server *server, t_client* player);
+bool freeze_participating_players(t_server *server, t_client* player);
 //
 void perform_elevation(t_server *server);
 //
@@ -135,6 +135,29 @@ void remove_required_resources(t_server *server);
 bool is_connected_player(t_server *server, int id);
 //
 tmp_t find_in_teams(t_server *server, int id);
+//
+void reverse_array(int *arr, int size);
+//
+void check_command_gui(t_server *server, char **message);
+//
+char **copy_array(char **array);
+//
+void set_id_player(t_server *server, int fd);
+//
+void join_client(t_server *server, char **message);
+//
+void handle_new_connection(t_server *svr);
+//
+int set_fds(t_server *svr);
+//
+void set_environment_variable(const char *key, void *ptr);
+//
+uintptr_t get_environment_variable(const char *key);
+//
+void clean(void) __attribute__((destructor));
+//
+void add_client(t_server *server, int new_socket);
+
 
 
 

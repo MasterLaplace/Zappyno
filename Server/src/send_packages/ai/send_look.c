@@ -67,23 +67,12 @@ void update_positions(t_server *server, int *pos_tiles_seen, int *index, int i)
     }
 }
 
-void reverse_array(int *arr, int size) {
-    int start = 0;
-    int end = size - 1;
-
-    while (start < end) {
-        int temp = arr[start];
-        arr[start] = arr[end];
-        arr[end] = temp;
-        start++;
-        end--;
-    }
-}
-
 int *get_pos_tiles_seen(t_server *server, int x, int y, int level)
 {
     int *pos_tiles_seen = calloc((level * 2 + 1) * (level * 2 + 1),
 sizeof(int));
+    if (!pos_tiles_seen)
+        return NULL;
     printf("pos player : %d %d\n", x, y);
     pos_tiles_seen[0] = find_tile(server, x, y);
     int index = 1;
@@ -91,7 +80,7 @@ sizeof(int));
         update_positions(server, pos_tiles_seen, &index, i);
     }
     pos_tiles_seen[index] = -1;
-    reverse_array(pos_tiles_seen, index); // Reverse the array before returning
+    reverse_array(pos_tiles_seen, index);
     printf("SIZE array : %d\n", index);
     for (int i = 0; pos_tiles_seen[i] != -1; i++)
         printf("pos tile %d : %d\n", i, pos_tiles_seen[i]);
@@ -100,12 +89,17 @@ sizeof(int));
 
 void send_look(t_server *server)
 {
-    AUTO_FREE char *message = calloc(1, sizeof(char));
+    AUTO_FREE char *message = calloc(2, sizeof(char));
+    if (!message)
+        return;
     int x = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
     int y = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y;
     int orientation = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level;
     AUTO_FREE int *pos_tiles = get_pos_tiles_seen(server, x, y, level);
+    if (!pos_tiles)
+        return;
+    sprintf(message, "[");
     for (int i = 0; pos_tiles[i] != -1; i++) {
         message = get_tile_resources(server, pos_tiles[i], message);
         if (pos_tiles[i + 1] != -1) {
@@ -113,7 +107,6 @@ void send_look(t_server *server)
             message = my_strcat(message, ",");
         }
     }
-    AUTO_FREE char *tmp = calloc(strlen(message) + 4, sizeof(char));
-    sprintf(tmp, "[%s]\n", &message[1]);
-    send_to_client(server, tmp, server->id);
+    sprintf(message, "%s]\n", message);
+    send_to_client(server, message, server->id);
 }

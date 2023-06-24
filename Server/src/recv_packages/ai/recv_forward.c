@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_forward(t_server *server, char **message)
+void recv_forward(t_server *server, UNUSED char **message)
 {
-    (void)message;
+    printf("Recv forward\n");
     send_forward(server);
 }

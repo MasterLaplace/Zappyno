@@ -14,7 +14,7 @@ char *make_pos_message(t_server *server, int id)
     int y = TEAMS[pos.i].players[pos.j].pos_y;
     int orientation = server->clients[id].orientation;
     char *message = calloc(9 + my_nblen(x) + my_nblen(y) + my_nblen(id) +
-                                     my_nblen(orientation), sizeof(char));
+my_nblen(orientation), sizeof(char));
     if (message == NULL)
         return NULL;
     sprintf(message, "ppo %d %d %d %d\n", id, x, y, orientation);
