@@ -86,6 +86,9 @@ bool setup_server(t_server *server, t_params *params)
  */
 void remove_client(t_server *server, int id)
 {
+    int pos = find_tile(server, server->clients[id].pos_x, server->clients[id].pos_y);
+    TILES(pos).player--;
+    printf("Client %d disconnected\n", id);
     close(CLIENT(id).socket_fd);
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
     memset(&CLIENT(id), 0, sizeof(t_client));
@@ -103,7 +106,7 @@ void remove_client(t_server *server, int id)
     }
     memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0,
 sizeof(t_client));
-    if (server->game.teams[TEAM_INDEX].nb_players > 0)
+    //if (server->game.teams[TEAM_INDEX].nb_players > 0)
         server->game.teams[TEAM_INDEX].nb_players--;
     CLIENT(id).dead = true;
 }

@@ -13,19 +13,19 @@
 
 
 ai_command ia_client[] = {
-        {"Look", recv_look, 1},
-        {"Forward", recv_forward, 1},
-        {"Right", recv_right, 1},
-        {"Left", recv_left, 1},
-        {"Inventory", recv_inventory, 1},
-        {"Connect_nbr", recv_connect_nbr, -1},
-        {"Take", recv_take, 1},
-        {"Set", recv_set, 1},
-        {"Broadcast", recv_broadcast, 1},
-        {"Fork", recv_fork, 1},
-        {"Eject", recv_eject, 1},
-        {"Incantation", recv_incantation, 1},
-        {NULL, NULL, 0}
+    {"Look", recv_look, 1},
+    {"Forward", recv_forward, 1},
+    {"Right", recv_right, 1},
+    {"Left", recv_left, 1},
+    {"Inventory", recv_inventory, 1},
+    {"Connect_nbr", recv_connect_nbr, -1},
+    {"Take", recv_take, 1},
+    {"Set", recv_set, 1},
+    {"Broadcast", recv_broadcast, 1},
+    {"Fork", recv_fork, 1},
+    {"Eject", recv_eject, 1},
+    {"Incantation", recv_incantation, 1},
+    {NULL, NULL, 0}
 };
 
 static void check_command_ai_next(t_server *server, char **message, int i)
@@ -66,6 +66,7 @@ strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed) {
 static void receive_from_client_next(t_server *server, char *message,
 int current_buf_len, int message_len)
 {
+    printf("ok\n");
     server->clients[server->id].buffer = realloc(
 server->clients[server->id].buffer,current_buf_len + message_len + 1);
     if (!server->clients[server->id].buffer)
@@ -74,9 +75,11 @@ server->clients[server->id].buffer,current_buf_len + message_len + 1);
 server->clients[server->id].buffer, message), " \n\t");
     if (!mes)
         return;
+    printf("ok3\n");
     if (!CLIENT(server->id).is_connected) {
         join_client(server, mes);
     } else {
+        printf("Message received buf: %s\n", server->clients[server->id].buffer);
         if (!CLIENT(server->id).is_gui)
             check_command_ai(server, mes);
         else
@@ -85,6 +88,8 @@ server->clients[server->id].buffer, message), " \n\t");
     if (server->clients[server->id].buffer != NULL) {
         free(server->clients[server->id].buffer);
         server->clients[server->id].buffer = calloc(1, 1);
+        if (!server->clients[server->id].buffer)
+            return;
     }
 }
 
@@ -112,11 +117,12 @@ server->clients[server->id].buffer,current_buf_len + mes_len + 1);
  */
 void handle_client_data(t_server *server, int fd)
 {
-    set_id_player(server, fd);
     char message[2];
     int valread;
+    printf("fd : %d\n", fd);
     if ((valread = read(fd, message, 2)))
         message[valread] = '\0';
+    printf("Message received : %s\n", message);
     if (valread == -1) {
         if (errno == ECONNRESET) {
             return remove_client(server, server->id);
@@ -127,8 +133,7 @@ void handle_client_data(t_server *server, int fd)
     } else if (valread == 0) {
         return remove_client(server, server->id);
     } else {
-        if (*message == '\n')
-            return;
+        printf("Message received : %s\n", message);
         receive_from_client(server, message);
     }
     return;

@@ -49,6 +49,7 @@ server->remove_food_timer.duration)) {
 static void read_data_next(t_server *server, unsigned client_id)
 {
     if (check_death(server)) {
+        printf("Player %d is dead\n", server->id);
         server->clients[client_id].is_freezed = false;
         server->clients[client_id].function = NULL;
         if (server->clients[client_id].params_function != NULL)
@@ -70,10 +71,11 @@ static void read_data_from_server(t_server *server, unsigned client_id)
 {
     int sd = server->clients[client_id].socket_fd;
     read_data_next(server, client_id);
-    if (has_timer_expired_gen_food(&server->gen_food_timer,
+    /*if (has_timer_expired_gen_food(&server->gen_food_timer,
 server->gen_food_timer.duration))
-        generate_food(server);
+        generate_food(server);*/
     if (has_timer_expired(&server->clients[client_id])) {
+        printf("function : %p\n", server->clients[client_id].function);
         server->clients[client_id].function(server,
 server->clients[client_id].params_function);
         server->clients[client_id].is_freezed = false;
@@ -97,10 +99,10 @@ int main(int ac, char **av)
     t_params params = {0};
     parse_args(ac, av, &params);
     check_params(&params);
-    ON_CLEANUP(free_server) t_server *server = set_server_struct(&params);
+    t_server *server = set_server_struct(&params);
     if (server == NULL)
         exit_malloc();
-    set_environment_variable("PTR", server);
+    set_environment_variable("SERVER_PTR", server);
     if (!setup_server(server, &params))
         return EXIT_FAILURE;
     do {

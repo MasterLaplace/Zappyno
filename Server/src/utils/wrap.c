@@ -60,8 +60,9 @@ int set_fds(t_server *svr)
 
     for (unsigned i = 0; i < SOMAXCONN; i++) {
         int sd = svr->clients[i].socket_fd;
-        if (sd > 0)
+        if (sd > 0) {
             FD_SET(sd, &svr->readfds);
+        }
         if (sd > svr->max_fd)
             svr->max_fd = sd;
     }

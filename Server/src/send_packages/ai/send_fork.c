@@ -23,10 +23,10 @@ static void reset_client_for_fork(t_server *server, int id)
     TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].is_an_egg =
 true;
     TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].id = id;
-    TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_x =
-RANDINT(0, server->params->width - 1);
-    TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_y =
-RANDINT(0, server->params->height - 1);
+    TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_x = 0;
+//RANDINT(0, server->params->width - 1);
+    TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_y = 0;
+//RANDINT(0, server->params->height - 1);
     int x = TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_x;
     int y = TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_y;
     CLIENT(id).is_forked = true;

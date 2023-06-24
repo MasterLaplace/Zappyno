@@ -11,6 +11,8 @@
 int shortest_distance(t_client *emitter, t_client *receiver, int map_width,
 int map_height)
 {
+    printf("emitter: %d, %d\n", emitter->pos_x, emitter->pos_y);
+    printf("receiver: %d, %d\n", receiver->pos_x, receiver->pos_y);
     int dx = abs(emitter->pos_x - receiver->pos_x);
     int dy = abs(emitter->pos_y - receiver->pos_y);
 
@@ -41,6 +43,7 @@ int distance, tmp_t tmp)
 
 void send_broadcast(t_server *server, char *message)
 {
+    printf("broadcast: %s\n", message);
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < TEAMS[j].max_players; i++) {
             int distance = shortest_distance(

@@ -9,8 +9,10 @@
 
 char *get_tile_resources(t_server *server, int pos, char* message)
 {
-    int max_size = (strlen(message) + 1) * sizeof(char);
-    AUTO_FREE char *tmp = calloc(max_size, sizeof(char));
+    AUTO_FREE char *tmp = calloc( (strlen(message) + 1), sizeof(char));
+    if (!tmp)
+        return NULL;
+    printf("FOOD(%d) : %d\n", pos, TILES(pos).resources[FOOD]);
     for (int i = 0; i < TILES(pos).resources[FOOD]; i++)
         tmp = my_strcat(tmp, " food");
     for (int i = 0; i < TILES(pos).resources[LINEMATE]; i++)
@@ -69,14 +71,16 @@ void update_positions(t_server *server, int *pos_tiles_seen, int *index, int i)
 
 int *get_pos_tiles_seen(t_server *server, int x, int y, int level)
 {
-    int *pos_tiles_seen = calloc((level * 2 + 1) * (level * 2 + 1),
+    int *pos_tiles_seen = calloc((level * 2 + 1) * (level * 2 + 1) + 1,
 sizeof(int));
     if (!pos_tiles_seen)
         return NULL;
     printf("pos player : %d %d\n", x, y);
     pos_tiles_seen[0] = find_tile(server, x, y);
+    printf("pos tile 0 : %d\n", pos_tiles_seen[0]);
     int index = 1;
     for (int i = 1; i <= level; i++) {
+        printf("i : %d\n", i);
         update_positions(server, pos_tiles_seen, &index, i);
     }
     pos_tiles_seen[index] = -1;
@@ -89,7 +93,7 @@ sizeof(int));
 
 void send_look(t_server *server)
 {
-    AUTO_FREE char *message = calloc(2, sizeof(char));
+    AUTO_FREE char *message = calloc(1, sizeof(char));
     if (!message)
         return;
     int x = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x;
@@ -99,7 +103,6 @@ void send_look(t_server *server)
     AUTO_FREE int *pos_tiles = get_pos_tiles_seen(server, x, y, level);
     if (!pos_tiles)
         return;
-    sprintf(message, "[");
     for (int i = 0; pos_tiles[i] != -1; i++) {
         message = get_tile_resources(server, pos_tiles[i], message);
         if (pos_tiles[i + 1] != -1) {
@@ -107,6 +110,7 @@ void send_look(t_server *server)
             message = my_strcat(message, ",");
         }
     }
-    sprintf(message, "%s]\n", message);
-    send_to_client(server, message, server->id);
+    AUTO_FREE char *tmp = calloc(strlen(message) + 10, sizeof(char));
+    sprintf(tmp, "[%s] %d %d\n", &message[1], x, y);
+    send_to_client(server, tmp, server->id);
 }

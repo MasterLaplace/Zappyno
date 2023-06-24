@@ -28,6 +28,10 @@ t_opt opts[] = {
  */
 static void handle_n(char **argv, int optind, int argc, t_params *params)
 {
+    if (optind >= argc)
+        exit(84);
+    if (!argv[optind])
+        exit(84);
     for (int i = optind - 1; i < argc; i++) {
         if (argv[i][0] == '-')
             break;
@@ -35,7 +39,11 @@ static void handle_n(char **argv, int optind, int argc, t_params *params)
                                     sizeof(char*) * (params->num_teams + 1));
         if (!params->team_names)
             exit(84);
-        params->team_names[params->num_teams] = strdup(argv[i]);
+        params->team_names[params->num_teams] = malloc(sizeof(char) *
+                                                    (strlen(argv[i]) + 1));
+        if (!params->team_names[params->num_teams])
+            exit(84);
+        strcpy(params->team_names[params->num_teams],argv[i]);
         if (!params->team_names[params->num_teams])
             exit(84);
         params->num_teams++;

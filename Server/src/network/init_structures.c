@@ -45,8 +45,8 @@ static t_map *set_tiles_struct(t_params *params)
 static void set_game_struct_next(t_game *game, t_params *params, int i)
 {
     for (int j = 0; j < params->clientsNb; j++) {
-        game->teams[i].players[j].pos_x = RANDINT(0, params->width - 1);
-        game->teams[i].players[j].pos_y = RANDINT(0, params->height - 1);
+        game->teams[i].players[j].pos_x = 0;
+        game->teams[i].players[j].pos_y = 0;
         game->teams[i].players[j].is_an_egg = true;
         game->teams[i].players[j].id = -1;
     }
@@ -117,5 +117,16 @@ t_server *set_server_struct(t_params *params)
     server->remove_food_timer.duration = 126.0 / server->params->freq;
     set_server_struct_next(server);
     printf("Timer remove food: %f\n", server->remove_food_timer.duration);
+    for (int i = 0; i < server->params->width * server->params->height; i++) {
+        printf("Tile %d: x: %d y: %d | ", i, server->game.tiles[i].x,
+               server->game.tiles[i].y);
+        printf("food: %d | ", server->game.tiles[i].resources[0]);
+        printf("linemate: %d | ", server->game.tiles[i].resources[1]);
+        printf("deraumere: %d | ", server->game.tiles[i].resources[2]);
+        printf("sibur: %d | ", server->game.tiles[i].resources[3]);
+        printf("mendiane: %d | ", server->game.tiles[i].resources[4]);
+        printf("phiras: %d | ", server->game.tiles[i].resources[5]);
+        printf("thystame: %d\n", server->game.tiles[i].resources[6]);
+    }
     return server;
 }
