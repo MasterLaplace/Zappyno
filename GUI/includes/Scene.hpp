@@ -320,7 +320,7 @@ namespace GUI {
                                 break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_user") {
-                                    it.setUserData(protocol->getUserData(0));
+                                    it.setUserData(protocol->getUserData(protocol->getCallbackTileId()));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_USER);
                                 }
                             }
@@ -330,7 +330,7 @@ namespace GUI {
                                 break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_case") {
-                                    it.setCaseData(protocol->getCaseData(0));
+                                    it.setCaseData(protocol->getCaseData(protocol->getCallbackUserId()));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_CASE);
                                 }
                             }

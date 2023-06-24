@@ -9,7 +9,6 @@
     #define CORE_HPP_
     #define	EXIT_ERROR	84	/* Failing exit status.  */
     #include "Protocol.hpp"
-    #include "Client.hpp"
     #include "SfTransition.hpp"
     #include "Scene.hpp"
 
@@ -29,7 +28,6 @@ class Core {
         std::shared_ptr<GUI::Scene> _scene;
         GUI::SceneManager _sceneManager;
         std::shared_ptr<Manager::Protocol> _protocol;
-        std::shared_ptr<Manager::Client> _client;
 };
 
 template<typename T>

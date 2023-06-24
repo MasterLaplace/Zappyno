@@ -45,6 +45,8 @@ namespace GUI {
             std::vector<std::shared_ptr<GUI::Egg>> getEggs() { return _eggs; }
             std::shared_ptr<GUI::Trantorian> getTrantorian(unsigned id);
             std::shared_ptr<GUI::Egg> getEgg(unsigned id);
+            Interface::Checkbox::State getState() const { return _state; }
+            Interface::CALLBACK getCallback() const { return _callback; }
 
             void addFood(const std::string &food);
             void removeFood(std::string food);
@@ -53,6 +55,24 @@ namespace GUI {
             void addEgg(std::shared_ptr<GUI::Egg> egg) { _eggs.push_back(egg); }
             void removeEgg(std::shared_ptr<GUI::Egg> egg);
             void removeEggs() { _eggs.clear(); }
+
+            void updateState(const Math::Vector &mousePos, const bool &mousePressed, int &userId, double scale) {
+                auto size = _sprite->getSize();
+                auto pos = _sprite->getPos();
+                if (mousePos.x() >= pos.x() && mousePos.x() <= pos.x() + (size.x() * scale) &&
+                    mousePos.y() >= pos.y() && mousePos.y() <= pos.y() + (size.y() * scale)) {
+                    if (_state == Interface::Checkbox::State::IDLE)
+                        _state = Interface::Checkbox::State::HOVER;
+                    if (_state == Interface::Checkbox::State::CLICKED)
+                        _state = Interface::Checkbox::State::RELEASED;
+                    if (mousePressed)
+                        _state = Interface::Checkbox::State::CLICKED;
+                } else {
+                    if (!mousePressed || _state == Interface::Checkbox::State::HOVER)
+                        _state = Interface::Checkbox::State::IDLE;
+                }
+                _sprite->animate(_state);
+            }
 
             void drawTile() { _sprite->drawSprite(); }
             void drawFoods();
@@ -68,6 +88,8 @@ namespace GUI {
             std::vector<std::shared_ptr<GUI::Egg>> _eggs;
             double scaleRatio = 0.05;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
+            Interface::Checkbox::State _state = Interface::Checkbox::State::IDLE;
+            Interface::CALLBACK _callback = Interface::OPEN_INVENTORY_CASE;
     };
     std::ostream &operator<<(std::ostream &os, Tiles &tile);
 } // namespace GUI

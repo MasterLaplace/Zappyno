@@ -18,11 +18,11 @@ Core::Core(const unsigned ac, const char *av[])
     }
     if (!this->parseArgs(ac, av))
         throw std::invalid_argument("Core: Invalid arguments, run with -h or -help for more informations");
-    _client = std::make_shared<Manager::Client>("127.0.0.1", std::stoi(av[2]));
+    auto client = std::make_shared<Manager::Client>("127.0.0.1", std::stoi(av[2]));
     _window = std::make_shared<sf::RenderWindow>();
-    _protocol = std::make_shared<Manager::Protocol>(_window);
+    _protocol = std::make_shared<Manager::Protocol>(_window, client);
     _window->create(sf::VideoMode(WIN_X, WIN_Y), "GUI", sf::Style::Default);
-    _window->setFramerateLimit(_client->getFramerate());
+    _window->setFramerateLimit(client->getFramerate());
     _window->setVerticalSyncEnabled(true);
 
     /* LOAD SCENES */
@@ -41,9 +41,9 @@ void Core::run()
     while (_window->isOpen()) {
 
         try {
-            if ((message = _client->receiveFromServer()) != "") {
+            if ((message = _protocol->_client->receiveFromServer()) != "") {
                 std::cout << "Message received: " << message;
-                _protocol->parseCommand(message, _client);
+                _protocol->parseCommand(message);
             }
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
@@ -95,6 +95,8 @@ void Core::run()
         } else {
             _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         }
+            if (_scene->getSceneType() == Scene_Manager::SceneType::GAME)
+                _protocol->updateProtocol(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
         _scene->drawScene<sf::RenderWindow>(*_window, _protocol);
 

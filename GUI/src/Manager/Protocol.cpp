@@ -11,14 +11,14 @@
 #include <memory>
 
 namespace Manager {
-    void Protocol::parseCommand(std::string &str, std::shared_ptr<Client> client)
+    void Protocol::parseCommand(std::string &str)
     {
         auto args = String::string_to_string_vector(str, "\n");
 
         std::unordered_map<std::string, std::vector<std::string>> map;
         for (auto av : args) {
             if (av == "WELCOME")
-                return client->sendToServer("GRAPHIC\n");
+                return _client->sendToServer("GRAPHIC\n");
             std::string command = av.substr(0, 3);
             if (map.find(command) == map.end())
                 map[command] = std::vector<std::string>();
@@ -53,11 +53,15 @@ namespace Manager {
         for (int i = 3; i < 10; i++)
             resources.push_back(std::stoi(args[i]));
         if (_tiles.size() < _mapSize.x() * _mapSize.y()) {
-            std::string path = "GUI/assets/Map_tile_06.png";
+            std::string path = "GUI/assets/tile.png";
             texture.loadFromFile(path);
             auto size = texture.getSize();
             auto screen_size = _window->getSize();
-            return _tiles.push_back(GUI::Tiles(std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - ((size.x * _scale) * _mapSize.x() / 2)) + (size.x * _scale) * x, ((screen_size.y / 2) - ((size.y * _scale) * _mapSize.y() / 2)) + (size.y * _scale) * y), Math::Vector(_scale, _scale)), resources, _window));
+            auto sprite = std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - (((size.x) * _scale) * _mapSize.x() / 2)) + ((size.x) * _scale) * x, ((screen_size.y / 2) - (((size.y / 4) * _scale) * _mapSize.y() / 2)) + ((size.y / 4) * _scale) * y), Math::Vector(_scale, _scale));
+            sprite->offset_y = size.y / 4;
+            sprite->max_offset_x = 1;
+            sprite->sprite.setTextureRect(sf::IntRect(0, 0, size.x, size.y / 4));
+            return _tiles.push_back(GUI::Tiles(sprite, resources, _window));
         }
         for (auto &tile : _tiles) {
             if (tile.getPos().x() == x && tile.getPos().y() == y)
@@ -508,6 +512,35 @@ namespace Manager {
             result.push_back(level.first + " > players: " + std::to_string(scores[level.first]));
         }
         return result;
+    }
+
+    std::vector<unsigned> Protocol::getUserData(unsigned id) {
+        std::vector<unsigned> data(7);
+        if (_tiles.size() < id || _tiles.empty())
+            return std::vector<unsigned>(7, 0);
+        for (auto food : _tiles[id].getFoods())
+            data[static_cast<size_t>(food.getType())]++;
+        return data;
+    }
+
+    std::vector<unsigned> Protocol::getCaseData(unsigned id) {
+        std::vector<unsigned> data(7);
+        if (_tiles.size() < id || _tiles.empty())
+            return std::vector<unsigned>(7, 0);
+        for (auto food : _tiles[id].getFoods())
+            data[static_cast<size_t>(food.getType())]++;
+        return data;
+    }
+
+    int Protocol::getCallbackTileId() {
+        auto user = _tileId;
+        // _tileId = -1;
+        return user;
+    }
+    int Protocol::getCallbackUserId() {
+        auto user = _userId;
+        // _userId = -1;
+        return user;
     }
 
     void Protocol::draw() {

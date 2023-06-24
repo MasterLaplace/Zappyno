@@ -95,7 +95,7 @@
         <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" type="other"/>
         <Panel name="settings_panel" img="settings_menu" pos="630, 270" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type="other"/>
         <Panel name="settings_pause_panel" img="settings_pause_menu" pos="0, 0" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type="other"/>
-        <Panel name="game_panel" img="" pos="0, 0" scale="1, 1" buttons="user_button, case_button, pause_button" type="other"/>
+        <Panel name="game_panel" img="" pos="0, 0" scale="1, 1" buttons="pause_button" type="other"/>
         <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" type="other"/>
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
         <Panel name="user_inventory_panel" texts="food_user, linemate_user, deraumere_user, sibur_user, mendiane_user, phiras_user, thystame_user" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>

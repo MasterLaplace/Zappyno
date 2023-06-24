@@ -23,8 +23,9 @@
 namespace Manager {
     class Protocol {
         public:
-            Protocol(std::shared_ptr<sf::RenderWindow> &window) {
+            Protocol(std::shared_ptr<sf::RenderWindow> &window, std::shared_ptr<Client> client) {
                 _window = window;
+                _client = client;
                 commands["msz"] = [this](std::string &str) { msz(str); };
                 commands["bct"] = [this](std::string &str) { bct(str); };
                 commands["tna"] = [this](std::string &str) { tna(str); };
@@ -52,7 +53,7 @@ namespace Manager {
             }
             ~Protocol() = default;
 
-            void parseCommand(std::string &str, std::shared_ptr<Client> client);
+            void parseCommand(std::string &str);
 
             /**
              * @brief map size (width, height)
@@ -244,34 +245,31 @@ namespace Manager {
             void setTextInventoryUser(std::shared_ptr<std::vector<Interface::Text>> text_user) { _text_user = text_user; }
             void setTextInventoryCase(std::shared_ptr<std::vector<Interface::Text>> text_case) { _text_case = text_case; }
 
-            std::vector<unsigned> getUserData(unsigned id) {
-                std::vector<unsigned> data(7);
-                if (_tiles.size() > id || _tiles.empty())
-                    return std::vector<unsigned>(7, 0);
-                for (auto food : _tiles[id].getFoods()) {
-                    data[static_cast<size_t>(food.getType())]++;
-                }
-                std::cout << "[getuserdata]" << std::endl;
-                return data;
-            }
-
-            std::vector<unsigned> getCaseData(unsigned id) {
-                std::vector<unsigned> data(7);
-                if (_tiles.size() > id || _tiles.empty())
-                    return std::vector<unsigned>(7, 0);
-                for (auto food : _tiles[id].getFoods()) {
-                    data[static_cast<size_t>(food.getType())]++;
-                }
-                std::cout << "[getcasedata]" << std::endl;
-                return data;
-            }
+            std::vector<unsigned> getUserData(unsigned id);
+            std::vector<unsigned> getCaseData(unsigned id);
 
             void setWinnerTeam(std::string team) { _winnerTeam = team; }
             std::string getWinnerTeam() const { return _winnerTeam; }
 
+            int getCallbackTileId();
+            int getCallbackUserId();
+
+            void updateProtocol(const Math::Vector &mousePos, const bool &mousePressed = false) {
+                int id = 0;
+
+                for (auto &tile : _tiles) {
+                    tile.updateState(mousePos, mousePressed, _userId, _scale);
+                    if (tile.getState() == Interface::Checkbox::State::CLICKED)
+                        _tileId = id;
+                    id++;
+                }
+            }
+
             std::vector<Interface::CALLBACK> getCallback() const {
                 std::vector<Interface::CALLBACK> callback;
                 callback.push_back(_gotoResult);
+                if (_tileId >= 0 && _tileId < int(_tiles.size()))
+                    callback.push_back(_tiles[_tileId].getCallback());
                 return callback;
             }
 
@@ -285,12 +283,16 @@ namespace Manager {
             std::map<const std::string /*name*/, std::function<void(std::string&)>> commands;
             std::vector<std::string /*name*/> _teams;
             unsigned _timeUnit = 100;
+            int _tileId = -1;
+            int _userId = -1;
             std::shared_ptr<Interface::Chat> _chat = nullptr;
             std::string _winnerTeam = "";
             Interface::CALLBACK _gotoResult = Interface::CALLBACK::NONE;
             std::shared_ptr<sf::RenderWindow> _window = nullptr;
             std::shared_ptr<std::vector<Interface::Text>> _text_user = nullptr;
             std::shared_ptr<std::vector<Interface::Text>> _text_case = nullptr;
+        public:
+            std::shared_ptr<Manager::Client> _client = nullptr;
     };
 } // namespace Manager
 
