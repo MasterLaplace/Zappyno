@@ -46,9 +46,10 @@
         <Button name="user_button" img="user_img_button" pos="410, 950" scale="1, 1" callback="open_inventory_user"/>
         <Button name="case_button" img="case_img_button" pos="1010, 950" scale="1, 1" callback="open_inventory_case"/>
         <Button name="pause_button" img="pause_img_button" pos="1605, 400" scale="1, 1" callback="open_pause"/>
-        <Button name="home_button" img="home_img_button" pos="710, 540" scale="1, 1" callback="goto_menu"/>
-        <Button name="settings_pause_button" img="settings_img_button" pos="710, 658" scale="1, 1" callback="goto_setting"/>
-        <Button name="resume_button" img="resume_img_button" pos="710, 422" scale="1, 1" callback="goto_game"/>
+        <Button name="home_button" img="home_img_button" pos="710, 500" scale="1, 1" callback="goto_menu"/>
+        <Button name="settings_pause_button" img="settings_img_button" pos="710, 606" scale="1, 1" callback="goto_setting"/>
+        <Button name="exit_pause_button" img="exit_img_button" pos="710, 712" scale="1, 1" callback="exit"/>
+        <Button name="resume_button" img="resume_img_button" pos="710, 394" scale="1, 1" callback="goto_game"/>
     </Buttons>
     <Checkboxs>
         <!-- CALLBACK: -->
@@ -99,7 +100,7 @@
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
         <Panel name="user_inventory_panel" texts="food_user, linemate_user, deraumere_user, sibur_user, mendiane_user, phiras_user, thystame_user" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>
         <Panel name="case_inventory_panel" texts="food_case, linemate_case, deraumere_case, sibur_case, mendiane_case, phiras_case, thystame_case" img="inventory_case_img" pos="0, 0" scale="1, 1" type="inventory_case"/>
-        <Panel name="pause_panel" img="pause_menu" pos="0, 0" scale="1, 1" buttons="settings_pause_button, home_button, resume_button" type="pause"/>
+        <Panel name="pause_panel" img="pause_menu" pos="0, 0" scale="1, 1" buttons="settings_pause_button, home_button, resume_button, exit_pause_button" type="pause"/>
         <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1" chat="chat"/>
         <Panel name="ranking_box" texts="1_ranking, 2_ranking, 3_ranking, 4_ranking, 5_ranking" img="ranking_img" pos="698, 13" scale="1, 1" type="other"/>
     </Panels>

@@ -70,6 +70,7 @@ namespace GUI {
             Scene_Manager::SceneType _scenetype;
             std::vector<Interface::Panel> _panels;
             std::shared_ptr<ISprite> _background = nullptr;
+            Interface::CALLBACK _callback = Interface::CALLBACK::NONE;
     };
 
     static std::vector<std::string /*music path*/> MUSIC = {

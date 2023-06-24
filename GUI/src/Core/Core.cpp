@@ -51,7 +51,7 @@ void Core::run()
 
 
         while (_window->pollEvent(event)) {
-            if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            if (event.type == sf::Event::Closed)
                 _window->close();
             if (event.type == sf::Event::KeyReleased) {
                 if (event.key.code == sf::Keyboard::F1) {

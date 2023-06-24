@@ -45,6 +45,11 @@ namespace GUI {
     void Scene::updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed) {
         for (auto &panel : _panels)
             panel.updatePanel(mousePos, key, mousePressed);
+        if (_scenetype == Scene_Manager::SceneType::GAME) {
+            if (key == sf::Keyboard::Escape) {
+                _callback = Interface::CALLBACK::OPEN_PAUSE;
+            }
+        }
     }
 
     std::vector<Interface::CALLBACK> Scene::getCallback() {
@@ -53,6 +58,7 @@ namespace GUI {
             std::vector<Interface::CALLBACK> tmp = panel.getCallback();
             callback.insert(callback.end(), tmp.begin(), tmp.end());
         }
+        callback.push_back(_callback);
         return callback;
     }
 
