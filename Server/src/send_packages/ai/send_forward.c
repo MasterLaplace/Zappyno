@@ -7,13 +7,13 @@
 
 #include "../../../include/send_package.h"
 
-enum Direction { North, East, South, West };
+enum Direction { North = 1, East, South, West };
 
-static void modify_position(t_server *server)
+static void modify_position(t_server *server, int id)
 {
     t_client *player = &TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM];
     unsigned x = player->pos_x, y = player->pos_y, new_x = x, new_y = y;
-    TILES(find_tile(server, x, y)).player--;
+    TILES(find_tile(server, x, y, id)).player--;
     switch (player->orientation) {
         case North:
             new_y = (y - 1 + server->params->height) % server->params->height;
@@ -28,21 +28,15 @@ static void modify_position(t_server *server)
             new_x = (x - 1 + server->params->width) % server->params->width;
             break;
     }
-    player->pos_x = CLIENT(server->id).pos_x = new_x;
-    player->pos_y = CLIENT(server->id).pos_y = new_y;
-    TILES(find_tile(server, new_x, new_y)).player++;
+    player->pos_x = CLIENT(id).pos_x = new_x;
+    player->pos_y = CLIENT(id).pos_y = new_y;
+    TILES(find_tile(server, new_x, new_y, id)).player++;
 }
 
-void send_forward(t_server *server)
+void send_forward(t_server *server, int id)
 {
-    modify_position(server);
-    printf("Position player : %d %d\n", CLIENT(server->id).pos_x,
-        CLIENT(server->id).pos_y);
-    send_to_client(server, "ok\n", server->id);
-}
-
-void send_forward_to_all(t_server *server)
-{
-    modify_position(server);
-    send_to_all_clients(server, "ok\n");
+    modify_position(server, id);
+    printf("Position player : %d %d\n", CLIENT(id).pos_x,
+        CLIENT(id).pos_y);
+    send_to_client(server, "ok\n", id);
 }

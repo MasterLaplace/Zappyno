@@ -19,8 +19,19 @@ int create_socket(void)
         perror("Cannot open socket");
         return -1;
     }
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, "\001", 4) < 0)
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    if (flags == -1) {
+        perror("fcntl F_GETFL failed");
+        return -1;
+    }
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        perror("fcntl F_SETFL failed");
+        return -1;
+    }
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, "\001", 4) < 0) {
         perror("setsockopt(SO_REUSEADDR) failed");
+        return -1;
+    }
     return sockfd;
 }
 
@@ -65,18 +76,18 @@ int listen_socket(t_server *server, t_params *params)
  * @param params
  * @return 0 if success, -1 if error
  */
-int setup_server(t_server *server, t_params *params)
+bool setup_server(t_server *server, t_params *params)
 {
     server->sockfd = create_socket();
     if (server->sockfd < 0)
-        return (-1);
+        return false;
     if (bind_socket(server, params) < 0)
-        return (-1);
+        return false;
     if (listen_socket(server, params) < 0)
-        return (-1);
+        return false;
     server->max_fd = server->sockfd;
     printf("Server setup complete\n");
-    return (0);
+    return true;
 }
 
 /**
@@ -86,24 +97,23 @@ int setup_server(t_server *server, t_params *params)
  */
 void remove_client(t_server *server, int id)
 {
-    int tmp_id = id;
+    int pos = find_tile(server, server->clients[id].pos_x,
+server->clients[id].pos_y, id);
+    TILES(pos).player--;
     close(CLIENT(id).socket_fd);
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
-    memset(&CLIENT(id), 0, sizeof(t_client));
+    CLIENT(id).socket_fd = 0;
     server->max_fd = server->sockfd;
     for (int i = 0; i < SOMAXCONN; i++) {
-        if (CLIENT(i).socket_fd > server->max_fd) {
+        if (CLIENT(i).socket_fd > server->max_fd)
             server->max_fd = CLIENT(i).socket_fd;
-        }
     }
-    for (int i = 0; i < server->params->num_teams; i++) {
-        if (!server->game.teams[i].players)
-            continue;
-        if (server->game.teams[i].players[INDEX_IN_TEAM].params_function) {
-            free_double_array(&server->game.teams[i].players[INDEX_IN_TEAM].params_function);
-            server->game.teams[i].players[INDEX_IN_TEAM].socket_fd = 0;
-        }
-    }
-    server->game.teams[TEAM_INDEX].nb_players--;
-    CLIENT(tmp_id).dead = true;
+    if (server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function)
+            free_double_array(
+&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function);
+    memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0, sizeof(t_client));
+    if (server->game.teams[TEAM_INDEX].nb_players > 0)
+        server->game.teams[TEAM_INDEX].nb_players--;
+    memset(&CLIENT(id), 0, sizeof(t_client));
+    CLIENT(id).dead = true;
 }

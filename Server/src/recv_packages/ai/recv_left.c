@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_left(t_server *server, char **message)
+void recv_left(t_server *server, UNUSED char **message, int id)
 {
-    (void)message;
-    send_left(server);
+    printf("Recv left\n");
+    send_left(server, id);
 }

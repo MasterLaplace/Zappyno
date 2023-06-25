@@ -7,7 +7,7 @@
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
-#include "../src/main.c"
+#include "../include/main.h"
 
 Test(MainTest, main)
 {

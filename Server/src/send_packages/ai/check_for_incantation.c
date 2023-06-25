@@ -18,11 +18,14 @@ static int required_ressources[8][8] = {
         {7, 6, 2, 2, 2, 2, 2, 1}   // for level 7
 };
 
-void remove_player_resources(t_server *server, t_client *player, int pos,
-int level)
+static void remove_player_resources(t_server *server, t_client *player,
+int level, int id)
 {
-    if (player->pos_x != CLIENT(server->id).pos_x ||
-        player->pos_y != CLIENT(server->id).pos_y ||
+    int pos = find_tile(server, CLIENT(id).pos_x,
+                        CLIENT(id).pos_y, id);
+
+    if (player->pos_x != CLIENT(id).pos_x ||
+        player->pos_y != CLIENT(id).pos_y ||
         (level + 1) != player->level) {
         return;
     }
@@ -33,14 +36,13 @@ int level)
     }
 }
 
-void remove_required_resources(t_server *server)
+void remove_required_resources(t_server *server, int id)
 {
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
-    int pos = find_tile(server, CLIENT(server->id).pos_x,
-                        CLIENT(server->id).pos_y);
+
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < TEAMS[j].max_players; i++) {
-            remove_player_resources(server, &TEAMS[j].players[i], pos, level);
+            remove_player_resources(server, &TEAMS[j].players[i], level, id);
         }
     }
 }

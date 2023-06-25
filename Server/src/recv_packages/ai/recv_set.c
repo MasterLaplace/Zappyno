@@ -7,14 +7,14 @@
 
 #include "../../../include/send_package.h"
 
-void recv_set(t_server *server, char **message)
+void recv_set(t_server *server, char **message, int id)
 {
     if (!message)
         return;
     printf("%s\n", message[0]);
     if (message[1] == NULL) {
-        send_error(server, 0);
+        send_error(server, 0, id);
         return;
     }
-    send_set_object(server, message);
+    send_set_object(server, message, id);
 }

@@ -26,3 +26,55 @@ int wrap_y(int y, int height)
     }
     return y;
 }
+
+void reverse_array(int *arr, int size)
+{
+    int start = 0;
+    int end = size - 1;
+
+    while (start < end) {
+        int temp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+void handle_new_connection(t_server *svr)
+{
+    int new_socket;
+
+    if ((new_socket = accept(svr->sockfd, NULL, NULL)) >= 0) {
+        printf("New connection\n");
+        int flags = fcntl(new_socket, F_GETFL, 0);
+        if (flags == -1) {
+            perror("fcntl F_GETFL failed");
+            return;
+        }
+        if (fcntl(new_socket, F_SETFL, flags | O_NONBLOCK) == -1) {
+            perror("fcntl F_SETFL failed");
+            return;
+        }
+        add_client(svr, new_socket);
+    }
+}
+
+int set_fds(t_server *svr)
+{
+    FD_ZERO(&svr->readfds);
+    FD_ZERO(&svr->wfd);
+    svr->max_fd = svr->sockfd;
+    FD_SET(svr->sockfd, &svr->readfds);
+    FD_SET(svr->sockfd, &svr->wfd);
+    for (unsigned i = 0; i < SOMAXCONN; i++) {
+        int sd = svr->clients[i].socket_fd;
+        if (sd > 0) {
+            FD_SET(sd, &svr->readfds);
+            FD_SET(sd, &svr->wfd);
+        }
+        if (sd > svr->max_fd)
+            svr->max_fd = sd;
+    }
+    return svr->max_fd;
+}

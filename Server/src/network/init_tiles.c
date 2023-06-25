@@ -5,7 +5,7 @@
 ** init_tiles.c
 */
 
-#include "../../include/server.h"
+#include "../../include/main.h"
 
 static unsigned calculate_density(t_params *params, unsigned type)
 {
@@ -55,17 +55,20 @@ static void fill_tiles(t_server *server, int *permutation, int *max_resources)
         unsigned tile_index = permutation[i];
         add_resource(server, i, tile_index, max_resources);
     }
-    free(permutation);
+    if (permutation != NULL)
+        free(permutation);
 }
 
-void generate_food(t_server *server)
+bool generate_food(t_server *server)
 {
     unsigned total_tiles = server->params->width * server->params->height;
     unsigned max_resources[7];
+    unsigned* permutation = (unsigned*)malloc(total_tiles * sizeof(unsigned));
+    if (permutation == NULL)
+        return false;
     for (unsigned i = 0; i < 7; i++) {
         max_resources[i] = calculate_density(server->params, i);
     }
-    unsigned* permutation = (unsigned*)malloc(total_tiles * sizeof(unsigned));
     for (unsigned i = 0; i < total_tiles; i++) {
         permutation[i] = i;
     }
@@ -76,4 +79,5 @@ void generate_food(t_server *server)
         permutation[j] = tmp;
     }
     fill_tiles(server, permutation, max_resources);
+    return true;
 }

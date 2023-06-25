@@ -7,11 +7,11 @@
 
 #include "../../../include/send_package.h"
 
-void recv_take(t_server *server, char **message)
+void recv_take(t_server *server, char **message, int id)
 {
     if (!message[1]) {
-        send_error(server, 0);
+        send_error(server, 0, id);
         return;
     }
-    send_take_object(server, message);
+    send_take_object(server, message, id);
 }

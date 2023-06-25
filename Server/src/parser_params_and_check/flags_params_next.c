@@ -33,11 +33,19 @@ static void handle_n(char **argv, int optind, int argc, t_params *params)
             break;
         params->team_names = realloc(params->team_names,
                                     sizeof(char*) * (params->num_teams + 1));
-        params->team_names[params->num_teams] = strdup(argv[i]);
+        if (!params->team_names)
+            exit(84);
+        params->team_names[params->num_teams] = malloc(sizeof(char) *
+                                                    (strlen(argv[i]) + 1));
+        if (!params->team_names[params->num_teams])
+            exit(84);
+        strcpy(params->team_names[params->num_teams],argv[i]);
         params->num_teams++;
     }
     params->team_names = realloc(params->team_names,
                                 sizeof(char*) * (params->num_teams + 1));
+    if (!params->team_names)
+        exit(84);
     params->team_names[params->num_teams] = NULL;
 }
 

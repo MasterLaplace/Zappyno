@@ -20,22 +20,22 @@ size_t count_all_words_size(char **array)
 // return the size of the final mesage + 1 for \0
 size_t count_message_size(char **array, t_server *server)
 {
-    size_t res = (server->params->num_teams * 5) + count_all_words_size(array)
-                 + 2;
+    size_t res = (server->params->num_teams * 5) +
+count_all_words_size(array) + 2;
     return res;
 }
 
-void send_name_of_all_the_teams(t_server *server, char** array)
+void send_name_of_all_the_teams(t_server *server, UNUSED char **array, int id)
 {
-    (void)array;
-    AUTO_FREE char *message = calloc(
-            count_message_size(server->params->team_names, server), sizeof(char));
-
+    AUTO_FREE char *message = calloc(count_message_size(
+server->params->team_names, server), sizeof(char));
+    if (!message)
+        return;
     for (size_t i = 0; server->params->team_names[i] != NULL; i++) {
         strncat(message, "tna ",strlen(message) + 4);
         strncat(message, server->params->team_names[i],strlen(message)
-                                                       + strlen(server->params->team_names[i]));
++ strlen(server->params->team_names[i]));
         strncat(message, "\n",strlen(message) + 1);
     }
-    send_to_gui(server, message, server->id);
+    send_to_gui(server, message, id);
 }

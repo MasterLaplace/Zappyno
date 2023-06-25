@@ -18,12 +18,12 @@ static int required_ressources[8][8] = {
         {7, 6, 2, 2, 2, 2, 2, 1}   // for level 7
 };
 
-int verify_elevation_conditions_next(t_server *server, int j)
+int verify_elevation_conditions_next(t_server *server, int j, int id)
 {
     int nb_players = 0;
-    int x = CLIENT(server->id).pos_x;
-    int y = CLIENT(server->id).pos_y;
-    int pos = find_tile(server, x, y);
+    int x = CLIENT(id).pos_x;
+    int y = CLIENT(id).pos_y;
+    int pos = find_tile(server, x, y, id);
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
 
     for (int i = 0; i < TEAMS[j].max_players; i++) {
@@ -36,67 +36,93 @@ int verify_elevation_conditions_next(t_server *server, int j)
     return nb_players;
 }
 
-bool verify_nmb_ressources_next(t_server *server, int j, int i, int level)
+bool verify_nmb_ressources_next(t_server *server, tmp_t tmp, int level, int id)
 {
-    int x = CLIENT(server->id).pos_x;
-    int y = CLIENT(server->id).pos_y;
-    int pos = find_tile(server, x, y);
-    if (TEAMS[j].players[i].pos_x != x ||
-        TEAMS[j].players[i].pos_y != y ||
-        (level + 1) != TEAMS[j].players[i].level) {
-        return false;
+    int i = tmp.i, j = tmp.j;
+    int x = CLIENT(id).pos_x;
+    int y = CLIENT(id).pos_y;
+    int pos = find_tile(server, x, y, id);
+    bool check = false;
+    printf("%d | %d | %d | %d | %d | %d\n", TEAMS[j].players[i].pos_x, x,
+           TEAMS[j].players[i].pos_y, y, (level + 1), TEAMS[j].players[i].level);
+    if (TEAMS[j].players[i].pos_x == x ||
+        TEAMS[j].players[i].pos_y == y ||
+        (level + 1) == TEAMS[j].players[i].level) {
+        check = true;
     }
+    printf("level: %d\n", level);
     for (int k = 1; k < TOTAL_RESOURCES; k++) {
-        if (TILES(pos).resources[k] < required_ressources[level][k + 1]) {
+        if (TILES(pos).resources[k] < required_ressources[level][k + 1] && check) {
+            printf("%d\n", k);
             return false;
         }
     }
+    printf("GOOD\n");
     return true;
 }
 
-bool verify_nmb_ressources(t_server *server, int j, int level)
+bool verify_nmb_ressources(t_server *server, int j, int level, int id)
 {
+    tmp_t tmp = {0, 0};
     for (int i = 0; i < TEAMS[j].max_players; i++) {
-        if (!verify_nmb_ressources_next(server, j, i, level))
+        tmp.i = i;
+        tmp.j = j;
+        if (!verify_nmb_ressources_next(server, tmp, level, id)) {
+            printf("TMPPPPP\n");
             return false;
+        }
     }
+    printf("GOOD\n");
     return true;
 }
 
-bool verify_elevation_conditions(t_server *server)
+bool verify_elevation_conditions(t_server *server, int id)
 {
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     int nb_players = 0;
-    int x = CLIENT(server->id).pos_x;
-    int y = CLIENT(server->id).pos_y;
-    int pos = find_tile(server, x, y);
     for (int j = 0; j < server->params->num_teams; j++) {
-        nb_players += verify_elevation_conditions_next(server, j);
+        nb_players += verify_elevation_conditions_next(server, j, id);
     }
     printf("nb_player: %d | required: %d\n", nb_players,
 required_ressources[level][1]);
     if (nb_players < required_ressources[level][1])
         return !printf("nb_players: %d\n", nb_players);
+    printf("incantation4564684\n");
     for (int j = 0; j < server->params->num_teams; j++) {
-        if (!verify_nmb_ressources(server, j, level))
+        bool test = verify_nmb_ressources(server, j, level, id);
+        printf("test: %d\n", test);
+        if (!test) {
+            printf("WOOOOW\n");
             return false;
+        }
+        printf("incantation/////\n");
     }
     return true;
 }
 
-void send_incantation(t_server *server)
+void send_incantation(t_server *server, int id)
 {
+    send_to_client(server, "Elevation underway\n", id);
     printf("incantation\n");
-    t_client* player = &CLIENT(server->id);
+    t_client* player = &CLIENT(id);
     int x = player->pos_x;
     int y = player->pos_y;
     tmp_t tmp = {x, y};
-    if (!verify_elevation_conditions(server)) {
-        send_to_client(server, "ko\n", server->id);
+    if (!verify_elevation_conditions(server, id)) {
+        send_to_client(server, "ko\n", id);
         return;
     }
-    freeze_participating_players(server, player);
-    perform_elevation(server);
-    remove_required_resources(server);
-    send_end_of_an_incantation(server, tmp, player->level);
+    printf("incantation50\n");
+    if (!freeze_participating_players(server, player, id)) {
+        printf("incantation1.0\n");
+        send_to_client(server, "ko\n", id);
+        return;
+    }
+    printf("incantation2.0\n");
+    perform_elevation(server, id);
+    remove_required_resources(server, id);
+    send_end_of_an_incantation(server, tmp, player->level, id);
+    AUTO_FREE char *str = malloc(sizeof(char) * my_nblen(player->level) + 17);
+    sprintf(str, "Current level: %d\n", player->level + 1);
+    send_to_client(server, str, id);
 }

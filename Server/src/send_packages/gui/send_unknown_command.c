@@ -7,16 +7,11 @@
 
 #include "../../../include/send_package.h"
 
-void send_unknown_command(t_server *server)
+void send_unknown_command(t_server *server, int id)
 {
     AUTO_FREE char *message = calloc(5,sizeof(char));
+    if (!message)
+        return;
     sprintf(message, "suc\n");
-    send_to_client(server, message, server->id);
-}
-
-void send_unknown_command_to_all(t_server *server)
-{
-    AUTO_FREE char *message = calloc(5,sizeof(char));
-    sprintf(message, "suc\n");
-    send_to_client(server, message, server->id);
+    send_to_client(server, message, id);
 }

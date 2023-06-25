@@ -17,56 +17,31 @@
  */
 void send_to_client(t_server *server, char *message, int id)
 {
+    printf("Send to client %d\n", id);
     t_client *client = &CLIENT(id);
     if (client->socket_fd == 0 || client->socket_fd == -1 || client->is_gui)
         return;
     int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
     if (bytes_sent == -1) {
         perror("send");
-        exit(EXIT_FAILURE);
+        sleep(1);
+        send(client->socket_fd, message, strlen(message), 0);
+        return;
     }
     if (errno == EPIPE) {
         remove_client(server, id);
     }
 }
 
-//send_to_all_clients will send a message to all clients
-void send_to_all_clients(t_server *server, char * message)
+void send_to_all_clients(t_server *server, char *message, int id)
 {
     t_client *clients = server->clients;
-    bool tmp = false;
 
     for (int i = 0; i < SOMAXCONN; i++) {
-        if (i == server->id)
-            send_to_client(server, "ok\n", server->id);
-        if (clients[i].socket_fd != 0) {
-            printf("Send to client %d\n", i);
+        if (clients[i].socket_fd != 0 && clients[i].socket_fd != -1 &&
+!clients[i].is_gui && i != id)
             send_to_client(server, message, i);
-            tmp = true;
-        }
     }
-}
-
-char *receive_from_client(t_server *server, int fd)
-{
-    char *message = calloc(1024, sizeof(char));
-    ssize_t recv_result = read(fd, message, 1024);
-
-    if (recv_result == -1) {
-        if (errno == ECONNRESET) {
-            remove_client(server, server->id);
-            printf("Client disconnected\n");
-            return NULL;
-        } else {
-            perror("recv");
-            exit(EXIT_FAILURE);
-        }
-    } else if (recv_result == 0) {
-        remove_client(server, server->id);
-        printf("Client disconnected\n");
-        return NULL;
-    }
-    return message;
 }
 
 void send_to_gui(t_server *server, char * message, int id)
@@ -77,7 +52,9 @@ void send_to_gui(t_server *server, char * message, int id)
     int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
     if (bytes_sent == -1) {
         perror("send");
-        exit(EXIT_FAILURE);
+        sleep(1);
+        send(client->socket_fd, message, strlen(message), 0);
+        return;
     }
     if (errno == EPIPE) {
         remove_client(server, id);

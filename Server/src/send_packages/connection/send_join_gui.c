@@ -7,12 +7,7 @@
 
 #include "../../../include/send_package.h"
 
-void send_join_gui(t_server *server)
+void send_join_gui(t_server *server, int id)
 {
-    send_to_client(server, "WELCOME\n", server->id);
-}
-
-void send_join_gui_to_all(t_server *server)
-{
-    send_to_all_clients(server, "WELCOME\n");
+    send_to_client(server, "WELCOME\n", id);
 }

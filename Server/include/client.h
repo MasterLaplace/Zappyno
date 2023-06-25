@@ -40,8 +40,9 @@ typedef struct s_client {
     unsigned resources[TOTAL_RESOURCES];
     unsigned index_in_team;
     my_timer_t timer;
-    void (*function)(t_server *, char **);
+    void (*function)(t_server *, char **, int);
     char **params_function;
+    char *buffer;
     bool is_gui;             // Whether the client is a gui or not
     bool is_freezed;         // Whether the client is freezed or not
     bool is_connected;      // Whether the client is connected or not

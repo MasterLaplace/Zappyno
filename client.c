@@ -1,68 +1,100 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-
-#define MAX_BUFFER_SIZE 20000
-
-// For uint8_t, uint16_t, uint32_t, etc.
-#include <stdint.h>
-
-// For send and recv
-#include <sys/types.h>
+#include <sys/select.h>
 #include <sys/socket.h>
-#include <stdbool.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
-int main() {
+#define MAX_BUFFER_SIZE 1024
+#define SERVER_IP "127.0.0.1"
+#define SERVER_PORT 4242
+
+int main()
+{
     // Create a socket
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1) {
-        perror("Socket creation failed");
-        exit(EXIT_FAILURE);
+    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket == -1) {
+        perror("Failed to create socket");
+        return 1;
     }
 
-    // Server address information
-    struct sockaddr_in server_addr;
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(8080);  // Replace with the actual server port
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Replace with the actual server IP
+    // Set up the server address
+    struct sockaddr_in serverAddress;
+    memset(&serverAddress, 0, sizeof(serverAddress));
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(SERVER_PORT);
+    if (inet_pton(AF_INET, SERVER_IP, &(serverAddress.sin_addr)) <= 0) {
+        perror("Invalid server address");
+        close(serverSocket);
+        return 1;
+    }
 
     // Connect to the server
-    if (connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
-        perror("Connection failed");
-        exit(EXIT_FAILURE);
+    if (connect(serverSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1) {
+        perror("Failed to connect to the server");
+        close(serverSocket);
+        return 1;
     }
-    printf("Connected to the server!\n");
 
-    ssize_t numChars;
-    size_t bufferSize = 0;
+    // Set up the file descriptor set for select
+    fd_set fds;
+    int maxfd = (serverSocket > STDIN_FILENO) ? serverSocket : STDIN_FILENO;
+
+    // Buffer to store received data
+    char buffer[MAX_BUFFER_SIZE];
+
+    // Main client loop
     while (1) {
-        char response[MAX_BUFFER_SIZE] = {0};
-        // Receive and display the response from the server
-        if (recv(sockfd, response, MAX_BUFFER_SIZE - 1, 0) == -1) {
-            perror("Receive failed");
-            exit(EXIT_FAILURE);
-        }
-        printf("Response: %s", response);
-        char *buffer = calloc(MAX_BUFFER_SIZE, sizeof(char));
-        // Read user input
-        printf("Enter your command: ");
-        numChars = getline(&buffer, &bufferSize, stdin);
-        if (numChars == -1) {
-            perror("Input error");
+        // Clear the file descriptor set
+        FD_ZERO(&fds);
+        FD_SET(STDIN_FILENO, &fds);
+        FD_SET(serverSocket, &fds);
+
+        // Wait for activity on any of the file descriptors
+        if (select(maxfd + 1, &fds, NULL, NULL, NULL) == -1) {
+            perror("Select error");
             break;
         }
-        // Send the input to the server
-        if (send(sockfd, buffer, strlen(buffer), 0) == -1) {
-            perror("Send failed");
-            exit(EXIT_FAILURE);
+
+        // Check if there is data to read from stdin
+        if (FD_ISSET(STDIN_FILENO, &fds)) {
+            // Read from stdin
+            memset(buffer, 0, sizeof(buffer));
+            if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+                // Send the input to the server
+                if (send(serverSocket, buffer, strlen(buffer), 0) == -1) {
+                    perror("Send error");
+                    break;
+                }
+            } else {
+                // Error or EOF on stdin, break the loop
+                break;
+            }
         }
-        free(buffer);
+
+        // Check if there is data to read from the server
+        if (FD_ISSET(serverSocket, &fds)) {
+            // Receive data from the server
+            memset(buffer, 0, sizeof(buffer));
+            ssize_t bytesRead = recv(serverSocket, buffer, sizeof(buffer) - 1, 0);
+            if (bytesRead <= 0) {
+                if (bytesRead == 0) {
+                    printf("Server closed the connection\n");
+                } else {
+                    perror("Receive error");
+                }
+                break;
+            } else {
+                // Process the received data
+                printf("Received from server: %s", buffer);
+            }
+        }
     }
 
     // Close the socket
-    close(sockfd);
+    close(serverSocket);
 
     return 0;
 }
