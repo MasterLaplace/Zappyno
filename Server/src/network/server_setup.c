@@ -111,7 +111,8 @@ server->clients[id].pos_y, id);
     if (server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function)
             free_double_array(
 &server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function);
-    memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0, sizeof(t_client));
+    memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM],
+0, sizeof(t_client));
     if (server->game.teams[TEAM_INDEX].nb_players > 0)
         server->game.teams[TEAM_INDEX].nb_players--;
     memset(&CLIENT(id), 0, sizeof(t_client));

@@ -40,6 +40,7 @@
     #include <netinet/in.h>
     #include <stdint.h>
     #include <fcntl.h>
+    #include <time.h>
 
     #include "params.h"
     #include "client.h"
@@ -49,7 +50,7 @@
 typedef struct tmp_s tmp_t;
 
 typedef struct server_timer_s {
-    time_t start;
+    clock_t start;
     double duration;
 } server_timer_t;
 
@@ -156,7 +157,10 @@ uintptr_t get_environment_variable(const char *key);
 void clean(void) __attribute__((destructor));
 //
 void add_client(t_server *server, int new_socket);
-
+//
+double calcul_angle(int x, int y);
+//
+struct timespec get_current_time();
 
 
 

@@ -13,19 +13,19 @@
 
 
 ai_command ia_client[] = {
-    {"Look", recv_look, 1},
-    {"Forward", recv_forward, 1},
-    {"Right", recv_right, 1},
-    {"Left", recv_left, 1},
-    {"Inventory", recv_inventory, 1},
-    {"Connect_nbr", recv_connect_nbr, -1},
-    {"Take", recv_take, 1},
-    {"Set", recv_set, 1},
-    {"Broadcast", recv_broadcast, 1},
-    {"Fork", recv_fork, 1},
-    {"Eject", recv_eject, 1},
-    {"Incantation", recv_incantation, 1},
-    {NULL, NULL, 0}
+    {"Look", recv_look, 0.7},
+    {"Forward", recv_forward, 0.7},
+    {"Right", recv_right, 0.7},
+    {"Left", recv_left, 0.7},
+    {"Inventory", recv_inventory, 0.7},
+    {"Connect_nbr", recv_connect_nbr, -1.0},
+    {"Take", recv_take, 0.7},
+    {"Set", recv_set, 0.7},
+    {"Broadcast", recv_broadcast, 0.7},
+    {"Fork", recv_fork, 4.2},
+    {"Eject", recv_eject, 0.7},
+    {"Incantation", recv_incantation, 30.0},
+    {NULL, NULL, 0.0}
 };
 
 static void check_command_ai_next(t_server *server, char **message, int i,
@@ -33,10 +33,8 @@ int id)
 {
     CLIENT(id).function = NULL;
     CLIENT(id).function = ia_client[i].function_ai;
-    CLIENT(id).timer.start = time(NULL);
-    if (CLIENT(id).timer.start == -1)
-        return;
-    CLIENT(id).timer.duration = ia_client[i].time;
+    CLIENT(id).timer.duration = ia_client[i].time / server->params->freq;
+    printf("Timer duration: %f\n", CLIENT(id).timer.duration);
     if (CLIENT(id).params_function != NULL)
         free_double_array(&CLIENT(id).params_function);
     CLIENT(id).params_function = copy_array(message);
@@ -55,6 +53,7 @@ ia_client[i].time == -1.0) {
         }
         if (!strncmp(ia_client[i].command_id, message[0],
 strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed) {
+            printf("AI command: %s | %s\n", ia_client[i].command_id, message[0]);
             check_command_ai_next(server, message, i, id);
             return;
         }
@@ -64,15 +63,15 @@ strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed) {
 static void receive_from_client_next(t_server *server, char *message,
 int current_buf_len, int id)
 {
-    int message_len = strlen(message);
     server->clients[id].buffer = realloc(
-server->clients[id].buffer,current_buf_len + message_len + 1);
+server->clients[id].buffer,current_buf_len + strlen(message) + 1);
     if (!server->clients[id].buffer)
         return;
     ON_CLEANUP(free_double_array) char **mes = stwa(strcat(
 server->clients[id].buffer, message), " \n\t");
     if (!mes)
         return;
+    printf("mes[0] = %s\n", mes[0]);
     if (!CLIENT(id).is_connected) {
         join_client(server, mes, id);
     } else {

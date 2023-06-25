@@ -66,20 +66,14 @@ int *get_pos_tiles_seen(t_server *server, int x, int y, int id)
 sizeof(int));
     if (!pos_tiles_seen)
         return NULL;
-    printf("pos player : %d %d\n", x, y);
     pos_tiles_seen[0] = find_tile(server, x, y, id);
-    printf("pos tile 0 : %d\n", pos_tiles_seen[0]);
     int index = 1;
     for (int i = 1; i <= level; i++) {
-        printf("i : %d\n", i);
         tmp_t tmp = {i, id};
         update_positions(server, pos_tiles_seen, &index, tmp);
     }
     pos_tiles_seen[index] = -1;
     reverse_array(pos_tiles_seen, index);
-    printf("SIZE array : %d\n", index);
-    for (int i = 0; pos_tiles_seen[i] != -1; i++)
-        printf("pos tile %d : %d\n", i, pos_tiles_seen[i]);
     return pos_tiles_seen;
 }
 
@@ -96,12 +90,10 @@ void send_look(t_server *server, int id)
         return;
     for (int i = 0; pos_tiles[i] != -1; i++) {
         message = get_tile_resources(server, pos_tiles[i], message, id);
-        if (pos_tiles[i + 1] != -1) {
-            printf("I : %d\n", i);
+        if (pos_tiles[i + 1] != -1)
             message = my_strcat(message, ",");
-        }
     }
     AUTO_FREE char *tmp = calloc(strlen(message) + 15, sizeof(char));
-    sprintf(tmp, "[%s] %d %d %d\n", &message[1], x, y, orientation);
+    sprintf(tmp, "[%s]\n", &message[1]);
     send_to_client(server, tmp, id);
 }

@@ -65,4 +65,4 @@ debug:
 	@$(MAKE) debug -C ./Server $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► DEBUG 🔧 !\n"$(DEFAULT)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re ai

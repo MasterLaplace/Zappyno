@@ -33,10 +33,12 @@ static bool check_death(t_server *server, int id)
         return false;
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].id == -1)
         return false;
+    printf("id : %d, Food: %d\n", id, TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0]);
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0] <= 0 &&
     has_timer_expired_gen_food(&server->remove_food_timer,
 server->remove_food_timer.duration) && FD_ISSET(CLIENT(id).socket_fd,
 &server->wfd) && FD_ISSET(CLIENT(id).socket_fd, &server->readfds)) {
+        printf("Food: %d\n", TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0]);
         AUTO_FREE char *str = calloc(my_nblen(id) + 10, sizeof(char));
         sprintf(str, "pdi %d\n", id);
         send_to_all_gui(server, str);
@@ -56,7 +58,6 @@ static void read_data_next(t_server *server, unsigned id)
         if (server->clients[id].params_function != NULL)
             free_double_array(&server->clients[id].params_function);
         server->clients[id].params_function = NULL;
-        return;
     }
     if (has_timer_expired_gen_food(&server->remove_food_timer,
 server->remove_food_timer.duration)) {
@@ -78,8 +79,10 @@ static void read_data_from_server(t_server *server, unsigned id)
     }
     read_data_next(server, id);
     if (has_timer_expired_gen_food(&server->gen_food_timer,
-server->gen_food_timer.duration))
+server->gen_food_timer.duration)) {
+        printf("Generate food\n");
         generate_food(server);
+    }
     if (has_timer_expired(&server->clients[id])) {
         server->clients[id].function(server,
 server->clients[id].params_function, id);

@@ -67,14 +67,15 @@ int check_y(int e_y, int r_y, int map_size)
     return (down_len);
 }
 
+static const int DIR[4][8] = {
+        { 1, 2, 3, 4, 5, 6, 7, 8 },
+        { 5, 6, 7, 8, 1, 2, 3, 4 },
+        { 3, 4, 5, 6, 7, 8, 1, 2 },
+        { 7, 8, 1, 2, 3, 4, 5, 6 },
+};
+
 int result(int orientation, double angle)
 {
-    static const int DIR[4][8] = {
-            { 1, 2, 3, 4, 5, 6, 7, 8 },
-            { 5, 6, 7, 8, 1, 2, 3, 4 },
-            { 3, 4, 5, 6, 7, 8, 1, 2 },
-            { 7, 8, 1, 2, 3, 4, 5, 6 },
-    };
     if ((angle > 315 && angle < 365) || (angle > 0 && angle < 45))
         return DIR[orientation - 1][0];
     if (angle == 315)
@@ -93,25 +94,19 @@ int result(int orientation, double angle)
         return DIR[orientation - 1][6];
 }
 
-double calcul_angle(int x, int y)
+static void send_broadcast_message(t_server *server, char *message, tmp_t tmp,
+int id)
 {
-    double angle_radians = atan2(y, x);
-
-    if (angle_radians < 0)
-        angle_radians += 2 * M_PI;
-    return angle_radians * 180 / M_PI;
-
-}
-
-static void send_broadcast_message(t_server *server, char *message, tmp_t tmp, int id) {
     int i = tmp.i;
     int j = tmp.j;
     if (TEAMS[j].players[i].id == id)
         return;
-    int square = check_x(TEAMS[j].players[i].pos_x, TEAMS[id].players[id].pos_x, server->params->width);
-    int square2 = check_y(TEAMS[j].players[i].pos_y, TEAMS[id].players[id].pos_y, server->params->height);
-    int orientation = result(TEAMS[j].players[i].orientation, calcul_angle(square, square2));
-
+    int square = check_x(TEAMS[j].players[i].pos_x,
+TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x,server->params->width);
+    int square2 = check_y(TEAMS[j].players[i].pos_y,
+TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y, server->params->height);
+    int orientation = result(TEAMS[j].players[i].orientation,
+calcul_angle(square, square2));
     char *str = calloc(strlen(message) + 12 + my_nblen(orientation), sizeof(char));
     if (!str)
         return;
@@ -122,11 +117,12 @@ static void send_broadcast_message(t_server *server, char *message, tmp_t tmp, i
 
 void send_broadcast(t_server *server, char *message, int id)
 {
-    printf("broadcast: %s\n", message);
+    printf("Broadcast from %d: %s\n", id, message);
     for (int j = 0; j < server->params->num_teams; j++) {
         for (int i = 0; i < TEAMS[j].max_players; i++) {
+            printf("i = %d, j = %d\n", i, j);
             tmp_t tmp = {i, j};
-            send_broadcast_message(server,message, tmp, id);
+            send_broadcast_message(server, message, tmp, id);
         }
     }
     send_to_client(server, "ok\n", id);
