@@ -19,8 +19,8 @@ WHITE = "\e[1;37m"
 all: ai gui server
 
 ai:
-	@$(MAKE) all -C ./AI $(NO_PRINT)
 	ln -sf ./AI/src/main.py ./zappy_ai
+	@$(MAKE) all -C ./AI $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► AI ⛽ !\n"$(DEFAULT)
 clean_AI:
 	@$(MAKE) clean -C ./AI $(NO_PRINT)
