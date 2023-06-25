@@ -10,6 +10,7 @@
 
     #include <stdbool.h>
     #include <stddef.h>
+    #include <time.h>
 
 typedef struct s_server t_server;
 
@@ -25,7 +26,7 @@ typedef enum {
 } e_resources;
 
 typedef struct my_timer_s {
-    time_t start;
+    clock_t start;
     double duration;
 } my_timer_t;
 

@@ -30,7 +30,7 @@ static t_map *set_tiles_struct(t_params *params)
 
 static void set_game_struct_next(t_game *game, t_params *params, int i)
 {
-    for (int j = 0; j < params->clientsNb; j++) {
+    for (int j = 0; j < game->teams[i].max_players; j++) {
         game->teams[i].players[j].pos_x = RANDINT(0, params->width - 1);
         game->teams[i].players[j].pos_y = RANDINT(0, params->height - 1);
         game->teams[i].players[j].is_an_egg = true;
@@ -56,7 +56,7 @@ static t_game set_game_struct(t_params *params)
     }
     for (int i = 0; i < params->num_teams; i++) {
         game.teams[i].max_players = params->clientsNb;
-        game.teams[i].players = calloc(params->clientsNb + 1, 88UL);
+        game.teams[i].players = calloc(game.teams[i].max_players + 1, sizeof(t_client));
         if (game.teams[i].players == NULL)
             exit_malloc();
         set_game_struct_next(&game, params, i);
@@ -68,6 +68,8 @@ static t_game set_game_struct(t_params *params)
 void set_server_struct_next(t_server *server)
 {
     for (int i = 0; i < SOMAXCONN; i++) {
+        server->clients[i].timer.start = clock();
+        server->clients[i].timer.duration = 0;
         server->clients[i].id = -1;
         server->clients[i].index_team = -1;
         server->clients[i].index_in_team = -1;
@@ -93,14 +95,10 @@ t_server *set_server_struct(t_params *params)
     server->params = params;
     server->game = set_game_struct(params);
     generate_food(server);
-    server->gen_food_timer.start = time(NULL);
-    if (server->gen_food_timer.start == -1)
-        exit_timer();
-    server->gen_food_timer.duration = 20.0 / server->params->freq;
-    server->remove_food_timer.start = time(NULL);
-    if (server->remove_food_timer.start == -1)
-        exit_timer();
-    server->remove_food_timer.duration = 126.0 / server->params->freq;
+    server->gen_food_timer.start = clock();
+    server->gen_food_timer.duration = 20.0 / params->freq;
+    server->remove_food_timer.start = clock();
+    server->remove_food_timer.duration = 126.0 / params->freq;
     set_server_struct_next(server);
     return server;
 }
