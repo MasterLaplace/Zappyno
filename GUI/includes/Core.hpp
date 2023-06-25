@@ -8,16 +8,14 @@
 #ifndef CORE_HPP_
     #define CORE_HPP_
     #define	EXIT_ERROR	84	/* Failing exit status.  */
-    #define FRAMERATE 60
-    #include <iostream>
-    #include "Client.hpp"
+    #include "Protocol.hpp"
     #include "SfTransition.hpp"
     #include "Scene.hpp"
 
 class Core {
     public:
         Core(const unsigned ac, const char *av[]);
-        ~Core() { _window->close(); }
+        ~Core() { if (_window->isOpen()) _window->close(); }
 
         void showUsage(std::ostream &output);
         bool parseArgs(const unsigned ac, const char *av[]);
@@ -26,8 +24,10 @@ class Core {
     protected:
     private:
         std::shared_ptr<sf::RenderWindow> _window;
+        Sf_transition::Transition star = Sf_transition::Transition(Sf_transition::Transition::TransitionType::STARFIELD, std::numeric_limits<int>::max());
         std::shared_ptr<GUI::Scene> _scene;
         GUI::SceneManager _sceneManager;
+        std::shared_ptr<Manager::Protocol> _protocol;
 };
 
 template<typename T>

@@ -7,23 +7,33 @@
 
 #ifndef ISPRITE_HPP_
     #define ISPRITE_HPP_
+    #include <SFML/Graphics.hpp>
     #include "Vector.hpp"
+    #include <memory>
 
 class ISprite {
     public:
         virtual ~ISprite() = default;
         virtual void animate(const unsigned &state) = 0;
+        virtual void animate_trantorian(unsigned state, const bool &isHover) = 0;
+        virtual void animate_checkbox(bool &ischecked, const unsigned &state) = 0;
         virtual void setOffset(Math::Vector offset) = 0;
         virtual void setMaxOffsetX(unsigned max_offset_x) = 0;
         virtual void setPos(Math::Vector pos) = 0;
         virtual void setScale(Math::Vector scale) = 0;
         virtual void setOrigin(Math::Vector origin) = 0;
         virtual void setSize(Math::Vector size) = 0;
+        virtual void setTransparency(const unsigned &transparency) = 0;
         virtual Math::Vector getPos() const = 0;
         virtual Math::Vector getScale() const = 0;
         virtual Math::Vector getOrigin() const = 0;
         virtual Math::Vector getSize() const = 0;
         virtual Math::Vector getMaxSize() const = 0;
+        virtual Math::Vector getStartSize() const = 0;
+        virtual unsigned getTransparency() const = 0;
+        virtual unsigned getOffetX() const = 0;
+        virtual unsigned getOffetY() const = 0;
+        virtual unsigned getMaxOffetX() const = 0;
         virtual void rotate(const float &angle) = 0;
         virtual void drawSprite() const = 0;
 };

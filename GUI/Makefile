@@ -40,8 +40,8 @@ ninja_clean:
 	@ninja -t clean
 
 gen_ninja:
-	@-./GUI/Script/Install/install_ninja_ubuntu.sh 2> /dev/null
-	@./GUI/Script/Generate_Ninja.py
+	@-Script/Install/install_ninja_ubuntu.sh 2> /dev/null
+	@Script/Generate_Ninja.py
 
 fclean: clean
 	@rm -rf $(NAME)
@@ -68,7 +68,7 @@ debug: re
 %.o: %.cpp
 	@$(COMPILER) $(CXX_FLAGS) $(FAST_FLAGS) $(INCLUDE) -c $< -o $@
 
-tests_run: gen
+tests_run: gen_ninja all
 	@ninja test
 	@mv test zappy_gui_tests
 	@mv zappy_gui_tests ../

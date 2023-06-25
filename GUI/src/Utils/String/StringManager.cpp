@@ -7,7 +7,6 @@
 
 #include "../../../includes/StringManager.hpp"
 
-
 namespace String {
     /**
      * @brief Split a string into a vector of strings
@@ -58,5 +57,36 @@ namespace String {
             }
         }
         return true;
+    }
+
+    /**
+     * @brief Find the occurrences of two substrings in a string
+     *
+     * @param str  The string to search in
+     * @param target1  The first substring
+     * @param target2  The second substring
+     * @return std::vector<unsigned>  The occurrences of the substrings
+     * @example :
+     * str: "FooBarFooBarFoo"
+     * target1: "Foo"
+     * target2: "Bar"
+     * return: {3, 2}
+     */
+    std::vector<unsigned> find_two_substrings_occurs(const std::string &str, const std::string &target1, const std::string &target2) {
+        std::string::size_type pos = 0;
+        std::string::size_type pos1 = 0;
+        std::string::size_type pos2 = 0;
+        unsigned occurrences_1 = 0;
+        unsigned occurrences_2 = 0;
+        while ((pos1 = str.find(target1, pos )) != std::string::npos || (pos2 = str.find(target2, pos )) != std::string::npos) {
+            if (pos1 != std::string::npos || pos1 < pos2) {
+                occurrences_1++;
+                pos = pos1 + target1.length();
+            } else if (pos2 != std::string::npos || pos2 < pos1) {
+                occurrences_2++;
+                pos = pos2 + target2.length();
+            }
+        }
+        return {occurrences_1, occurrences_2};
     }
 } // namespace String

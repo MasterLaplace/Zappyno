@@ -16,7 +16,7 @@
  * @namespace Interface
  * @example in SFML:
  * auto tt = Sf_text::Text_s("", {0, 0}, Sf_text::createFont("GUI/assets/OpenSans-ExtraBoldItalic.ttf"), sf::Color::Red);
- * Interface::Bar _input = Interface::Input(Math::Vector(0, 0), Math::Vector(100, 100), 20, tt);
+ * Interface::Input _input = Interface::Input(Math::Vector(0, 0), Math::Vector(100, 100), 20, tt);
  * while (_window.isOpen()) {
  *      _input.updateState(mousePos, event.key.code, sf::Mouse::isButtonPressed(sf::Mouse::Left));
  *      _input.drawInput<sf::RenderWindow>(window);
@@ -50,8 +50,8 @@ namespace Interface {
             Math::Vector getSize() const { return _size; }
             unsigned getState() const { return _state; }
 
-            template<typename T>
-            void drawInput(T &window) {
+            template<typename Win>
+            void drawInput(Win &window) {
                 _sfText.str = _text;
                 Sf_text::DrawText(window, _sfText);
             }
