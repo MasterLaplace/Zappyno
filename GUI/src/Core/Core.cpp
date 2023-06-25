@@ -35,7 +35,7 @@ Core::Core(const unsigned ac, const char *av[])
 void Core::run()
 {
     std::cout << "Core: Running..." << std::endl;
-    sf::Clock clock;
+    sf::Clock clockProtocol;
     sf::Time interval = sf::seconds(1.0f);  // intervalle de 1 seconde
     sf::Event event;
     std::string message;

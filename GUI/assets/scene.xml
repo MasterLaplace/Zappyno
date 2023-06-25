@@ -68,27 +68,27 @@
     </Bars>
     <Texts>
         <!-- user -->
-        <Text name="food_user" pos="166, 222" font="open_sans_bold_italic"/>
-        <Text name="linemate_user" pos="166, 374" font="open_sans_bold_italic"/>
-        <Text name="deraumere_user" pos="166, 506" font="open_sans_bold_italic"/>
-        <Text name="sibur_user" pos="166, 637" font="open_sans_bold_italic"/>
-        <Text name="mendiane_user" pos="166, 769" font="open_sans_bold_italic"/>
-        <Text name="phiras_user" pos="166, 919" font="open_sans_bold_italic"/>
-        <Text name="thystame_user" pos="166, 1035" font="open_sans_bold_italic"/>
+        <Text name="food_user" pos="166, 222" font="open_sans_bold_italic" color="black"/>
+        <Text name="linemate_user" pos="166, 374" font="open_sans_bold_italic" color="black"/>
+        <Text name="deraumere_user" pos="166, 506" font="open_sans_bold_italic" color="black"/>
+        <Text name="sibur_user" pos="166, 637" font="open_sans_bold_italic" color="black"/>
+        <Text name="mendiane_user" pos="166, 769" font="open_sans_bold_italic" color="black"/>
+        <Text name="phiras_user" pos="166, 919" font="open_sans_bold_italic" color="black"/>
+        <Text name="thystame_user" pos="166, 1035" font="open_sans_bold_italic" color="black"/>
         <!-- case -->
-        <Text name="food_case" pos="166, 178" font="open_sans_bold_italic"/>
-        <Text name="linemate_case" pos="166, 328" font="open_sans_bold_italic"/>
-        <Text name="deraumere_case" pos="166, 460" font="open_sans_bold_italic"/>
-        <Text name="sibur_case" pos="166, 591" font="open_sans_bold_italic"/>
-        <Text name="mendiane_case" pos="166, 723" font="open_sans_bold_italic"/>
-        <Text name="phiras_case" pos="166, 873" font="open_sans_bold_italic"/>
-        <Text name="thystame_case" pos="166, 989" font="open_sans_bold_italic"/>
+        <Text name="food_case" pos="166, 178" font="open_sans_bold_italic" color="black"/>
+        <Text name="linemate_case" pos="166, 328" font="open_sans_bold_italic" color="black"/>
+        <Text name="deraumere_case" pos="166, 460" font="open_sans_bold_italic" color="black"/>
+        <Text name="sibur_case" pos="166, 591" font="open_sans_bold_italic" color="black"/>
+        <Text name="mendiane_case" pos="166, 723" font="open_sans_bold_italic" color="black"/>
+        <Text name="phiras_case" pos="166, 873" font="open_sans_bold_italic" color="black"/>
+        <Text name="thystame_case" pos="166, 989" font="open_sans_bold_italic" color="black"/>
         <!-- ranking -->
-        <Text name="1_ranking" pos="732, 53" font="open_sans_bold_italic"/>
-        <Text name="2_ranking" pos="732, 97" font="open_sans_bold_italic"/>
-        <Text name="3_ranking" pos="732, 141" font="open_sans_bold_italic"/>
-        <Text name="4_ranking" pos="732, 185" font="open_sans_bold_italic"/>
-        <Text name="5_ranking" pos="732, 229" font="open_sans_bold_italic"/>
+        <Text name="1_ranking" pos="732, 53" font="open_sans_bold_italic" color="gold"/>
+        <Text name="2_ranking" pos="732, 97" font="open_sans_bold_italic" color="silver"/>
+        <Text name="3_ranking" pos="732, 141" font="open_sans_bold_italic" color="bronze"/>
+        <Text name="4_ranking" pos="732, 185" font="open_sans_bold_italic" color="black"/>
+        <Text name="5_ranking" pos="732, 229" font="open_sans_bold_italic" color="black"/>
     </Texts>
     <Panels>
         <!-- type: "inventory", "other" -->
@@ -101,8 +101,8 @@
         <Panel name="user_inventory_panel" texts="food_user, linemate_user, deraumere_user, sibur_user, mendiane_user, phiras_user, thystame_user" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>
         <Panel name="case_inventory_panel" texts="food_case, linemate_case, deraumere_case, sibur_case, mendiane_case, phiras_case, thystame_case" img="inventory_case_img" pos="0, 0" scale="1, 1" type="inventory_case"/>
         <Panel name="pause_panel" img="pause_menu" pos="0, 0" scale="1, 1" buttons="settings_pause_button, home_button, resume_button, exit_pause_button" type="pause"/>
-        <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1" chat="chat"/>
-        <Panel name="ranking_box" texts="1_ranking, 2_ranking, 3_ranking, 4_ranking, 5_ranking" img="ranking_img" pos="698, 13" scale="1, 1" type="other"/>
+        <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1" chat="chat" type="chat"/>
+        <Panel name="ranking_box" texts="1_ranking, 2_ranking, 3_ranking, 4_ranking, 5_ranking" img="ranking_img" pos="698, 13" scale="1, 1" type="score"/>
     </Panels>
     <Scenes>
         <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
