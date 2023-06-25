@@ -26,43 +26,60 @@ namespace GUI {
     void Tiles::setInventory(std::vector<unsigned> &inventory) {
         auto pos = _sprite->getPos();
         auto size = _sprite->getSize();
-        for (unsigned i = 0; i < inventory[0]; i++) {
+        std::map<std::string, unsigned> foods;
+        for (auto &food : _food) {
+            if (food.getName() == "food")
+                foods["food"]++;
+            else if (food.getName() == "linemate")
+                foods["linemate"]++;
+            else if (food.getName() == "deraumere")
+                foods["deraumere"]++;
+            else if (food.getName() == "sibur")
+                foods["sibur"]++;
+            else if (food.getName() == "mendiane")
+                foods["mendiane"]++;
+            else if (food.getName() == "phiras")
+                foods["phiras"]++;
+            else if (food.getName() == "thystame")
+                foods["thystame"]++;
+        }
+        for (unsigned i = foods["food"]; i < inventory[0]; i++) {
             auto randomPos = getRandPos(FOODS["food"], scaleRatio);
             Food food("food", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["food"], getRandPos(FOODS["food"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[1]; i++) {
+        for (unsigned i = foods["linemate"]; i < inventory[1]; i++) {
             auto randomPos = getRandPos(FOODS["linemate"], scaleRatio);
             Food food("linemate", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["linemate"], getRandPos(FOODS["linemate"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[2]; i++) {
+        for (unsigned i = foods["deraumere"]; i < inventory[2]; i++) {
             auto randomPos = getRandPos(FOODS["deraumere"], scaleRatio);
             Food food("deraumere", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["deraumere"], getRandPos(FOODS["deraumere"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[3]; i++) {
+        for (unsigned i = foods["sibur"]; i < inventory[3]; i++) {
             auto randomPos = getRandPos(FOODS["sibur"], scaleRatio);
             Food food("sibur", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["sibur"], getRandPos(FOODS["sibur"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[4]; i++) {
+        for (unsigned i = foods["mendiane"]; i < inventory[4]; i++) {
             auto randomPos = getRandPos(FOODS["mendiane"], scaleRatio);
             Food food("mendiane", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["mendiane"], getRandPos(FOODS["mendiane"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[5]; i++) {
+        for (unsigned i = foods["phiras"]; i < inventory[5]; i++) {
             auto randomPos = getRandPos(FOODS["phiras"], scaleRatio);
             Food food("phiras", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["phiras"], getRandPos(FOODS["phiras"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[6]; i++) {
+        for (unsigned i = foods["thystame"]; i < inventory[6]; i++) {
             auto randomPos = getRandPos(FOODS["thystame"], scaleRatio);
             Food food("thystame", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["thystame"], getRandPos(FOODS["thystame"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());

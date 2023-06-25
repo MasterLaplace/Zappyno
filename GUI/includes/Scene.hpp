@@ -226,11 +226,11 @@ namespace GUI {
                                     else if (_panel.getType() == "inventory_case")
                                         _panel.setTextCase(std::make_shared<std::vector<Interface::Text>>());
                                     auto texts = String::string_to_string_vector(it3["texts"], ", \t");
-                                    std::cout << "inputs: " << it3["text"] << std::endl;
+                                    std::cout << "texts: " << it3["text"] << std::endl;
                                     for (auto it4 : texts) {
                                         for (auto it5 : text) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                std::cout << "name text: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 Interface::Text _text(findInTiles(font, it5["font"]));
                                                 _text.setPos(pos);
@@ -321,7 +321,6 @@ namespace GUI {
                             if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
                                 break;
                             for (auto &it : scene->getPanels()) {
-                                std::cout << it.getType() << std::endl;
                                 if (it.getType() == "pause_setting") {
                                     scene->setPauseSettings(true);
                                     return it.setCallback(Interface::CALLBACK::GOTO_SETTING_PAUSE);

@@ -41,9 +41,11 @@ void Core::run()
     while (_window->isOpen()) {
 
         try {
+            if (_scene->getSceneType() == Scene_Manager::SceneType::GAME) {
             if ((message = _protocol->_client->receiveFromServer()) != "") {
                 std::cout << "Message received: " << message;
                 _protocol->parseCommand(message);
+            }
             }
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;

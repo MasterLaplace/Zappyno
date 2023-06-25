@@ -148,6 +148,7 @@ namespace GUI {
     }
 
     sf::Color SceneManager::StringToSfColor(const std::string &color) {
+        std::cout << "[StringToSfColor] Color: " << color << std::endl;
         if (color == "red")
             return sf::Color::Red;
         if (color == "green")
@@ -166,6 +167,14 @@ namespace GUI {
             return sf::Color::White;
         if (color == "black")
             return sf::Color::Black;
+        if (color == "bronze")
+            return sf::Color(205, 127, 50);
+        if (color == "silver")
+            return sf::Color(192, 192, 192);
+        if (color == "gold")
+            return sf::Color(255, 215, 0);
+        if (color == "grey")
+            return sf::Color(128, 128, 128);
         return sf::Color::White;
     }
 

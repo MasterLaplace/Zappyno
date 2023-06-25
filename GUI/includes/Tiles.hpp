@@ -86,7 +86,7 @@ namespace GUI {
             std::vector<Food> _food;
             std::vector<std::shared_ptr<GUI::Trantorian>> _trantorians;
             std::vector<std::shared_ptr<GUI::Egg>> _eggs;
-            double scaleRatio = 0.05;
+            double scaleRatio = 0.2;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
             Interface::Checkbox::State _state = Interface::Checkbox::State::IDLE;
             Interface::CALLBACK _callback = Interface::OPEN_INVENTORY_CASE;
