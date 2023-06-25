@@ -269,4 +269,7 @@ vgcore.*
 *.yxy
 *.log
 *.txt
-test
+!requirements.txt
+test*
+.Test/
+openvr/

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+    <Info name="config" sample="500" addr="127.0.0.1" port="49154" ambient="0,0,0"/>
+    <Fonts>
+        <Font name="arial" path="GUI/assets/arial.ttf"/>
+        <Font name="open_sans_bold_italic" path="GUI/assets/OpenSans-ExtraBoldItalic.ttf"/>
+    </Fonts>
+    <Images>
+        <Image name="play_button" path="GUI/assets/play_button-removebg-preview.png" offset="251, 249" max="1"/>
+        <Image name="table_panel" path="GUI/assets/table.png"/>
+        <Image name="health_bar" path="GUI/assets/health_bar.png"/>
+    </Images>
+    <Buttons>
+        <Button name="play" img="play_button" pos="0, 0" scale="1, 1"/>
+    </Buttons>
+    <Inputs>
+        <Input name="ip" img="table_panel" pos="0, 0" size="100, 100" scale="1, 1" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
+    </Inputs>
+    <Bars>
+        <Bar name="healh" img="health_bar" pos="0, 0" scale="1, 1" vertical="true"/>
+    </Bars>
+    <Panels>
+        <Panel name="table" img="table_panel" pos="0, 0" scale="0.75, 0.75" buttons="play" inputs="ip" bars="healh"/>
+        <Panel name="table_game" img="table_panel" pos="500, 500" scale="0.50, 0.50" buttons="play" inputs="ip" bars="healh"/>
+    </Panels>
+    <Scenes>
+        <Scene name="menu" panels="table"/>
+        <Scene name="game" panels="table_game"/>
+    </Scenes>
+</sbml>

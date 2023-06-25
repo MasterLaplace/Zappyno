@@ -15,7 +15,7 @@ OBJ          = $(SRC:.cpp=.o)
 INCLUDE      = -I includes/
 CXX_FLAGS    = -Wall -Wextra -std=c++17 -pipe
 FAST_FLAGS   = -Ofast -march=native -flto -funroll-loops -fomit-frame-pointer
-DEBUG_FLAGS  = -g3 -ggdb -fsanitize=address -fno-omit-frame-pointer
+DEBUG_FLAGS  = -g3 -ggdb -fno-omit-frame-pointer
 LIB_THREADS  = -lpthread
 LIB_SFML     = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 LIBS         = $(LIB_THREADS) $(LIB_SFML)
@@ -40,15 +40,22 @@ ninja_clean:
 	@ninja -t clean
 
 gen_ninja:
-	@-./Install/install_ninja_ubuntu.sh 2> /dev/null
-	@./Script/Generate_Ninja.py
+	@-./GUI/Script/Install/install_ninja_ubuntu.sh 2> /dev/null
+	@./GUI/Script/Generate_Ninja.py
 
 fclean: clean
 	@rm -rf $(NAME)
 	@-rm -rf .ninja_log
+# If Macos
+ifeq ($(shell uname), Darwin)
+	@find . -type f -name "*.gcda" -exec rm {} +
+	@find . -type f -name "*.gcno" -exec rm {} +
+	@find . -type f -name "*.gcov" -exec rm {} +
+else
 	@find -type f -name "*.gcda" -delete
 	@find -type f -name "*.gcno" -delete
 	@find -type f -name "*.gcov" -delete
+endif
 	@-rm -rf obj/src
 	@rm -rf vgcore.*
 
