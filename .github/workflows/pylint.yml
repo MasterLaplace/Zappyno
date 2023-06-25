@@ -11,13 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:devel
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Update package list and install SFML
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install libsfml-dev -y
+    - name: Checkout project
+      uses: actions/checkout@v3
 
     - name: Install requirements
       run: make install -C ./AI
