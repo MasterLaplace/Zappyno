@@ -59,7 +59,8 @@ bool verify_nmb_ressources(t_server *server, int j, int level, int id)
 {
     tmp_t tmp = {0, 0};
     for (int i = 0; i < TEAMS[j].max_players; i++) {
-        tmp = {i, j};
+        tmp.i = i;
+        tmp.j = j;
         if (!verify_nmb_ressources_next(server, tmp, level, id))
             return false;
     }
