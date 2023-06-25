@@ -56,7 +56,7 @@ namespace GUI {
             void removeEgg(std::shared_ptr<GUI::Egg> egg);
             void removeEggs() { _eggs.clear(); }
 
-            void updateState(const Math::Vector &mousePos, const bool &mousePressed, /* int &userId,*/ double scale) {
+            void updateTile(const Math::Vector &mousePos, const bool &mousePressed, int &userId, double scale) {
                 auto size = _sprite->getSize();
                 auto pos = _sprite->getPos();
                 for (auto &trantorian : _trantorians) {
@@ -64,9 +64,8 @@ namespace GUI {
                 }
                 if (mousePos.x() >= pos.x() && mousePos.x() <= pos.x() + (size.x() * scale) &&
                     mousePos.y() >= pos.y() && mousePos.y() <= pos.y() + (size.y() * scale)) {
-                    for (auto &trantorian : _trantorians) {
-                        trantorian->updateTrantorianState(mousePos, mousePressed, scale);
-                    }
+                    for (auto &trantorian : _trantorians)
+                        trantorian->updateTrantorianState(mousePos, mousePressed, userId, scale * scaleRatio);
                     if (_state == Interface::Checkbox::State::IDLE)
                         _state = Interface::Checkbox::State::HOVER;
                     if (_state == Interface::Checkbox::State::CLICKED)

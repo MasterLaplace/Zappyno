@@ -13,9 +13,7 @@
 namespace Interface {
     class Text {
         public:
-            Text(const std::string &font) {
-                std::cout << "HELLO: " << font << std::endl;
-                _text.font = Sf_text::createFont(font); }
+            Text(const std::string &font) { _text.font = Sf_text::createFont(font); }
             Text(const Text &other) = default;
             ~Text() = default;
 
@@ -26,9 +24,7 @@ namespace Interface {
             void setText(std::string text) { _text.str = text; }
 
             template<typename Win>
-            void drawText(Win &window) {
-                Sf_text::DrawText(window, _text);
-            }
+            void drawText(Win &window) { Sf_text::DrawText(window, _text); }
 
         protected:
         private:

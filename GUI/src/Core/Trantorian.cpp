@@ -24,14 +24,16 @@ namespace GUI {
         return Math::Vector((nextPos.x() - pos.x() / (speed / scale)) + pos.x() * scale, (nextPos.y() - pos.y() / (speed / scale)) + pos.y() * scale);
     }
 
-    void Trantorian::updateTrantorianState(const Math::Vector &mousePos, const bool &mousePressed, double scale) {
+    void Trantorian::updateTrantorianState(const Math::Vector &mousePos, const bool &mousePressed, int &userId, double scale) {
         auto size = _sprite->getSize();
         auto _pos = _sprite->getPos();
 
         if (mousePos.x() >= _pos.x() && mousePos.x() <= _pos.x() + (size.x() * scale) &&
             mousePos.y() >= _pos.y() && mousePos.y() <= _pos.y() + (size.y() * scale)) {
-            if (_buttonState == Interface::Checkbox::State::CLICKED)
+            if (_buttonState == Interface::Checkbox::State::CLICKED) {
                 _buttonState = Interface::Checkbox::State::RELEASED;
+                userId = _id;
+            }
             if (mousePressed)
                 _buttonState = Interface::Checkbox::State::CLICKED;
         }

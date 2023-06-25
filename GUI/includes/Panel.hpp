@@ -61,6 +61,14 @@ namespace Interface {
             std::string getType() const { return _type; }
 
             std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
+            void setText(std::vector<std::string> texts) {
+                for (int i = 0; i < int(_texts.size()); i++) {
+                    if (i >= int(texts.size()) || texts.empty())
+                        _texts[i].setText(std::to_string(i) + ".    > players:\n");
+                    else
+                        _texts[i].setText(std::to_string(i) + ". " + texts[i]);
+                }
+            }
 
             std::shared_ptr<std::vector<Interface::Text>> getTextUser() const { return _text_user; }
             std::shared_ptr<std::vector<Interface::Text>> getTextCase() const { return _text_case; }
@@ -70,6 +78,7 @@ namespace Interface {
             void addCheckbox(const Interface::Checkbox &checkbox) { _checkboxs.push_back(checkbox); }
             void addBar(const Interface::Bar &bar) { _bars.push_back(bar); }
             void addChat(const Interface::Chat &chat) { _chat = std::make_shared<Interface::Chat>(chat); }
+            void addText(const Interface::Text &text) { _texts.push_back(text); }
             void addTextUser(const Interface::Text &text) { _text_user->push_back(text); }
             void addTextCase(const Interface::Text &text) { _text_case->push_back(text); }
             template<typename Win>
@@ -84,6 +93,8 @@ namespace Interface {
                     input.drawInput<Win>(win);
                 for (auto &bar : _bars)
                     bar.drawBar();
+                for (auto &text : _texts)
+                    text.drawText<Win>(win);
                 if (_text_user) {
                     for (auto &text : *_text_user)
                         text.drawText<Win>(win);
@@ -106,6 +117,7 @@ namespace Interface {
             std::vector<Interface::Checkbox> _checkboxs;
             std::vector<Interface::Input> _inputs;
             std::vector<Interface::Bar> _bars;
+            std::vector<Interface::Text> _texts;
             std::shared_ptr<std::vector<Interface::Text>> _text_user = nullptr;
             std::shared_ptr<std::vector<Interface::Text>> _text_case = nullptr;
             std::shared_ptr<Interface::Chat> _chat = nullptr;

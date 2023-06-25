@@ -258,7 +258,7 @@ namespace Manager {
                 int id = 0;
 
                 for (auto &tile : _tiles) {
-                    tile.updateState(mousePos, mousePressed, /* _userId, */ _scale);
+                    tile.updateTile(mousePos, mousePressed, _userId, _scale);
                     if (tile.getState() == Interface::Checkbox::State::RELEASED)
                         _tileId = id;
                     id++;

@@ -234,10 +234,13 @@ namespace GUI {
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 Interface::Text _text(findInTiles(font, it5["font"]));
                                                 _text.setPos(pos);
+                                                _text.setColor(SceneManager::StringToSfColor(it5["color"]));
                                                 if (_panel.getType() == "inventory_user")
                                                     _panel.addTextUser(_text);
                                                 else if (_panel.getType() == "inventory_case")
                                                     _panel.addTextCase(_text);
+                                                else
+                                                    _panel.addText(_text);
                                             }
                                         }
                                     }
@@ -263,6 +266,12 @@ namespace GUI {
                     }
                 } catch (std::exception &e) {
                     std::cerr << e.what() << std::endl;
+                }
+                if (scene->getSceneType() == Scene_Manager::SceneType::GAME) {
+                    for (auto &it : scene->getPanels()) {
+                        if (it.getType() == "score")
+                            it.setText(protocol->getScore());
+                    }
                 }
                 for (auto it : list_callback) {
                     switch (it) {

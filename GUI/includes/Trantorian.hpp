@@ -80,7 +80,7 @@ namespace GUI {
 
             Math::Vector calculDistance(Math::Vector pos, Math::Vector nextPos, unsigned speed, double scale);
 
-            void updateTrantorianState(const Math::Vector &mousePos, const bool &mousePressed, double scale);
+            void updateTrantorianState(const Math::Vector &mousePos, const bool &mousePressed, int &userId, double scale);
             void animationTrantorian();
             void drawTrantorian() { _sprite->drawSprite(); }
 
