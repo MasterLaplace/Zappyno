@@ -12,6 +12,10 @@
         <Image name="settings_menu" path="GUI/assets/settings_menu.png"/>
         <Image name="game" path="GUI/assets/mars_floor.jpeg"/>
         <Image name="space_background" path="GUI/assets/space_back.jpg"/>
+        <Image name="pause_menu" path="GUI/assets/Pause_menu_panel.png"/>
+        <Image name="settings_pause_menu" path="GUI/assets/settings_pause_menu.png"/>
+        <Image name="ranking_img" path="GUI/assets/ranking_panel.png"/>
+        <Image name="settings_pause_menu" path="GUI/assets/settings_pause_menu.png"/>
         <Image name="health_bar" path="GUI/assets/health_bar.png"/>
         <Image name="chat_img" path="GUI/assets/chat_box.png"/>
         <Image name="inventory_case_img" path="GUI/assets/Inventory_case.png"/>
@@ -24,6 +28,9 @@
         <Image name="exit_img_button" path="GUI/assets/exit_button.png" offset="500, 80" max="1"/>
         <Image name="user_img_button" path="GUI/assets/user.png" offset="500, 80" max="1"/>
         <Image name="case_img_button" path="GUI/assets/case.png" offset="500, 80" max="1"/>
+        <Image name="home_img_button" path="GUI/assets/Home_button.png" offset="500, 80" max="1"/>
+        <Image name="resume_img_button" path="GUI/assets/resume_button.png" offset="500, 80" max="1"/>
+        <Image name="pause_img_button" path="GUI/assets/pause_button.png" offset="300, 80" max="1"/>
         <Image name="back_img_button" path="GUI/assets/back_button.png" offset="108, 106" max="1"/>
         <Image name="mute_img_button" path="GUI/assets/mute_check_box.png" offset="80, 80" max="1"/>
         <Image name="full_screen_img_button" path="GUI/assets/full_screen_check_box.png" offset="80, 80" max="1"/>
@@ -36,14 +43,19 @@
         <Button name="credits_button" img="credits_img_button" pos="710, 634" scale="1, 1" callback="goto_credit"/>
         <Button name="exit_button" img="exit_img_button" pos="710, 745" scale="1, 1" callback="exit"/>
         <Button name="back_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_menu"/>
-        <Button name="user_button" img="user_img_button" pos="410, 50" scale="1, 1" callback="open_inventory_user"/>
-        <Button name="case_button" img="case_img_button" pos="1010, 50" scale="1, 1" callback="open_inventory_case"/>
+        <Button name="user_button" img="user_img_button" pos="410, 950" scale="1, 1" callback="open_inventory_user"/>
+        <Button name="case_button" img="case_img_button" pos="1010, 950" scale="1, 1" callback="open_inventory_case"/>
+        <Button name="home_button" img="home_img_button" pos="710, 500" scale="1, 1" callback="goto_menu"/>
+        <Button name="settings_pause_button" img="settings_img_button" pos="710, 606" scale="1, 1" callback="goto_setting_pause"/>
+        <Button name="exit_pause_button" img="exit_img_button" pos="710, 712" scale="1, 1" callback="exit"/>
+        <Button name="resume_button" img="resume_img_button" pos="710, 394" scale="1, 1" callback="goto_game"/>
+        <Button name="back_pause_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_game"/>
     </Buttons>
     <Checkboxs>
         <!-- CALLBACK: -->
         <!-- "NONE", "goto_create", "goto_game", "goto_setting", "goto_credit", "goto_result", "goto_menu", "resize", "mute_sound", "exit" -->
-        <Checkbox name="mute_button" img="mute_img_button" pos="810, 522" scale="1, 1" callback="mute_sound"/>
-        <Checkbox name="full_screen_button" img="full_screen_img_button" pos="1020, 522" scale="1, 1" callback=""/>
+        <Checkbox name="mute_button" img="mute_img_button" pos="805, 545" scale="1, 1" callback="mute_sound"/>
+        <Checkbox name="full_screen_button" img="full_screen_img_button" pos="1035, 545" scale="1, 1" callback="resize"/>
     </Checkboxs>
     <Inputs>
         <Input name="ip" img="table_panel" pos="0, 0" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
@@ -56,36 +68,45 @@
     </Bars>
     <Texts>
         <!-- user -->
-        <Text name="food" pos="166, 222" font="open_sans_bold_italic"/>
-        <Text name="linemate" pos="166, 374" font="open_sans_bold_italic"/>
-        <Text name="deraumere" pos="166, 506" font="open_sans_bold_italic"/>
-        <Text name="sibur" pos="166, 637" font="open_sans_bold_italic"/>
-        <Text name="mendiane" pos="166, 769" font="open_sans_bold_italic"/>
-        <Text name="phiras" pos="166, 919" font="open_sans_bold_italic"/>
-        <Text name="thystame" pos="166, 1035" font="open_sans_bold_italic"/>
+        <Text name="food_user" pos="166, 222" font="open_sans_bold_italic" color="black"/>
+        <Text name="linemate_user" pos="166, 374" font="open_sans_bold_italic" color="black"/>
+        <Text name="deraumere_user" pos="166, 506" font="open_sans_bold_italic" color="black"/>
+        <Text name="sibur_user" pos="166, 637" font="open_sans_bold_italic" color="black"/>
+        <Text name="mendiane_user" pos="166, 769" font="open_sans_bold_italic" color="black"/>
+        <Text name="phiras_user" pos="166, 919" font="open_sans_bold_italic" color="black"/>
+        <Text name="thystame_user" pos="166, 1035" font="open_sans_bold_italic" color="black"/>
         <!-- case -->
-        <Text name="food_case" pos="166, 178" font="open_sans_bold_italic"/>
-        <Text name="linemate_case" pos="166, 328" font="open_sans_bold_italic"/>
-        <Text name="deraumere_case" pos="166, 460" font="open_sans_bold_italic"/>
-        <Text name="sibur_case" pos="166, 591" font="open_sans_bold_italic"/>
-        <Text name="mendiane_case" pos="166, 723" font="open_sans_bold_italic"/>
-        <Text name="phiras_case" pos="166, 873" font="open_sans_bold_italic"/>
-        <Text name="thystame_case" pos="166, 989" font="open_sans_bold_italic"/>
+        <Text name="food_case" pos="166, 178" font="open_sans_bold_italic" color="black"/>
+        <Text name="linemate_case" pos="166, 328" font="open_sans_bold_italic" color="black"/>
+        <Text name="deraumere_case" pos="166, 460" font="open_sans_bold_italic" color="black"/>
+        <Text name="sibur_case" pos="166, 591" font="open_sans_bold_italic" color="black"/>
+        <Text name="mendiane_case" pos="166, 723" font="open_sans_bold_italic" color="black"/>
+        <Text name="phiras_case" pos="166, 873" font="open_sans_bold_italic" color="black"/>
+        <Text name="thystame_case" pos="166, 989" font="open_sans_bold_italic" color="black"/>
+        <!-- ranking -->
+        <Text name="1_ranking" pos="732, 53" font="open_sans_bold_italic" color="gold"/>
+        <Text name="2_ranking" pos="732, 97" font="open_sans_bold_italic" color="silver"/>
+        <Text name="3_ranking" pos="732, 141" font="open_sans_bold_italic" color="bronze"/>
+        <Text name="4_ranking" pos="732, 185" font="open_sans_bold_italic" color="black"/>
+        <Text name="5_ranking" pos="732, 229" font="open_sans_bold_italic" color="black"/>
     </Texts>
     <Panels>
         <!-- type: "inventory", "other" -->
         <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" type="other"/>
-        <Panel name="settings_panel" img="settings_menu" pos="426, 216" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type="other"/>
-        <Panel name="game_panel" img="" pos="0, 0" scale="1, 1" buttons="user_button, case_button" type="other"/>
+        <Panel name="settings_panel" img="settings_menu" pos="680, 370" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type="other"/>
+        <Panel name="settings_pause_panel" img="settings_pause_menu" pos="0, 0" scale="1, 1" buttons="back_pause_button" checkboxs="mute_button, full_screen_button" type="pause_setting"/>
+        <Panel name="game_panel" img="" pos="0, 0" scale="1, 1" buttons="pause_button" type="other"/>
         <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" type="other"/>
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
-        <Panel name="user_inventory_panel" texts="food, thystame, linemate, deraumere, sibur, mendiane, phiras" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>
-        <Panel name="case_inventory_panel" texts="food_case, thystame_case, linemate_case, deraumere_case, sibur_case, mendiane_case, phiras_case" img="inventory_case_img" pos="0, 0" scale="1, 1" type="inventory_case"/>
-        <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1" chat="chat"/>
+        <Panel name="user_inventory_panel" texts="food_user, linemate_user, deraumere_user, sibur_user, mendiane_user, phiras_user, thystame_user" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>
+        <Panel name="case_inventory_panel" texts="food_case, linemate_case, deraumere_case, sibur_case, mendiane_case, phiras_case, thystame_case" img="inventory_case_img" pos="0, 0" scale="1, 1" type="inventory_case"/>
+        <Panel name="pause_panel" img="pause_menu" pos="0, 0" scale="1, 1" buttons="settings_pause_button, home_button, resume_button, exit_pause_button" type="pause"/>
+        <Panel name="chat_box" img="chat_box_img" pos="1605, 565" scale="1, 1" chat="chat" type="chat"/>
+        <Panel name="ranking_box" texts="1_ranking, 2_ranking, 3_ranking, 4_ranking, 5_ranking" img="ranking_img" pos="698, 13" scale="1, 1" type="score"/>
     </Panels>
     <Scenes>
         <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
-        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, chat_box" back="game"/>
+        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, chat_box, ranking_box, pause_panel, settings_pause_panel" back="game"/>
         <Scene name="setting" panels="settings_panel" back="space_background"/>
         <Scene name="credit" panels="credits_panel" back="space_background"/>
     </Scenes>

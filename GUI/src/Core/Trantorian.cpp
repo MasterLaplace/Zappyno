@@ -18,6 +18,32 @@ namespace GUI {
         _inventory["thystame"] = 0;
     }
 
+    Math::Vector Trantorian::calculDistance(Math::Vector pos, Math::Vector nextPos, unsigned speed, double scale) {
+        if (0 == nextPos.x() && 0 == nextPos.y())
+            return pos;
+        return Math::Vector((nextPos.x() - pos.x() / (speed / scale)) + pos.x() * scale, (nextPos.y() - pos.y() / (speed / scale)) + pos.y() * scale);
+    }
+
+    void Trantorian::updateTrantorianState(const Math::Vector &mousePos, const bool &mousePressed, int &userId, double scale) {
+        auto size = _sprite->getSize();
+        auto _pos = _sprite->getPos();
+
+        if (mousePos.x() >= _pos.x() && mousePos.x() <= _pos.x() + (size.x() * scale) &&
+            mousePos.y() >= _pos.y() && mousePos.y() <= _pos.y() + (size.y() * scale)) {
+            if (_buttonState == Interface::Checkbox::State::CLICKED) {
+                _buttonState = Interface::Checkbox::State::RELEASED;
+                userId = _id;
+            }
+            if (mousePressed)
+                _buttonState = Interface::Checkbox::State::CLICKED;
+        }
+    }
+
+    void Trantorian::animationTrantorian() {
+        std::cout << "[updateState@Trantorian] state" << _buttonState << std::endl;
+        _sprite->animate_trantorian(_dir, _buttonState == Interface::Checkbox::State::RELEASED);
+    }
+
     double Trantorian::DirToRandian() {
         switch (_dir) {
             case NORTH:

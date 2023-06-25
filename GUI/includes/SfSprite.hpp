@@ -35,6 +35,10 @@ namespace Sf_sprite {
         unsigned offset_y = 0;
         unsigned max_offset_x = 0;
 
+        unsigned getOffetX() const { return this->offset_x; }
+        unsigned getOffetY() const { return this->offset_y; }
+        unsigned getMaxOffetX() const { return this->max_offset_x; }
+
         void setOffset(Math::Vector offset) override;
         void setMaxOffsetX(unsigned max_offset_x) { this->max_offset_x = max_offset_x; }
         void setPos(Math::Vector pos) override { this->pos = sf::Vector2f(pos.x(), pos.y()); sprite.setPosition(this->pos); }
@@ -46,9 +50,11 @@ namespace Sf_sprite {
         Math::Vector getScale() const override { return Math::Vector(this->scale.x, this->scale.y); }
         Math::Vector getOrigin() const override { return Math::Vector(this->origin.x, this->origin.y); }
         Math::Vector getSize() const override { return Math::Vector(this->sprite.getTextureRect().width, this->sprite.getTextureRect().height); }
+        Math::Vector getStartSize() const override { return Math::Vector(this->sprite.getTextureRect().left, this->sprite.getTextureRect().top); }
         Math::Vector getMaxSize() const override { return Math::Vector(this->maxSize.width, this->maxSize.height); }
         unsigned getTransparency() const override { return this->sprite.getColor().a; }
         void animate(const unsigned &state = 0);
+        void animate_trantorian(unsigned state, const bool &isHover);
         void animate_checkbox(bool &ischecked, const unsigned &state = 0);
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }

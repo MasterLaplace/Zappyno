@@ -34,7 +34,7 @@ namespace GUI {
 
             void setPos(Math::Vector pos) { _sprite->setPos(pos); }
             void setScale(Math::Vector scale) { _sprite->setScale(scale); }
-            void setInventory(std::vector<unsigned> &inventory);
+            void setInventory(std::vector<unsigned> &inventory, double scale);
             Math::Vector getPos() const { return _sprite->getPos(); }
             Math::Vector getSize() const { return _sprite->getSize(); }
             std::map<std::string, unsigned> getInventory() const { return _inventory; }
@@ -45,14 +45,45 @@ namespace GUI {
             std::vector<std::shared_ptr<GUI::Egg>> getEggs() { return _eggs; }
             std::shared_ptr<GUI::Trantorian> getTrantorian(unsigned id);
             std::shared_ptr<GUI::Egg> getEgg(unsigned id);
+            Interface::Checkbox::State getState() const { return _state; }
+            Interface::CALLBACK getCallback() const { return _callback; }
 
-            void addFood(const std::string &food);
+            void addFood(const std::string &food, double scale);
             void removeFood(std::string food);
             void addTrantorian(std::shared_ptr<GUI::Trantorian> trantorian) { _trantorians.push_back(trantorian); }
             void removeTrantorian(std::shared_ptr<GUI::Trantorian> trantorian);
             void addEgg(std::shared_ptr<GUI::Egg> egg) { _eggs.push_back(egg); }
             void removeEgg(std::shared_ptr<GUI::Egg> egg);
             void removeEggs() { _eggs.clear(); }
+
+            void updateTile(const Math::Vector &mousePos, const bool &mousePressed, int &userId, double scale) {
+                auto size = _sprite->getSize();
+                auto pos = _sprite->getPos();
+                for (auto &trantorian : _trantorians) {
+                    trantorian->setPos(trantorian->calculDistance(trantorian->getPos(), trantorian->getNextPos(), trantorian->getSpeed(), scale));
+                }
+                if (mousePos.x() >= pos.x() && mousePos.x() <= pos.x() + (size.x() * scale) &&
+                    mousePos.y() >= pos.y() && mousePos.y() <= pos.y() + (size.y() * scale)) {
+                    for (auto &trantorian : _trantorians)
+                        trantorian->updateTrantorianState(mousePos, mousePressed, userId, scale * scaleRatio);
+                    if (_state == Interface::Checkbox::State::IDLE)
+                        _state = Interface::Checkbox::State::HOVER;
+                    if (_state == Interface::Checkbox::State::CLICKED)
+                        _state = Interface::Checkbox::State::RELEASED;
+                    if (mousePressed)
+                        _state = Interface::Checkbox::State::CLICKED;
+                } else {
+                    if ((!mousePressed || _state == Interface::Checkbox::State::HOVER) && _state != Interface::Checkbox::State::RELEASED)
+                        _state = Interface::Checkbox::State::IDLE;
+                }
+            }
+
+            void animationTile() {
+                _sprite->animate(_state);
+                for (auto &trantorian : _trantorians) {
+                    trantorian->animationTrantorian();
+                }
+            }
 
             void drawTile() { _sprite->drawSprite(); }
             void drawFoods();
@@ -61,13 +92,15 @@ namespace GUI {
 
         protected:
         private:
-            std::shared_ptr<sf::RenderWindow> _window = nullptr;
-            std::shared_ptr<ISprite> _sprite = nullptr;
-            std::vector<Food> _food;
             std::vector<std::shared_ptr<GUI::Trantorian>> _trantorians;
             std::vector<std::shared_ptr<GUI::Egg>> _eggs;
-            double scaleRatio = 0.1;
+            std::vector<Food> _food;
+            std::shared_ptr<sf::RenderWindow> _window = nullptr;
+            std::shared_ptr<ISprite> _sprite = nullptr;
+            double scaleRatio = 0.2;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
+            Interface::Checkbox::State _state = Interface::Checkbox::State::IDLE;
+            Interface::CALLBACK _callback = Interface::OPEN_INVENTORY_CASE;
     };
     std::ostream &operator<<(std::ostream &os, Tiles &tile);
 } // namespace GUI

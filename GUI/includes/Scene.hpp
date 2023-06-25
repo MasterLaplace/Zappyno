@@ -36,6 +36,8 @@ namespace GUI {
             Scene(const Scene&) = default;
             Scene &operator=(const Scene&) = default;
 
+            void setPause(bool isPause) { _isPause = isPause; }
+            void setPauseSettings(bool isPauseSettings) { _isPauseSettings = isPauseSettings; }
 
             Scene_Manager::SceneType &getSceneType() { return _scenetype; }
 
@@ -70,6 +72,9 @@ namespace GUI {
             Scene_Manager::SceneType _scenetype;
             std::vector<Interface::Panel> _panels;
             std::shared_ptr<ISprite> _background = nullptr;
+            Interface::CALLBACK _callback = Interface::CALLBACK::NONE;
+            bool _isPause = false;
+            bool _isPauseSettings = false;
     };
 
     static std::vector<std::string /*music path*/> MUSIC = {
@@ -221,18 +226,21 @@ namespace GUI {
                                     else if (_panel.getType() == "inventory_case")
                                         _panel.setTextCase(std::make_shared<std::vector<Interface::Text>>());
                                     auto texts = String::string_to_string_vector(it3["texts"], ", \t");
-                                    std::cout << "inputs: " << it3["text"] << std::endl;
+                                    std::cout << "texts: " << it3["text"] << std::endl;
                                     for (auto it4 : texts) {
                                         for (auto it5 : text) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                std::cout << "name text: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 Interface::Text _text(findInTiles(font, it5["font"]));
                                                 _text.setPos(pos);
+                                                _text.setColor(SceneManager::StringToSfColor(it5["color"]));
                                                 if (_panel.getType() == "inventory_user")
                                                     _panel.addTextUser(_text);
                                                 else if (_panel.getType() == "inventory_case")
                                                     _panel.addTextCase(_text);
+                                                else
+                                                    _panel.addText(_text);
                                             }
                                         }
                                     }
@@ -259,17 +267,33 @@ namespace GUI {
                 } catch (std::exception &e) {
                     std::cerr << e.what() << std::endl;
                 }
+                if (scene->getSceneType() == Scene_Manager::SceneType::GAME) {
+                    for (auto &it : scene->getPanels()) {
+                        if (it.getType() == "score")
+                            it.setText(protocol->getScore());
+                    }
+                }
                 for (auto it : list_callback) {
                     switch (it) {
                         case Interface::CALLBACK::EXIT:
-                            window->close();
-                            return;
+                            return window->close();
                         case Interface::CALLBACK::MUTE_SOUND:
                             if (music.getVolume() == 0)
                                 music.setVolume(100);
                             else
                                 music.setVolume(0);
-                            return;
+                            break;
+                        case Interface::CALLBACK::RESIZE:
+                            if (_isFullscreen) {
+                                _isFullscreen = false;
+                                window->close();
+                                window->create(sf::VideoMode(1920, 1080), "GUI", sf::Style::Default);
+                            } else {
+                                _isFullscreen = true;
+                                window->close();
+                                window->create(sf::VideoMode(1920, 1080), "GUI", sf::Style::Fullscreen);
+                            }
+                            break;
                         case Interface::CALLBACK::GOTO_MENU:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::MENU, window);
                             return;
@@ -292,22 +316,46 @@ namespace GUI {
                         case Interface::CALLBACK::GOTO_CREDIT:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::CREDIT, window);
                             return;
+                        case Interface::CALLBACK::OPEN_PAUSE:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
+                            for (auto &it : scene->getPanels()) {
+                                if (it.getType() == "pause") {
+                                    scene->setPause(true);
+                                    return it.setCallback(Interface::CALLBACK::OPEN_PAUSE);
+                                }
+                            }
+                            break;
+                        case Interface::CALLBACK::GOTO_SETTING_PAUSE:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
+                            for (auto &it : scene->getPanels()) {
+                                if (it.getType() == "pause_setting") {
+                                    scene->setPauseSettings(true);
+                                    return it.setCallback(Interface::CALLBACK::GOTO_SETTING_PAUSE);
+                                }
+                            }
+                            break;
                         case Interface::CALLBACK::OPEN_INVENTORY_USER:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_user") {
-                                    it.setUserData(protocol->getUserData(0));
+                                    it.setUserData(protocol->getUserData(protocol->getCallbackTileId()));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_USER);
                                 }
                             }
-                            throw std::invalid_argument("Scene: Cannot find inventory user panel");
+                            break;
                         case Interface::CALLBACK::OPEN_INVENTORY_CASE:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_case") {
-                                    it.setCaseData(protocol->getCaseData(0));
+                                    it.setCaseData(protocol->getCaseData(protocol->getCallbackUserId()));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_CASE);
                                 }
                             }
-                            throw std::invalid_argument("Scene: Cannot find inventory case panel");
+                            break;
                         default:
                             break;
                     }
@@ -318,6 +366,8 @@ namespace GUI {
         private:
             Parser::Xml _xml;
             sf::Music music;
+            bool _isFullscreen = false;
+            Math::Vector _winSize = {1920, 1080};
     };
 }
 

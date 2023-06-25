@@ -11,7 +11,7 @@ namespace GUI {
     Tiles::Tiles(std::shared_ptr<ISprite> sprite, std::vector<unsigned> &inventory, std::shared_ptr<sf::RenderWindow> &window) {
         _window = window;
         _sprite = sprite;
-        setInventory(inventory);
+        setInventory(inventory, 1);
     }
 
     Math::Vector Tiles::getRandPos(std::string path, double scale) {
@@ -23,48 +23,74 @@ namespace GUI {
         return Math::Vector(RAND(pos.x(), pos.x() + size.x() - (p_size.x * scale)), RAND(pos.y(), pos.y() + size.y() - (p_size.y * scale)));
     }
 
-    void Tiles::setInventory(std::vector<unsigned> &inventory) {
+    void Tiles::setInventory(std::vector<unsigned> &inventory, double scale) {
         auto pos = _sprite->getPos();
         auto size = _sprite->getSize();
-        for (unsigned i = 0; i < inventory[0]; i++) {
+        std::map<std::string, unsigned> foods = {
+            {"food", 0},
+            {"linemate", 0},
+            {"deraumere", 0},
+            {"sibur", 0},
+            {"mendiane", 0},
+            {"phiras", 0},
+            {"thystame", 0}
+        };
+
+        for (auto &food : _food) {
+            if (food.getName() == "food")
+                foods["food"]++;
+            else if (food.getName() == "linemate")
+                foods["linemate"]++;
+            else if (food.getName() == "deraumere")
+                foods["deraumere"]++;
+            else if (food.getName() == "sibur")
+                foods["sibur"]++;
+            else if (food.getName() == "mendiane")
+                foods["mendiane"]++;
+            else if (food.getName() == "phiras")
+                foods["phiras"]++;
+            else if (food.getName() == "thystame")
+                foods["thystame"]++;
+        }
+        for (unsigned i = foods["food"]; i < inventory[0]; i++) {
             auto randomPos = getRandPos(FOODS["food"], scaleRatio);
-            Food food("food", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["food"], getRandPos(FOODS["food"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
+            Food food("food", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["food"], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[1]; i++) {
+        for (unsigned i = foods["linemate"]; i < inventory[1]; i++) {
             auto randomPos = getRandPos(FOODS["linemate"], scaleRatio);
-            Food food("linemate", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["linemate"], getRandPos(FOODS["linemate"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
+            Food food("linemate", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["linemate"], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[2]; i++) {
+        for (unsigned i = foods["deraumere"]; i < inventory[2]; i++) {
             auto randomPos = getRandPos(FOODS["deraumere"], scaleRatio);
-            Food food("deraumere", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["deraumere"], getRandPos(FOODS["deraumere"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
+            Food food("deraumere", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["deraumere"], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[3]; i++) {
+        for (unsigned i = foods["sibur"]; i < inventory[3]; i++) {
             auto randomPos = getRandPos(FOODS["sibur"], scaleRatio);
-            Food food("sibur", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["sibur"], getRandPos(FOODS["sibur"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
+            Food food("sibur", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["sibur"], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[4]; i++) {
+        for (unsigned i = foods["mendiane"]; i < inventory[4]; i++) {
             auto randomPos = getRandPos(FOODS["mendiane"], scaleRatio);
-            Food food("mendiane", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["mendiane"], getRandPos(FOODS["mendiane"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
+            Food food("mendiane", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["mendiane"], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[5]; i++) {
+        for (unsigned i = foods["phiras"]; i < inventory[5]; i++) {
             auto randomPos = getRandPos(FOODS["phiras"], scaleRatio);
-            Food food("phiras", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["phiras"], getRandPos(FOODS["phiras"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
+            Food food("phiras", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["phiras"], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
-        for (unsigned i = 0; i < inventory[6]; i++) {
+        for (unsigned i = foods["thystame"]; i < inventory[6]; i++) {
             auto randomPos = getRandPos(FOODS["thystame"], scaleRatio);
-            Food food("thystame", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["thystame"], getRandPos(FOODS["thystame"], scaleRatio), Math::Vector(scaleRatio, scaleRatio)));
+            Food food("thystame", std::make_shared<Sf_sprite::SfSprite>(_window, FOODS["thystame"], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
             food.setOriginalPos(randomPos - _sprite->getPos());
             _food.push_back(food);
         }
@@ -86,10 +112,11 @@ namespace GUI {
         return nullptr;
     }
 
-    void Tiles::addFood(const std::string &food) {
+    void Tiles::addFood(const std::string &food, double scale) {
         auto randomPos = getRandPos(FOODS[food], scaleRatio);
-        Food newFood(food, std::make_shared<Sf_sprite::SfSprite>(_window, FOODS[food], randomPos, Math::Vector(scaleRatio, scaleRatio)));
+        Food newFood(food, std::make_shared<Sf_sprite::SfSprite>(_window, FOODS[food], randomPos, Math::Vector(scale * scaleRatio, scale * scaleRatio)));
         newFood.setOriginalPos(randomPos - _sprite->getPos());
+        std::cout << "[addFood] add food " << food << std::endl;
         _food.push_back(newFood);
     }
 

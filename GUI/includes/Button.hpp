@@ -32,6 +32,7 @@ namespace Interface {
         GOTO_CREATE,
         GOTO_GAME,
         GOTO_SETTING,
+        GOTO_SETTING_PAUSE,
         GOTO_CREDIT,
         GOTO_RESULT,
         GOTO_MENU,
@@ -40,6 +41,7 @@ namespace Interface {
         MUTE_SOUND,
         OPEN_INVENTORY_USER,
         OPEN_INVENTORY_CASE,
+        OPEN_PAUSE,
         FULL_SCREEN,
         FINAL
     };

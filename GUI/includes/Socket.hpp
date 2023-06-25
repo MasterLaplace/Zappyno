@@ -11,6 +11,7 @@
     #include <cstdlib>
     #include <cstring>
     #include <sys/socket.h>
+    #include <netdb.h>
     #include <arpa/inet.h>
     #include <unistd.h>
     #include <sys/time.h>
@@ -41,6 +42,14 @@ namespace Network {
              * @return int  The client socket
              */
             int getClientSocket() { return this->clientSocket; }
+
+            /**
+             * @brief Get the Server Address object with the server IP and port
+             *
+             * @param hostname  The server IP or hostname (ex: localhost)
+             * @return const char*  The server IP address (ex: 127.0.0.1)
+             */
+            const char *hostname_to_ip(const std::string &hostname);
 
         private:
             int clientSocket;

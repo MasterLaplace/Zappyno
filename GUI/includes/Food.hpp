@@ -16,13 +16,13 @@ namespace GUI {
     class Food {
         public:
             enum class FoodType {
+                FOOD,
                 LINEMATE,
                 DERAUMERE,
                 SIBUR,
                 MENDIANE,
                 PHIRAS,
                 THYSTAME,
-                FOOD,
                 NONE
             };
         public:
@@ -38,8 +38,8 @@ namespace GUI {
 
             Math::Vector getPos() { return _sprite->getPos(); }
             void setPos(Math::Vector pos) { _sprite->setPos(pos); }
-            Math::Vector getOriginalPos() { return _pos; }
-            void setOriginalPos(Math::Vector pos) { _pos = pos; }
+            Math::Vector getOriginalPos() { return _originalPos; }
+            void setOriginalPos(Math::Vector pos) { _originalPos = pos; }
             Math::Vector getSize() { return _sprite->getSize(); }
             void setSize(Math::Vector size) { _sprite->setSize(size); }
             Math::Vector getScale() { return _sprite->getScale(); }
@@ -47,6 +47,8 @@ namespace GUI {
 
             std::string FoodTypeToString(const FoodType &type) {
                 switch (type) {
+                    case FoodType::FOOD:
+                        return "food";
                     case FoodType::LINEMATE:
                         return "linemate";
                     case FoodType::DERAUMERE:
@@ -59,13 +61,13 @@ namespace GUI {
                         return "phiras";
                     case FoodType::THYSTAME:
                         return "thystame";
-                    case FoodType::FOOD:
-                        return "food";
                     default:
                         return "none";
                 }
             }
             FoodType StringToFoodType(const std::string &type) {
+                if (type == "food")
+                    return FoodType::FOOD;
                 if (type == "linemate")
                     return FoodType::LINEMATE;
                 if (type == "deraumere")
@@ -78,8 +80,6 @@ namespace GUI {
                     return FoodType::PHIRAS;
                 if (type == "thystame")
                     return FoodType::THYSTAME;
-                if (type == "food")
-                    return FoodType::FOOD;
                 return FoodType::NONE;
             }
 
@@ -88,7 +88,7 @@ namespace GUI {
         protected:
         private:
             std::shared_ptr<ISprite> _sprite = nullptr;
-            Math::Vector _pos;
+            Math::Vector _originalPos;
             FoodType _type;
     };
 } // namespace GUI

@@ -28,7 +28,7 @@ namespace Sf_text {
         Sf_text.setFont(text.font);
         Sf_text.setString(text.str);
         Sf_text.setCharacterSize(text.size);
-        Sf_text.setFillColor(sf::Color::Black);
+        Sf_text.setFillColor(text.color);
         Sf_text.setPosition(text.pos);
 
         window.draw(Sf_text);

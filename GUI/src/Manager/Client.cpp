@@ -25,6 +25,7 @@ namespace Manager {
     void Client::sendToServer(const std::string &message) {
         if (!this->socket)
             throw std::runtime_error("Socket is not set.");
+        std::cout << "[sendToServer] Sending: " << message << std::endl;
         send(this->socket->getClientSocket(), message.c_str(), message.length(), 0);
     }
 

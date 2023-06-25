@@ -13,21 +13,18 @@
 namespace Interface {
     class Text {
         public:
-            Text(const std::string &font) { 
-                std::cout << "HELLO: " << font << std::endl;
-                _text.font = Sf_text::createFont(font); }
+            Text(const std::string &font) { _text.font = Sf_text::createFont(font); }
             Text(const Text &other) = default;
             ~Text() = default;
 
             void setPos(const Math::Vector &pos) { _text.pos = sf::Vector2f(pos.x(), pos.y()); }
+            void setColor(const sf::Color &color) { _text.color = color; }
 
             std::string getText() const { return _text.str; }
             void setText(std::string text) { _text.str = text; }
 
             template<typename Win>
-            void drawText(Win &window) {
-                Sf_text::DrawText(window, _text);
-            }
+            void drawText(Win &window) { Sf_text::DrawText(window, _text); }
 
         protected:
         private:

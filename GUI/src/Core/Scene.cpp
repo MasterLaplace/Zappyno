@@ -38,13 +38,29 @@ namespace GUI {
     }
 
     void Scene::updateScene(const Math::Vector &mousePos, const bool &mousePressed) {
-        for (auto &panel : _panels)
+        for (auto &panel : _panels) {
+            if (panel.getType() == "pause" && !_isPause && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
+            if (panel.getType() == "pause_setting" && !_isPauseSettings && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
             panel.updatePanel(mousePos, mousePressed);
+        }
     }
 
     void Scene::updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed) {
-        for (auto &panel : _panels)
+        for (auto &panel : _panels) {
+            if (panel.getType() == "pause" && !_isPause && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
+            if (panel.getType() == "pause_setting" && !_isPauseSettings && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
+            if (_isPause && _isPauseSettings)
+                _isPause = false;
             panel.updatePanel(mousePos, key, mousePressed);
+        }
+        if (_scenetype == Scene_Manager::SceneType::GAME) {
+            if (key == sf::Keyboard::Escape)
+                _callback = Interface::CALLBACK::OPEN_PAUSE;
+        }
     }
 
     std::vector<Interface::CALLBACK> Scene::getCallback() {
@@ -53,6 +69,7 @@ namespace GUI {
             std::vector<Interface::CALLBACK> tmp = panel.getCallback();
             callback.insert(callback.end(), tmp.begin(), tmp.end());
         }
+        callback.push_back(_callback);
         return callback;
     }
 
@@ -92,6 +109,8 @@ namespace GUI {
                 return "goto_game";
             case Interface::CALLBACK::GOTO_SETTING:
                 return "goto_setting";
+            case Interface::CALLBACK::GOTO_SETTING_PAUSE:
+                return "goto_setting_pause";
             case Interface::CALLBACK::GOTO_CREDIT:
                 return "goto_credit";
             case Interface::CALLBACK::GOTO_RESULT:
@@ -108,6 +127,8 @@ namespace GUI {
                 return "open_inventory_user";
             case Interface::CALLBACK::OPEN_INVENTORY_CASE:
                 return "open_inventory_case";
+            case Interface::CALLBACK::OPEN_PAUSE:
+                return "open_pause";
             case Interface::CALLBACK::FINAL:
                 return "final";
         default:
@@ -127,6 +148,7 @@ namespace GUI {
     }
 
     sf::Color SceneManager::StringToSfColor(const std::string &color) {
+        std::cout << "[StringToSfColor] Color: " << color << std::endl;
         if (color == "red")
             return sf::Color::Red;
         if (color == "green")
@@ -145,6 +167,14 @@ namespace GUI {
             return sf::Color::White;
         if (color == "black")
             return sf::Color::Black;
+        if (color == "bronze")
+            return sf::Color(205, 127, 50);
+        if (color == "silver")
+            return sf::Color(192, 192, 192);
+        if (color == "gold")
+            return sf::Color(255, 215, 0);
+        if (color == "grey")
+            return sf::Color(128, 128, 128);
         return sf::Color::White;
     }
 

@@ -15,6 +15,7 @@ class ISprite {
     public:
         virtual ~ISprite() = default;
         virtual void animate(const unsigned &state) = 0;
+        virtual void animate_trantorian(unsigned state, const bool &isHover) = 0;
         virtual void animate_checkbox(bool &ischecked, const unsigned &state) = 0;
         virtual void setOffset(Math::Vector offset) = 0;
         virtual void setMaxOffsetX(unsigned max_offset_x) = 0;
@@ -28,7 +29,11 @@ class ISprite {
         virtual Math::Vector getOrigin() const = 0;
         virtual Math::Vector getSize() const = 0;
         virtual Math::Vector getMaxSize() const = 0;
+        virtual Math::Vector getStartSize() const = 0;
         virtual unsigned getTransparency() const = 0;
+        virtual unsigned getOffetX() const = 0;
+        virtual unsigned getOffetY() const = 0;
+        virtual unsigned getMaxOffetX() const = 0;
         virtual void rotate(const float &angle) = 0;
         virtual void drawSprite() const = 0;
 };
