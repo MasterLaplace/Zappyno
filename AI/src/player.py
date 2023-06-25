@@ -8,17 +8,9 @@ from re import split
 from collections import Counter
 from enum import Enum
 from typing import Dict, List
+from utils import Utils
 
 separator: str = '|'
-required_resources: List[Dict[str, int]] = [
-    {'linemate': 1},
-    {'linemate': 1, 'deraumere': 1, 'sibur': 1},
-    {'linemate': 2, 'sibur': 1, 'phiras': 2},
-    {'linemate': 1, 'deraumere': 1, 'sibur': 2, 'phiras': 1},
-    {'linemate': 1, 'deraumere': 2, 'sibur': 1, 'mendiane': 3},
-    {'linemate': 1, 'deraumere': 2, 'sibur': 3, 'phiras': 1},
-    {'linemate': 2, 'deraumere': 2, 'sibur': 2, 'mendiane': 2, 'phiras': 2, 'thystame': 1}
-]
 
 class Movement(Enum):
     """
@@ -39,6 +31,7 @@ class Command(Enum):
     TAKE = 'Take '
     SET = 'Set '
     INCANTATION = 'Incantation'
+    READY = 'Ready'
     FORK = 'Fork'
 
 class Player:
@@ -48,108 +41,95 @@ class Player:
     """
     def __init__(self) -> None:
         self.player_id = 0
-        self.__level: int = 1
-        self.__inventory: Dict = {'food': 0, 'linemate': 0, 'deraumere': 0, 'sibur': 0, 'mendiane': 0, 'phiras': 0,
-            'thystame': 0}
+        self.level: int = 1
+        self.__inventory: Dict = Utils.get_default_inventory()
         self.fov: str = ''
         self.__to_take: str = ''
         self.__shared_inventory: Dict = {}
         self.__map: List[List] = [[]]
         self.is_running: bool = True
         self.response: str = ''
-        self.__incantation: bool = False
         self.__delete_broadcast: bool = False
         self.delete_read: bool = False
-        self.__number_incantation: int = 0
+        self.__incantation_count: int = 0
+        self.__incanting: bool = False
         self.__commands: List = []
         self.step: int = -2
         self.__ready: bool = False
         self.unused_slots: int = 0
         self.fork: bool = True
-        self.new_object: bool = False
+        self.got_new_stone: bool = False
         self.available_slots: int = 0
 
-    def check_incantation_possible(self) -> bool:
+    def __check_incantation_possible(self) -> bool:
         """
         Check if the incantation is possible.
         """
-        for obj in required_resources[self.__level]:
-            if self.__shared_inventory[obj] < required_resources[self.__level][obj]:
+        required: Dict[str, int] = Utils.get_required_resources_for(self.level)
+        shared: Dict[str, int] = {}
+
+        if 'total' in self.__shared_inventory:
+            shared = self.__shared_inventory['total']
+        else:
+            shared = Utils.get_default_inventory()
+        for item, quantity in required.items():
+            if shared[item] < quantity:
                 return False
         return True
 
-    def drop_object(self) -> None:
+    def __set_object(self) -> None:
         """
         Drop an object.
         :return:
         """
-        if self.__commands:
+        if len(self.__commands) > 0:
             return
-        data = self.fov.split(',')[0]
-        while True:
-            if len(data) == 0:
-                break
-            data = data[1:]
-        new_data = data.split(' ')
-        required = required_resources[self.__level]
-        for items in required:
-            for res in new_data:
-                if res == items:
-                    required[items] -= 1
-        for ressources in required_resources[self.__level]:
-            if ressources in data and data and required[ressources] > 0:
-                self.__commands.append(Command.SET.value + ressources)
-                self.__commands.append(Command.LOOK.value)
-                return
-        self.step = 7
+        data = self.fov[1:-1].split(',')[0]
+        splitted = data.strip().split(' ')
+        required = Utils.get_required_resources_for(self.level)
+        for item in required:
+            for res in splitted:
+                if res != item:
+                    continue
+                required[item] -= 1
+        for item, quantity in required.items():
+            if quantity == 0 or item not in self.__inventory or self.__inventory[item] == 0:
+                continue
+            self.__commands += [Command.SET.value + item, Command.LOOK.value, self.__get_shared_inventory_broadcast()]
+            # self.__commands += [Command.SET.value + item, Command.LOOK.value]
+            self.__inventory[item] -= 1
+            return
+        # self.step = 7
         self.response = ''
 
-    def incantation(self) -> None:
+    def __incantation(self) -> None:
         """
         Incantation of the player.
         :return:
         """
-        if self.__commands:
-            return
-        data = self.fov.split(',')[0]
-        while True:
-            if len(data) == 0:
-                break
-            data = data[1:]
-        new_data = data.split(' ')
-        required = required_resources[self.__level].copy()
-        for items in required:
-            for res in new_data:
-                if res == items:
-                    required[items] -= 1
-        for ressources in required_resources[self.__level]:
-            if ressources in data and required[ressources] > 0:
-                return
-        self.response = Command.INCANTATION.value
-        self.__commands = [Command.INCANTATION.value]
-        self.step = 7
+        data = self.fov[1:-1].split(',')[0]
+        splitted = data.strip().split(' ')
+        required = Utils.get_required_resources_for(self.level)
 
-    def fill_shared_inventory(self, inventory: str) -> None:
-        """
-        Fill the shared inventory.
-        """
-        client, _, inventory = inventory.split(separator)
-        self.__shared_inventory[client] = loads(inventory)
-        self.__shared_inventory[self.player_id] = self.__inventory
-        total: Counter = Counter()
-
-        for key, value in self.__shared_inventory.items():
-            if key == 'total':
+        for item in required:
+            for res in splitted:
+                if res != item:
+                    continue
+                required[item] -= 1
+        for _, quantity in required.items():
+            if quantity == 0:
                 continue
-            total.update(value)
-        self.__shared_inventory = dict(total)
+            return
+        self.response = Command.INCANTATION.value
+        self.__commands.clear()
+        self.step = 7
 
     def refresh_shared_inventory(self) -> None:
         """
         Refresh the shared inventory by updating the total value.
         """
-        total: Counter = Counter()
         self.__shared_inventory[self.player_id] = self.__inventory
+        total: Counter = Counter()
 
         for key, value in self.__shared_inventory.items():
             if key == 'total':
@@ -157,32 +137,34 @@ class Player:
             total.update(value)
         self.__shared_inventory['total'] = dict(total)
 
-    def create_map(self) -> None:
+    def __fill_shared_inventory(self, inventory: str) -> None:
+        """
+        Fill the shared inventory.
+        """
+        _, client_id, stringified_inventory = inventory.split(separator)
+        self.__shared_inventory[client_id] = loads(stringified_inventory)
+        self.refresh_shared_inventory()
+
+    def __create_map(self) -> None:
         """
         Create a map of the look.
         :param look:
         """
-        row_increment = 1
-        vertical_offset = 8
-        horizontal_offset = 0
+        field_wideness: int = 1
+        field_position: int = 0
+        vertical_offset: int = 8
+        horizontal_offset: int = 0
+        data: List[str] = [' '.join(split('\W+', elem)[1:]) for elem in self.fov.split(',')]
+        line: int = int(sqrt(len(data)))
 
-        data: list = []
-        separated_look: list = self.fov.split(',')
-        look_length: int = len(separated_look)
-        for i in range(look_length):
-            data.append(' '.join(split(r'\'\W+', separated_look[i])[1:]))
-        length: int = len(data)
-        nb_line: int = int(sqrt(length))
-        for i in range(nb_line):
-            target_row = vertical_offset - horizontal_offset
-            column = 0
-            while column < row_increment:
-                self.__map[target_row][horizontal_offset] += data[i]
-                target_row += 1
-                i += 1
-                column += 1
-            row_increment += 2
+        for _ in range(line):
+            row: int = vertical_offset - horizontal_offset
+            for _ in range(field_wideness):
+                self.__map[row][horizontal_offset].append(data[field_position])
+                field_position += 1
+                row += 1
             horizontal_offset += 1
+            field_wideness += 2
 
     def array_size(self, array: list) -> int:
         """
@@ -190,8 +172,9 @@ class Player:
         :param array:
         """
         number = 0
+
         for elem in array:
-            if not bool(elem):
+            if len(elem) == 0:
                 return number
             number += 1
         return number
@@ -206,23 +189,26 @@ class Player:
         horizontal_offset = 0
 
         while horizontal_offset < self.array_size(self.__map[vertical_offset]):
-            if obj == self.__map[vertical_offset][horizontal_offset]:
+            if (len(self.__map[vertical_offset][horizontal_offset]) > 0 and
+            obj in self.__map[vertical_offset][horizontal_offset][0]):
                 return [vertical_offset, horizontal_offset]
             horizontal_offset += 1
-            tmp = vertical_offset
-            while tmp >= vertical_offset - horizontal_offset:
-                if obj == self.__map[tmp][horizontal_offset]:
-                    return [tmp, horizontal_offset]
-                tmp -= 1
-            tmp = vertical_offset
-            while tmp <= vertical_offset + horizontal_offset:
-                if obj == self.__map[tmp][horizontal_offset]:
-                    return [tmp, horizontal_offset]
-                tmp += 1
+            total = vertical_offset
+            while total >= vertical_offset - horizontal_offset:
+                if (len(self.__map[vertical_offset][horizontal_offset]) > 0 and
+                obj in self.__map[total][horizontal_offset][0]):
+                    return [total, horizontal_offset]
+                total -= 1
+            total = vertical_offset
+            while total <= vertical_offset + horizontal_offset:
+                if (len(self.__map[vertical_offset][horizontal_offset]) > 0 and
+                obj in self.__map[total][horizontal_offset][0]):
+                    return [total, horizontal_offset]
+                total += 1
             horizontal_offset += 1
         return []
 
-    def movement_left(self, object_coord: List[int], obj: str) -> None:
+    def movement_left(self, object_coord: List[int]) -> None:
         """
         Move the player to the left.
         :param object_coord:
@@ -232,10 +218,8 @@ class Player:
         self.__commands.append(Movement.LEFT.value)
         for _ in range(8 - object_coord[0]):
             self.__commands.append(Movement.FORWARD.value)
-        self.__commands.append(Command.TAKE.value + obj)
-        self.__commands.append(Command.INVENTORY.value)
 
-    def movement_right(self, object_coord: List[int], obj: str):
+    def movement_right(self, object_coord: List[int]):
         """
         Move the player to the right.
         :param object_coord:
@@ -243,12 +227,10 @@ class Player:
         :param command:
         """
         self.__commands.append(Movement.RIGHT.value)
-        for _ in range(8 - object_coord[0]):
+        for _ in range(object_coord[0] - 8):
             self.__commands.append(Movement.FORWARD.value)
-        self.__commands.append(Command.TAKE.value + obj)
-        self.__commands.append(Command.INVENTORY.value)
 
-    def movement_forward(self, object_coord: List[int], obj: str):
+    def movement_forward(self, object_coord: List[int]):
         """
         Move the player forward.
         :param object_coord:
@@ -257,48 +239,39 @@ class Player:
         """
         for _ in range(8 - object_coord[1]):
             self.__commands.append(Movement.FORWARD.value)
-        self.__commands.append(Command.TAKE.value + obj)
-        self.__commands.append(Command.INVENTORY.value)
 
-    def execute_action(self) -> None:
+    def __execute_action(self) -> None:
         """
         Decide which action to do for the player.
         """
         self.__map = [[[] for _ in range(9)] for _ in range(17)]
-        self.create_map()
-        object_coord: List[int] = self.search_object(self.__to_take)
-        if not bool(object_coord):
-            self.__commands.append(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]).value)
-            self.__commands.append(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]).value)
-            self.__commands.append(choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]).value)
-            return
-        if object_coord[0] == 8 and object_coord[1] == 0:
-            self.__commands = [Command.TAKE.value + self.__to_take]
-            return
-        for _ in range(object_coord[0] - 8):
-            self.__commands.append(Movement.FORWARD.value)
-        if object_coord[0] == 0:
-            self.movement_forward(object_coord, self.__to_take)
-        if object_coord[1] == 0:
-            self.__commands.append(Command.TAKE.value + self.__to_take)
-        if object_coord[0] < 8:
-            self.movement_left(object_coord, self.__to_take)
-        if object_coord[0] > 8:
-            self.movement_right(object_coord, self.__to_take)
+        self.__create_map()
+        object_pos: List[int] = self.search_object(self.__to_take)
 
-    def move_to_broadcasted_tile(self, tile: int) -> None:
+        if len(object_pos) == 0:
+            self.__commands += [choice([Movement.FORWARD, Movement.LEFT, Movement.RIGHT]).value for _ in range(3)]
+            return
+        for _ in range(object_pos[1]):
+            self.__commands.append(Movement.FORWARD.value)
+        if object_pos[0] < 8:
+            self.movement_left(object_pos)
+        elif object_pos[0] > 8:
+            self.movement_right(object_pos)
+        self.__commands += [Command.TAKE.value + self.__to_take, Command.INVENTORY.value]
+
+    def move_to_broadcasted_tile(self, origin: int) -> None:
         """
-        Move to the tile received by the broadcast.
+        Move to the tile received by the broadcast with the provided origin.
         """
         if self.__commands or self.__ready:
             return
         self.__commands = []
-        if tile == 0:
-            self.response = Command.BROADCAST.value + 'Ready'
+        if origin == 0:
+            self.response = Command.BROADCAST.value + Command.READY.value
             self.__ready = True
-        elif tile in (2, 1, 8):
+        elif origin in (2, 1, 8):
             self.__commands.append(Movement.FORWARD.value)
-        elif tile in (5, 6, 7):
+        elif origin in (5, 6, 7):
             self.__commands.append(Movement.RIGHT.value)
         else:
             self.__commands.append(Movement.LEFT.value)
@@ -314,6 +287,8 @@ class Player:
             if len(splitted) != 2:
                 continue
             self.__inventory[splitted[0]] = int(splitted[1])
+        self.refresh_shared_inventory()
+        print(f'{self.player_id}: Food quantity: {self.__inventory["food"]}')
 
     def parse_broadcast(self, message: str) -> None:
         """
@@ -324,46 +299,68 @@ class Player:
         from_tile = int(message[8])
         message = message[11:]
 
-        if 'Inventory' in message:
-            self.fill_shared_inventory(message[9:])
-        if 'Incantation' in message:
+        if Command.INVENTORY.value in message:
+            self.__fill_shared_inventory(message[9:])
+        if Command.INCANTATION.value in message:
             player_id: int = int(message.split(separator)[1])
             if self.__delete_broadcast:
                 self.__delete_broadcast = False
                 return
-            if self.step < 4 and self.step > -1:
-                self.step = 4
-                self.__commands = []
-                return
-            if self.__number_incantation >= 1 and player_id > self.player_id:
-                self.__incantation = False
-                self.__number_incantation = 0
+
+            if self.__incantation_count >= 1 and player_id > self.player_id:
+                self.__incanting = False
+                self.__incantation_count = 0
                 self.step = 0
                 return
-            if self.__incantation:
+
+            if self.step >= 0 and self.step <= 3 and self.__inventory['food'] >= Utils.get_minimum_food_quantity():
+                self.step = 4
+                self.__commands.clear()
+                return
+
+            if self.__incanting:
                 self.move_to_broadcasted_tile(from_tile)
-        if 'Ready' in message and self.__incantation:
-            self.__number_incantation += 1
+
+        if Command.READY.value in message and self.__incantation_count != 0:
+            self.__incantation_count += 1
 
     def find_resource(self) -> str:
         """
         Return a string matching the resource to find.
         The resource is chosen randomly between the missing resources.
         """
-        required = required_resources[self.__level].copy()
+        required = Utils.get_required_resources_for(self.level)
         missing_resources = []
 
         if 'total' in self.__shared_inventory:
             inventory = self.__shared_inventory['total'].copy()
         else:
-            inventory = {'food': 0, 'linemate': 0, 'deraumere': 0, 'sibur': 0, 'mendiane': 0, 'phiras': 0,
-                'thystame': 0}
-        for key, value in required.items():
-            if value > inventory[key] or key not in inventory:
-                missing_resources.append(key)
+            inventory = Utils.get_default_inventory()
+        for item, quantity in required.items():
+            if item not in inventory or quantity > inventory[item]:
+                missing_resources.append(item)
         if len(missing_resources) == 0:
             return 'food'
         return choice(missing_resources)
+
+    def level_up(self) -> None:
+        """
+        Reset some player parameters when level up.
+        """
+        self.step = 9
+        self.got_new_stone = False
+        self.__incanting = False
+        self.__incantation_count = 0
+        self.__ready = False
+        self.__delete_broadcast = False
+        self.delete_read = False
+        self.response = ''
+        self.__to_take = ''
+
+    def __get_shared_inventory_broadcast(self) -> str:
+        data: List = [Command.INVENTORY.value, self.player_id, dumps(self.__inventory)]
+
+        return Command.BROADCAST.value + separator.join(str(e) for e in data)
 
     def logical(self) -> None:
         """
@@ -405,32 +402,29 @@ class Player:
         if self.unused_slots > 0:
             self.response = Command.FORK.value
             self.fork = True
-        else:
-            self.response = Command.LOOK.value
         self.step = 0
 
     def __manage_step_0(self) -> None:
-        if self.__commands:
-            self.response = self.__commands[0]
-            self.__commands.pop(0)
+        if len(self.__commands) > 0:
+            self.response = self.__commands.pop(0)
         else:
             self.response = Command.INVENTORY.value
             self.step = 1
 
     def __manage_step_1(self) -> None:
-        if self.new_object:
-            data: List = []
-            if not self.check_incantation_possible():
-                data = [Command.INCANTATION.value, self.player_id, self.__level]
-                self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
+        if self.got_new_stone:
+            self.got_new_stone = False
+            if not self.__check_incantation_possible():
+                self.response = self.__get_shared_inventory_broadcast()
             else:
-                data = [Command.INCANTATION.value, self.player_id, self.__level]
-                self.__incantation = True
-                self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
+                # MARK: INCANTATION IS POSSIBLE, AND I'M THE LEADER
+                if self.level > 1:
+                    data: List = [Command.INCANTATION.value, self.player_id, self.level]
+                    self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
+                self.__incantation_count = 1
+                self.__incanting = True
                 self.step = 4
-                self.new_object = False
                 return
-            self.new_object = False
         else:
             self.step = 2
             self.logical()
@@ -442,25 +436,34 @@ class Player:
         self.step = 3
 
     def __manage_step_3(self) -> None:
-        self.__to_take = self.find_resource()
-        self.execute_action()
+        if self.__inventory['food'] < Utils.get_minimum_food_quantity():
+            self.__to_take = 'food'
+        else:
+            self.__to_take = self.find_resource()
+        self.__execute_action()
         self.step = 0
 
     def __manage_step_4(self) -> None:
-        if not self.__incantation:
-            self.__incantation = True
+        if not self.__incanting:
+            # MARK: BROADCAST "ON MY WAY" ?
+            self.__incanting = True
             return
-        if self.__number_incantation >= 6:
+
+        if self.__incantation_count >= Utils.get_required_players_for(self.level):
+            # MARK: AMOUNT OF PLAYERS IS OK FOR INCANTATION
             self.step = 5
             return
-        if self.__number_incantation != 0:
+
+        if self.__incantation_count != 0:
+            print('WAITING FOR OTHER PLAYERS')
             return
+
         if len(self.__commands) > 0 and not self.__ready:
-            self.response = self.__commands[0]
-            self.__commands = self.__commands[1:]
+            self.response = self.__commands.pop(0)
             self.__delete_broadcast = True
             if len(self.__commands) == 0:
                 self.delete_read = True
+
         elif Command.BROADCAST.value in self.response and self.__ready:
             self.step = 5
         else:
@@ -469,27 +472,28 @@ class Player:
     def __manage_step_5(self) -> None:
         self.__delete_broadcast = False
         self.response = Command.LOOK.value
-        self.step += 1
+        self.step = 6
 
     def __manage_step_6(self) -> None:
         self.__delete_broadcast = False
-        if self.__number_incantation >= 6:
-            self.incantation()
+        if self.__incantation_count >= Utils.get_required_players_for(self.level):
+            self.__incantation()
+            print('START INCANTATION OR NOT ?')
+        else:
+            print('NOT STARTING INCANTATION…')
         if self.step != 7:
-            self.drop_object()
+            self.__set_object()
             if len(self.__commands) > 0:
-                self.response = self.__commands[0]
-                self.__commands = self.__commands[1:]
+                self.response = self.__commands.pop(0)
             else:
                 self.response = Command.INVENTORY.value
 
     def __manage_step_7(self) -> None:
-        if self.__number_incantation < 6:
-            self.response = Command.CONNECT_NBR.value
-            return
+        # if self.__incantation_count < Utils.get_required_players_for(self.level):
+            # self.response = Command.CONNECT_NBR.value
+            # return
         if len(self.__commands) > 0:
-            self.response = self.__commands[0]
-            self.__commands = self.__commands[1:]
+            self.response = self.__commands.pop(0)
         else:
             self.__commands = [Command.INVENTORY.value, Command.LOOK.value]
 
@@ -501,6 +505,6 @@ class Player:
         self.step = 10
 
     def __manage_step_10(self) -> None:
-        data: List = [Command.INVENTORY.value, self.player_id, self.__level, dumps(self.__inventory)]
+        data: List = [Command.INVENTORY.value, self.player_id, dumps(self.__inventory)]
         self.response = Command.BROADCAST.value + separator.join(str(e) for e in data)
         self.step = 0
