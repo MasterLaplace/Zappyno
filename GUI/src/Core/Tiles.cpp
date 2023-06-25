@@ -26,7 +26,16 @@ namespace GUI {
     void Tiles::setInventory(std::vector<unsigned> &inventory) {
         auto pos = _sprite->getPos();
         auto size = _sprite->getSize();
-        std::map<std::string, unsigned> foods;
+        std::map<std::string, unsigned> foods = {
+            {"food", 0},
+            {"linemate", 0},
+            {"deraumere", 0},
+            {"sibur", 0},
+            {"mendiane", 0},
+            {"phiras", 0},
+            {"thystame", 0}
+        };
+
         for (auto &food : _food) {
             if (food.getName() == "food")
                 foods["food"]++;
