@@ -258,10 +258,16 @@ namespace Manager {
                 int id = 0;
 
                 for (auto &tile : _tiles) {
-                    tile.updateState(mousePos, mousePressed, _userId, _scale);
-                    if (tile.getState() == Interface::Checkbox::State::CLICKED)
+                    tile.updateState(mousePos, mousePressed, /* _userId, */ _scale);
+                    if (tile.getState() == Interface::Checkbox::State::RELEASED)
                         _tileId = id;
                     id++;
+                }
+            }
+
+            void animationProtocol() {
+                for (auto &tile : _tiles) {
+                    tile.animationTile();
                 }
             }
 
@@ -270,12 +276,15 @@ namespace Manager {
                 if (!id) { id = true; return; };
                 // ppo n X Y O\n ppo #n\n player’s position
                 // plv n L\n plv #n\n player’s level
+                // pin #n\n player’s inventory
                 if (i + j * _mapSize.y() >= int(_tiles.size()))
                     return;
-                for (auto &trantorian : _tiles[i + j * _mapSize.y()].getTrantorians()) {
-                    std::string str = "ppo #" + std::to_string(trantorian->getId()) + "\n";
+                for (auto &trantorian : _tiles[i + j * _mapSize.x()].getTrantorians()) {
+                    std::string str = "ppo " + std::to_string(trantorian->getId()) + "\n";
                     _client->sendToServer(str);
-                    str = "plv #" + std::to_string(trantorian->getId()) + "\n";
+                    str = "plv " + std::to_string(trantorian->getId()) + "\n";
+                    _client->sendToServer(str);
+                    str = "pin " + std::to_string(trantorian->getId()) + "\n";
                     _client->sendToServer(str);
                 }
             }
@@ -285,6 +294,8 @@ namespace Manager {
                 callback.push_back(_gotoResult);
                 if (_tileId >= 0 && _tileId < int(_tiles.size()))
                     callback.push_back(_tiles[_tileId].getCallback());
+                if (_userId >= 0 && _userId < _tiles.size())
+                    callback.push_back(_tiles[_userId].getCallback());
                 return callback;
             }
 

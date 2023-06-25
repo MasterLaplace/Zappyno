@@ -37,6 +37,8 @@ void Core::run()
     std::cout << "Core: Running..." << std::endl;
     sf::Clock clock;
     sf::Time interval = sf::seconds(1.0f);  // intervalle de 1 seconde
+    sf::Clock clockAnimation;
+    sf::Time intervalAnimation = sf::seconds(1.0f / 24);  // intervalle de 1 seconde
     sf::Event event;
     std::string message;
 
@@ -48,14 +50,14 @@ void Core::run()
                 std::cout << "Message received: " << message;
                 _protocol->parseCommand(message);
             }
-                if (clock.getElapsedTime() >= interval) {
+                if (clockProtocol.getElapsedTime() >= interval) {
                     _protocol->_client->sendToServer("mct\n");
                     auto MapSize = _protocol->getMapSize();
                     for (int j = 0; j < int(MapSize.y()); j++) {
                         for (int i = 0; i < int(MapSize.x()); i++)
                             _protocol->sendTileToServer(i, j);
                     }
-                    clock.restart();
+                    clockProtocol.restart();
                 }
             }
         } catch (const std::exception &e) {
@@ -108,8 +110,13 @@ void Core::run()
         } else {
             _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         }
-            if (_scene->getSceneType() == Scene_Manager::SceneType::GAME)
+            if (_scene->getSceneType() == Scene_Manager::SceneType::GAME) {
                 _protocol->updateProtocol(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
+                if (clockAnimation.getElapsedTime() >= interval) {
+                    _protocol->animationProtocol();
+                    clockAnimation.restart();
+                }
+            }
         _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
         _scene->drawScene<sf::RenderWindow>(*_window, _protocol);
 

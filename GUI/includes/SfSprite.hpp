@@ -54,6 +54,7 @@ namespace Sf_sprite {
         Math::Vector getMaxSize() const override { return Math::Vector(this->maxSize.width, this->maxSize.height); }
         unsigned getTransparency() const override { return this->sprite.getColor().a; }
         void animate(const unsigned &state = 0);
+        void animate_trantorian(unsigned state, const bool &isHover);
         void animate_checkbox(bool &ischecked, const unsigned &state = 0);
 
         void rotate(const float &angle) override { this->sprite.setRotation(angle); }

@@ -42,11 +42,25 @@ namespace Sf_sprite {
 
         rect.left += this->offset_x;
         rect.top = this->offset_y * state;
-        this->sprite.setTextureRect(rect);
-        if (rect.left >= int(end)) {
+        if (rect.left >= int(end))
             rect.left = 0;
-            this->sprite.setTextureRect(rect);
-        }
+        this->sprite.setTextureRect(rect);
+    }
+
+    void SfSprite::animate_trantorian(unsigned state, const bool &isHover) {
+        if (state == 0)
+            state = 3;
+        else if (state == 3)
+            state = 0;
+        sf::IntRect rect = this->sprite.getTextureRect();
+        unsigned end = this->offset_x * (this->max_offset_x - 1);
+        std::cout << "[animate_trantorian] state: " << state << std::endl;
+
+        rect.left += this->offset_x;
+        rect.top = ((isHover)?this->offset_y*4:this->offset_y) * state;
+        if (rect.left >= int(end))
+            rect.left = 0;
+        this->sprite.setTextureRect(rect);
     }
 
     void SfSprite::animate_checkbox(bool &ischecked, const unsigned &state) {

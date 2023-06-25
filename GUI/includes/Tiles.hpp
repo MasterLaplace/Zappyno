@@ -34,7 +34,7 @@ namespace GUI {
 
             void setPos(Math::Vector pos) { _sprite->setPos(pos); }
             void setScale(Math::Vector scale) { _sprite->setScale(scale); }
-            void setInventory(std::vector<unsigned> &inventory);
+            void setInventory(std::vector<unsigned> &inventory, double scale);
             Math::Vector getPos() const { return _sprite->getPos(); }
             Math::Vector getSize() const { return _sprite->getSize(); }
             std::map<std::string, unsigned> getInventory() const { return _inventory; }
@@ -48,7 +48,7 @@ namespace GUI {
             Interface::Checkbox::State getState() const { return _state; }
             Interface::CALLBACK getCallback() const { return _callback; }
 
-            void addFood(const std::string &food);
+            void addFood(const std::string &food, double scale);
             void removeFood(std::string food);
             void addTrantorian(std::shared_ptr<GUI::Trantorian> trantorian) { _trantorians.push_back(trantorian); }
             void removeTrantorian(std::shared_ptr<GUI::Trantorian> trantorian);
@@ -56,11 +56,17 @@ namespace GUI {
             void removeEgg(std::shared_ptr<GUI::Egg> egg);
             void removeEggs() { _eggs.clear(); }
 
-            void updateState(const Math::Vector &mousePos, const bool &mousePressed, int &userId, double scale) {
+            void updateState(const Math::Vector &mousePos, const bool &mousePressed, /* int &userId,*/ double scale) {
                 auto size = _sprite->getSize();
                 auto pos = _sprite->getPos();
+                for (auto &trantorian : _trantorians) {
+                    trantorian->setPos(trantorian->calculDistance(trantorian->getPos(), trantorian->getNextPos(), trantorian->getSpeed(), scale));
+                }
                 if (mousePos.x() >= pos.x() && mousePos.x() <= pos.x() + (size.x() * scale) &&
                     mousePos.y() >= pos.y() && mousePos.y() <= pos.y() + (size.y() * scale)) {
+                    for (auto &trantorian : _trantorians) {
+                        trantorian->updateTrantorianState(mousePos, mousePressed, scale);
+                    }
                     if (_state == Interface::Checkbox::State::IDLE)
                         _state = Interface::Checkbox::State::HOVER;
                     if (_state == Interface::Checkbox::State::CLICKED)
@@ -68,10 +74,16 @@ namespace GUI {
                     if (mousePressed)
                         _state = Interface::Checkbox::State::CLICKED;
                 } else {
-                    if (!mousePressed || _state == Interface::Checkbox::State::HOVER)
+                    if ((!mousePressed || _state == Interface::Checkbox::State::HOVER) && _state != Interface::Checkbox::State::RELEASED)
                         _state = Interface::Checkbox::State::IDLE;
                 }
+            }
+
+            void animationTile() {
                 _sprite->animate(_state);
+                for (auto &trantorian : _trantorians) {
+                    trantorian->animationTrantorian();
+                }
             }
 
             void drawTile() { _sprite->drawSprite(); }

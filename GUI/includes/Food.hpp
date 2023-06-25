@@ -38,8 +38,8 @@ namespace GUI {
 
             Math::Vector getPos() { return _sprite->getPos(); }
             void setPos(Math::Vector pos) { _sprite->setPos(pos); }
-            Math::Vector getOriginalPos() { return _pos; }
-            void setOriginalPos(Math::Vector pos) { _pos = pos; }
+            Math::Vector getOriginalPos() { return _originalPos; }
+            void setOriginalPos(Math::Vector pos) { _originalPos = pos; }
             Math::Vector getSize() { return _sprite->getSize(); }
             void setSize(Math::Vector size) { _sprite->setSize(size); }
             Math::Vector getScale() { return _sprite->getScale(); }
@@ -88,7 +88,7 @@ namespace GUI {
         protected:
         private:
             std::shared_ptr<ISprite> _sprite = nullptr;
-            Math::Vector _pos;
+            Math::Vector _originalPos;
             FoodType _type;
     };
 } // namespace GUI
