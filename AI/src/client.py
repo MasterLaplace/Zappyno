@@ -51,6 +51,9 @@ class Client:
         Handle read selector from select.
         """
         received: str = self.__communication.receive()
+        print(f'\tReceived: {self.__id} (lvl {self.__player.level}) -> {received}')
+        if 'ko' in received:
+            print('\t\t\t\t\t\tTHERE\'S A KO!')
 
         if received:
             self.__message += received
@@ -71,7 +74,7 @@ class Client:
         if self.__player.response:
             if not self.__is_logged and self.__player.response == self.__team:
                 self.__state = State.SENT_TEAM
-            # print(f'\tSending: {self.__id} -> {self.__player.response}')
+            print(f'\tSending: {self.__id} (lvl {self.__player.level}) -> {self.__player.response}')
             self.__communication.send(self.__player.response)
             self.__player.is_running = False
 
@@ -88,7 +91,11 @@ class Client:
         elif 'Elevation underway' in line:
             self.__player.step = 8
         elif 'Current level:' in line:
-            print(f'Current level: {line}')
+            self.__player.level = int(line[15:])
+            if self.__player.level == 8:
+                sys_exit(0)
+            self.__player.level_up()
+            print(f'PLAYER HAS LEVELLED UP: {line}')
         elif self.__state == State.SAVED_INFOS and 'message' in line:
             if self.__player.delete_read:
                 self.__player.delete_read = False
@@ -99,7 +106,7 @@ class Client:
             return
         elif 'ok' in line and 'Take' in self.__player.response and 'food' not in self.__player.response:
             self.__player.refresh_shared_inventory()
-            self.__player.new_object = True
+            self.__player.got_new_stone = True
         elif 'Inventory' in self.__player.response:
             self.__player.parse_inventory(line)
         elif 'Look' in self.__player.response:

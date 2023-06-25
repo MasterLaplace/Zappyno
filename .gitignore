@@ -270,6 +270,6 @@ vgcore.*
 *.log
 *.txt
 !requirements.txt
-test
+test*
 .Test/
 openvr/
