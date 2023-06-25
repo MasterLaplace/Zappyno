@@ -33,10 +33,10 @@ static bool check_death(t_server *server, int id)
         return false;
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].id == -1)
         return false;
-    printf("Player %d has %d food\n", id, TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0]);
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0] <= 0 &&
     has_timer_expired_gen_food(&server->remove_food_timer,
-server->remove_food_timer.duration) && FD_ISSET(CLIENT(id).socket_fd, &server->wfd) && FD_ISSET(CLIENT(id).socket_fd, &server->readfds)) {
+server->remove_food_timer.duration) && FD_ISSET(CLIENT(id).socket_fd,
+&server->wfd) && FD_ISSET(CLIENT(id).socket_fd, &server->readfds)) {
         AUTO_FREE char *str = calloc(my_nblen(id) + 10, sizeof(char));
         sprintf(str, "pdi %d\n", id);
         send_to_all_gui(server, str);
@@ -77,11 +77,10 @@ static void read_data_from_server(t_server *server, unsigned id)
         handle_client_data(server, sd, id);
     }
     read_data_next(server, id);
-    /*if (has_timer_expired_gen_food(&server->gen_food_timer,
+    if (has_timer_expired_gen_food(&server->gen_food_timer,
 server->gen_food_timer.duration))
-        generate_food(server);*/
+        generate_food(server);
     if (has_timer_expired(&server->clients[id])) {
-        printf("function : %p\n", server->clients[id].function);
         server->clients[id].function(server,
 server->clients[id].params_function, id);
         server->clients[id].is_freezed = false;
@@ -101,7 +100,9 @@ void loop(t_server *server)
     if (FD_ISSET(server->sockfd, &server->readfds))
         handle_new_connection(server);
     for (int i = 0; i < SOMAXCONN; i++) {
-        if (server->clients[i].socket_fd > 0 && FD_ISSET(server->clients[i].socket_fd, &server->readfds)) {
+        if (server->clients[i].socket_fd > 0
+&& (FD_ISSET(server->clients[i].socket_fd, &server->readfds) ||
+FD_ISSET(server->clients[i].socket_fd, &server->wfd))) {
             read_data_from_server(server, i);
         }
     }

@@ -100,7 +100,6 @@ void remove_client(t_server *server, int id)
     int pos = find_tile(server, server->clients[id].pos_x,
 server->clients[id].pos_y, id);
     TILES(pos).player--;
-    printf("Client %d disconnected\n", id);
     close(CLIENT(id).socket_fd);
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
     CLIENT(id).socket_fd = 0;

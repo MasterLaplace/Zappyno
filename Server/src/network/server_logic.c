@@ -37,7 +37,6 @@ int id)
     if (CLIENT(id).timer.start == -1)
         return;
     CLIENT(id).timer.duration = ia_client[i].time;
-    printf("Timer set to %f\n", CLIENT(id).timer.duration);
     if (CLIENT(id).params_function != NULL)
         free_double_array(&CLIENT(id).params_function);
     CLIENT(id).params_function = copy_array(message);
@@ -51,13 +50,11 @@ static void check_command_ai(t_server *server, char **message, int id)
         if (!strncmp(ia_client[i].command_id, message[0],
 strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed &&
 ia_client[i].time == -1.0) {
-            printf("Command found : %s\n", ia_client[i].command_id);
             ia_client[i].function_ai(server, message, id);
             return;
         }
         if (!strncmp(ia_client[i].command_id, message[0],
 strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed) {
-            printf("Command found : %s\n", ia_client[i].command_id);
             check_command_ai_next(server, message, i, id);
             return;
         }
@@ -122,15 +119,11 @@ void handle_client_data(t_server *server, int fd, int id)
         message[valread] = '\0';
     if (valread == -1) {
         if (errno == ECONNRESET) {
-            printf("Client %d disconnected HERE\n", id);
             return remove_client(server, id);
         } else {
             perror("recv");
             return;
         }
-    } else if (valread == 0) {
-        printf("Client %d disconnected HERE\n", id);
-        return remove_client(server, id);
     } else {
         receive_from_client(server, message, id);
     }

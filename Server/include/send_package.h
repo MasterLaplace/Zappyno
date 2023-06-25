@@ -11,6 +11,7 @@
     #define ORIENTATION TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation
     #define POS_X TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_x
     #define POS_Y TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].pos_y
+    #define ABS(x) ((x) < 0 ? -(x) : (x))
 
     #include "server.h"
     #include "clean_up.h"

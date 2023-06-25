@@ -10,7 +10,7 @@
 void init_inventory(int *resources)
 {
     resources[FOOD] = 10;
-    resources[LINEMATE] = 0;
+    resources[LINEMATE] = 1;
     resources[DERAUMERE] = 0;
     resources[SIBUR] = 0;
     resources[MENDIANE] = 0;
@@ -26,6 +26,7 @@ static void add_team_next(t_server *server, int i, int j, int id)
     CLIENT(id).index_team = i;
     CLIENT(id).index_in_team = j;
     TEAMS[i].players[j].id = id;
+    TEAMS[i].players[j].level = 1;
     init_inventory(TEAMS[i].players[j].resources);
     TILES(find_tile(server, TEAMS[i].players[j].pos_x,
                     TEAMS[i].players[j].pos_y, id)).player++;

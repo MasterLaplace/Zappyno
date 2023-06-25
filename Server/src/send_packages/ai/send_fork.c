@@ -24,9 +24,7 @@ static void reset_client_for_fork(t_server *server, int id)
 true;
     TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].id = id;
     TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_x = 0;
-//RANDINT(0, server->params->width - 1);
     TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_y = 0;
-//RANDINT(0, server->params->height - 1);
     int x = TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_x;
     int y = TEAMS[TEAM_INDEX].players[TEAMS[TEAM_INDEX].max_players - 1].pos_y;
     CLIENT(id).is_forked = true;
