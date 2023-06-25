@@ -31,7 +31,7 @@ namespace Interface {
             END = 3
         };
         public:
-            Popup(std::shared_ptr<ISprite> sprite, std::string text);
+            Popup(std::shared_ptr<ISprite> sprite, std::string text = "An egg has been cracked, time to eat!");
             ~Popup() = default;
 
             void setPos(const Math::Vector &pos) { _pos = pos; }

@@ -14,7 +14,7 @@ SRC          = $(shell find $(SRC_DIR) -name '**.cpp')
 OBJ          = $(SRC:.cpp=.o)
 INCLUDE      = -I includes/
 CXX_FLAGS    = -Wall -Wextra -std=c++17 -pipe
-FAST_FLAGS   = -Ofast -march=native -flto -funroll-loops -fomit-frame-pointer
+FAST_FLAGS   = -g3 #-Ofast -march=native -flto -funroll-loops -fomit-frame-pointer
 DEBUG_FLAGS  = -g3 -ggdb -fno-omit-frame-pointer
 LIB_THREADS  = -lpthread
 LIB_SFML     = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio

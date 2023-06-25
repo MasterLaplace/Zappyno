@@ -40,6 +40,8 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         _mapSize = {std::stod(args[1]), std::stod(args[2])};
+        // if (_chat)
+        //     _chat->addMessage("Map size set to " + std::to_string(_mapSize.x()) + "x" + std::to_string(_mapSize.y()));
     }
 
     void Protocol::bct(std::string &str)
@@ -68,7 +70,7 @@ namespace Manager {
             if (i == x + y * _mapSize.x())
                 return _tiles[i].setInventory(resources, _scale);
         }
-        throw std::runtime_error("[bct] Tile not found in map (x: " + std::to_string(x) + ", y: " + std::to_string(y) + ")");
+        // throw std::runtime_error("[bct] Tile not found in map (x: " + std::to_string(x) + ", y: " + std::to_string(y) + ")");
     }
 
     void Protocol::tna(std::string &str)
@@ -77,6 +79,8 @@ namespace Manager {
 
         if (std::find(_teams.begin(), _teams.end(), args[1]) == _teams.end())
             _teams.push_back(args[1]);
+        // if (_chat)
+        //     _chat->addMessage("Team " + args[1] + " added");
     }
 
     void Protocol::pnw(std::string &str)
@@ -141,22 +145,14 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
-        std::map<std::string, unsigned> inventory;
-        inventory["food"] = std::stoi(args[4]);
-        inventory["linemate"] = std::stoi(args[5]);
-        inventory["deraumere"] = std::stoi(args[6]);
-        inventory["sibur"] = std::stoi(args[7]);
-        inventory["mendiane"] = std::stoi(args[8]);
-        inventory["phiras"] = std::stoi(args[9]);
-        inventory["thystame"] = std::stoi(args[10]);
-
         auto trantorian = getTile(id);
+
         if (trantorian)
-            return trantorian->setInventory(inventory);
+            return trantorian->setFood("food", std::stoi(args[4]));
         throw std::runtime_error("[pin] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
-    void Protocol::pex(std::string &str)
+    void Protocol::pex(std::string &str) // TODO
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
@@ -221,6 +217,7 @@ namespace Manager {
         if (message[message.size() - 1] == ' ')
             message[message.size() - 1] = '\0';
         std::cout << message << std::endl;
+        // _chat->addMessage(message);
     }
 
     void Protocol::pic(std::string &str)
@@ -243,12 +240,12 @@ namespace Manager {
         bool success = std::stoi(args[3]);
 
         for (auto &trantorian : getTile(pos).getTrantorians()) {
-                if (success)
-                    trantorian->setState(GUI::Trantorian::State::IDLE); // Temporary
-                else
-                    trantorian->setState(GUI::Trantorian::State::DYING); // Temporary
-            }
+            if (success)
+                trantorian->setState(GUI::Trantorian::State::IDLE); // Temporary
+            else
+                trantorian->setState(GUI::Trantorian::State::DYING); // Temporary
         }
+    }
 
     void Protocol::pfk(std::string &str)
     {
@@ -266,14 +263,15 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
+        std::cout << "[pdr] pdr" << std::endl;
         auto trantorian = getTile(id);
         for (auto &tile : _tiles) {
             for (auto &trantorian : tile.getTrantorians()) {
                 if (trantorian->getId() == id) {
-            trantorian->removeFood(std::stoi(args[2]), 1);
+                    trantorian->removeFood(std::stoi(args[2]), 1);
                     tile.addFood(trantorian->intToFoodString(std::stoi(args[2])), _scale);
-            return trantorian->setState(GUI::Trantorian::State::DROPPING);
-        }
+                    return trantorian->setState(GUI::Trantorian::State::DROPPING);
+                }
             }
         }
         throw std::runtime_error("[pdr] Player not found in map (id: " + std::to_string(id) + ")");
@@ -288,10 +286,10 @@ namespace Manager {
         for (auto &tile : _tiles) {
             for (auto &trantorian : tile.getTrantorians()) {
                 if (trantorian->getId() == id) {
-            trantorian->addFood(food, 1);
+                    trantorian->addFood(food, 1);
                     tile.removeFood(trantorian->intToFoodString(food));
-            return trantorian->setState(GUI::Trantorian::State::TAKING);
-        }
+                    return trantorian->setState(GUI::Trantorian::State::TAKING);
+                }
             }
         }
         throw std::runtime_error("[pgt] Player not found in map (id: " + std::to_string(id) + ")");
@@ -331,7 +329,7 @@ namespace Manager {
         throw std::runtime_error("[enw] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
-    void Protocol::ebo(std::string &str)
+    void Protocol::ebo(std::string &str) // TODO
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
@@ -385,6 +383,7 @@ namespace Manager {
         if (message[message.size() - 1] == ' ')
             message[message.size() - 1] = '\0';
         std::cout << message << std::endl;
+        // _chat->addMessage(message);
     }
 
     void Protocol::suc(std::string &str)
@@ -566,6 +565,7 @@ namespace Manager {
     int Protocol::getCallbackTileId() {
         auto user = _tileId;
         // _tileId = -1;
+        std::cout << "[getCallbackTileId] tile id : " << user << std::endl;
         return user;
     }
     int Protocol::getCallbackUserId() {

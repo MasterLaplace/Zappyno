@@ -54,7 +54,7 @@ namespace Sf_sprite {
             state = 0;
         sf::IntRect rect = this->sprite.getTextureRect();
         unsigned end = this->offset_x * (this->max_offset_x - 1);
-        std::cout << "[animate_trantorian] state: " << state << std::endl;
+        // std::cout << "[animate_trantorian] state: " << state << std::endl;
 
         rect.left += this->offset_x;
         rect.top = ((isHover)?this->offset_y*4:this->offset_y) * state;

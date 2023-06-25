@@ -10,6 +10,8 @@
     #define	EXIT_ERROR	84	/* Failing exit status.  */
     #include "Protocol.hpp"
     #include "SfTransition.hpp"
+    #include "Perlin.hpp"
+    #include "Camera.hpp"
     #include "Scene.hpp"
 
 class Core {
@@ -24,7 +26,10 @@ class Core {
     protected:
     private:
         std::shared_ptr<sf::RenderWindow> _window;
+        Engine::Camera camera;
         Sf_transition::Transition star = Sf_transition::Transition(Sf_transition::Transition::TransitionType::STARFIELD, std::numeric_limits<int>::max());
+        Engine::Mesh map;
+        Engine::Mesh cube;
         std::shared_ptr<GUI::Scene> _scene;
         GUI::SceneManager _sceneManager;
         std::shared_ptr<Manager::Protocol> _protocol;

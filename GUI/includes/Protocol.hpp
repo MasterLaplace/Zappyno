@@ -16,9 +16,57 @@
     #include "Text.hpp"
     #include <functional>
 
+/*
+SYMBOL MEANING
+X width or horizontal position
+Y height or vertical position
+q0 resource 0 (food) quantity
+q1 resource 1 (linemate) quantity
+q2 resource 2 (deraumere) quantity
+q3 resource 3 (sibur) quantity
+q4 resource 4 (mendiane) quantity
+q5 resource 5 (phiras) quantity
+q6 resource 6 (thystame) quantity
+n player number
+O orientation: 1(N), 2(E), 3(S), 4(W)
+L player or incantation level
+e egg number
+T time unit
+N name of the team
+R incantation result
+M message
+i resource number
+*/
+
 /**
  * @brief Protocol class
  *
+ * SERVER CLIENT DETAILS
+ * msz X Y\n msz\n map size                         // OK
+ * bct X Y q0 q1 q2 q3 q4 q5 q6\n bct X Y\n content of a tile           // OK
+ * bct X Y q0 q1 q2 q3 q4 q5 q6\n * nbr_tiles mct\n content of the map (all the tiles)  // OK
+ * tna N\n * nbr_teams tna\n name of all the teams  // OK
+ * pnw #n X Y O L N\n connection of a new player    // NEED TO BE CHECKED
+ * ppo n X Y O\n ppo #n\n player’s position         // OK
+ * plv n L\n plv #n\n player’s level                // OK
+ * pin n X Y q0 q1 q2 q3 q4 q5 q6\n pin #n\n player’s inventory         // OK
+ * pex n\n expulsion                                // OK
+ * pbc n M\n broadcast                              // OK
+ * pic X Y L n n . . . \n start of an incantation (by the first player) // OK
+ * pie X Y R\n end of an incantation                // OK
+ * pfk n\n egg laying by the player                 // OK
+ * pdr n i\n resource dropping                      // OK
+ * pgt n i\n resource collecting                    // OK
+ * pdi n\n death of a player                        // OK
+ * enw e n X Y\n an egg was laid by a player        // OK
+ * ebo e\n player connection for an egg             // OK
+ * edi e\n death of an egg                          // OK
+ * sgt T\n sgt\n time unit request                  // OK
+ * sst T\n sst T\n time unit modification           // OK
+ * seg N\n end of game                              // OK
+ * smg M\n message from the server                  // OK
+ * suc\n unknown command                            // OK
+ * sbp\n command parameter                          // OK
 */
 namespace Manager {
     class Protocol {
@@ -50,6 +98,15 @@ namespace Manager {
                 commands["smg"] = [this](std::string &str) { smg(str); };
                 commands["suc"] = [this](std::string &str) { suc(str); };
                 commands["sbp"] = [this](std::string &str) { sbp(str); };
+                // msz X Y\n msz\n map size // je m'en fout
+                // bct X Y q0 q1 q2 q3 q4 q5 q6\n bct X Y\n content of a tile // je m'en fout
+                // bct X Y q0 q1 q2 q3 q4 q5 q6\n * nbr_tiles mct\n content of the map (all the tiles)
+                // tna N\n * nbr_teams tna\n name of all the teams // je m'en fout
+                // ppo n X Y O\n ppo #n\n player’s position
+                // plv n L\n plv #n\n player’s level
+                // pin n X Y q0 q1 q2 q3 q4 q5 q6\n pin #n\n player’s inventory
+                // sgt T\n sgt\n time unit request
+                // sst T\n sst T\n time unit modification
             }
             ~Protocol() = default;
 
@@ -261,6 +318,7 @@ namespace Manager {
                     tile.updateTile(mousePos, mousePressed, _userId, _scale);
                     if (tile.getState() == Interface::Checkbox::State::RELEASED)
                         _tileId = id;
+                    // std::cout << "[updateProtocol] Tile " << id << " clicked" << std::endl;
                     id++;
                 }
             }

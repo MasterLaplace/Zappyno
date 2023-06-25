@@ -40,7 +40,7 @@ namespace GUI {
     }
 
     void Trantorian::animationTrantorian() {
-        std::cout << "[updateState@Trantorian] state" << _buttonState << std::endl;
+        // std::cout << "[updateState@Trantorian] state" << _buttonState << std::endl;
         _sprite->animate_trantorian(_dir, _buttonState == Interface::Checkbox::State::RELEASED);
     }
 

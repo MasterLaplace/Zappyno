@@ -16,6 +16,7 @@ namespace GUI {
             if (chat != nullptr)
                 return chat;
         }
+        throw std::runtime_error("Chat not found");
         return nullptr;
     }
 
@@ -45,6 +46,16 @@ namespace GUI {
                 continue;
             panel.updatePanel(mousePos, mousePressed);
         }
+        auto &cam = _pipeline.getCamera();
+        if (cam != nullptr)
+            cam->Transform();
+        // for (auto &obj : _objects) {
+        //     auto &mesh = obj.getMesh();
+        //     mesh.Transform(obj.getPos(), obj.getRot(), obj.getScale());
+        //     for (auto &shape : mesh.getShapes()) {
+        //         _pipeline.geometry_rendering(mesh, shape, _isVR);
+        //     }
+        // }
     }
 
     void Scene::updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed) {
@@ -61,6 +72,16 @@ namespace GUI {
             if (key == sf::Keyboard::Escape)
                 _callback = Interface::CALLBACK::OPEN_PAUSE;
         }
+        auto &cam = _pipeline.getCamera();
+        if (cam != nullptr)
+            cam->Transform();
+        // for (auto &obj : _objects) {
+        //     auto &mesh = obj.getMesh();
+        //     mesh.Transform(obj.getPos(), obj.getRot(), obj.getScale());
+        //     for (auto &shape : mesh.getShapes()) {
+        //         _pipeline.geometry_rendering(mesh, shape, _isVR);
+        //     }
+        // }
     }
 
     std::vector<Interface::CALLBACK> Scene::getCallback() {
@@ -121,6 +142,8 @@ namespace GUI {
                 return "resize";
             case Interface::CALLBACK::MUTE_SOUND:
                 return "mute_sound";
+            case Interface::CALLBACK::VR:
+                return "vr";
             case Interface::CALLBACK::EXIT:
                 return "exit";
             case Interface::CALLBACK::OPEN_INVENTORY_USER:

@@ -49,6 +49,7 @@ namespace GUI {
             void setScale(Math::Vector scale) { _sprite->setScale(scale); }
             void setDir(Direction dir) { _dir = dir; }
             void setTeam(std::string team) { _team = team; }
+            void setFood(std::string food, unsigned quantity) { _inventory[food] = quantity; }
             void setInventory(std::map<std::string, unsigned> inventory) { _inventory = inventory; }
             void setState(State state) { _state = state; }
             void setSprite(std::shared_ptr<ISprite> sprite) { _sprite = sprite; }
@@ -57,6 +58,7 @@ namespace GUI {
             unsigned getId() const { return _id; }
             unsigned getSpeed() const { return _speed; }
             int getNextPosId() const { return _nextPosId; }
+            unsigned getFood(std::string food) const { return _inventory.at(food); }
             Math::Vector getPos() const { return _sprite->getPos(); }
             Math::Vector getNextPos() const { return _nextPos; }
             Math::Vector getScale() const { return _sprite->getScale(); }
