@@ -294,7 +294,7 @@ namespace Manager {
                 callback.push_back(_gotoResult);
                 if (_tileId >= 0 && _tileId < int(_tiles.size()))
                     callback.push_back(_tiles[_tileId].getCallback());
-                if (_userId >= 0 && _userId < _tiles.size())
+                if (_userId >= 0 && _userId < int(_tiles.size()))
                     callback.push_back(_tiles[_userId].getCallback());
                 return callback;
             }

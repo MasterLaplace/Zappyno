@@ -37,8 +37,6 @@ void Core::run()
     std::cout << "Core: Running..." << std::endl;
     sf::Clock clock;
     sf::Time interval = sf::seconds(1.0f);  // intervalle de 1 seconde
-    sf::Clock clockAnimation;
-    sf::Time intervalAnimation = sf::seconds(1.0f / 24);  // intervalle de 1 seconde
     sf::Event event;
     std::string message;
 
@@ -112,10 +110,7 @@ void Core::run()
         }
             if (_scene->getSceneType() == Scene_Manager::SceneType::GAME) {
                 _protocol->updateProtocol(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
-                if (clockAnimation.getElapsedTime() >= interval) {
                     _protocol->animationProtocol();
-                    clockAnimation.restart();
-                }
             }
         _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
         _scene->drawScene<sf::RenderWindow>(*_window, _protocol);

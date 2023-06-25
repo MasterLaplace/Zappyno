@@ -16,7 +16,7 @@ namespace Interface {
         text.font = _font;
         text.pos = sf::Vector2f(_pos.x(), _pos.y() + (_chat.size() * 20));
         _chat.push_back(text);
-        if (_chat.size() > limit)
+        while (_chat.size() > limit)
             _chat.pop_front();
     }
 } // namespace Interface

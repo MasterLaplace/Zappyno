@@ -20,6 +20,7 @@ namespace Interface {
             ~Text() = default;
 
             void setPos(const Math::Vector &pos) { _text.pos = sf::Vector2f(pos.x(), pos.y()); }
+            void setColor(const sf::Color &color) { _text.color = color; }
 
             std::string getText() const { return _text.str; }
             void setText(std::string text) { _text.str = text; }
