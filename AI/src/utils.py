@@ -3,6 +3,7 @@ Utils class used to get some useful informations
 """
 
 from typing import Dict, List
+from uuid import uuid4
 
 class Utils:
     """
@@ -55,4 +56,11 @@ class Utils:
         """
         Get the minimum food quantity to survive.
         """
-        return 35
+        return 75
+
+    @staticmethod
+    def generate_uuid() -> str:
+        """
+        Generate an uuid.
+        """
+        return str(uuid4())
