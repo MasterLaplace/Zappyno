@@ -486,6 +486,7 @@ namespace Manager {
         std::map<std::string, int> levels;
         std::vector<std::string> result;
         int division = 0;
+
         for (auto &tile : _tiles) {
             for (auto &trantorian : tile.getTrantorians()) {
                 if (scores.find(trantorian->getTeam()) == scores.end())

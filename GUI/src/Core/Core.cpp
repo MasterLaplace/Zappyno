@@ -18,7 +18,7 @@ Core::Core(const unsigned ac, const char *av[])
     }
     if (!this->parseArgs(ac, av))
         throw std::invalid_argument("Core: Invalid arguments, run with -h or -help for more informations");
-    auto client = std::make_shared<Manager::Client>("127.0.0.1", std::stoi(av[2]));
+    auto client = std::make_shared<Manager::Client>(std::string(av[4]), std::stoi(av[2]));
     _window = std::make_shared<sf::RenderWindow>();
     _protocol = std::make_shared<Manager::Protocol>(_window, client);
     _window->create(sf::VideoMode(WIN_X, WIN_Y), "GUI", sf::Style::Default);
