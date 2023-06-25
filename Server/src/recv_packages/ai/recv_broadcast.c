@@ -7,13 +7,17 @@
 
 #include "../../../include/send_package.h"
 
-void recv_broadcast(t_server *server, char **message)
+void recv_broadcast(t_server *server, char **message, int id)
 {
-    if (message)
+    printf("Broadcast\n");
+    printf("mess = %s\n", message[1]);
+    if (!message)
         return;
+    printf("Broadcast\n");
     if (message[1] == NULL) {
-        send_error(server, 0);
+        send_error(server, 0, id);
         return;
     }
-    send_broadcast(server, message[1]);
+    printf("Broadcast\n");
+    send_broadcast(server, message[1], id);
 }

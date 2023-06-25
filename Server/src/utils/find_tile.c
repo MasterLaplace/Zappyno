@@ -16,7 +16,7 @@
  * @param y
  * @return
  */
-unsigned find_tile(t_server *server, unsigned x, unsigned y)
+unsigned find_tile(t_server *server, unsigned x, unsigned y, int id)
 {
     unsigned size = server->params->height * server->params->width;
     for (unsigned i = 0; i < size; i++) {

@@ -17,6 +17,7 @@
  */
 void send_to_client(t_server *server, char *message, int id)
 {
+    printf("Send to client %d\n", id);
     t_client *client = &CLIENT(id);
     if (client->socket_fd == 0 || client->socket_fd == -1 || client->is_gui)
         return;
@@ -32,18 +33,14 @@ void send_to_client(t_server *server, char *message, int id)
     }
 }
 
-//send_to_all_clients will send a message to all clients
-void send_to_all_clients(t_server *server, char * message)
+void send_to_all_clients(t_server *server, char *message, int id)
 {
     t_client *clients = server->clients;
 
     for (int i = 0; i < SOMAXCONN; i++) {
-        if (i == server->id)
-            send_to_client(server, "ok\n", server->id);
-        if (clients[i].socket_fd != 0) {
-            printf("Send to client %d\n", i);
+        if (clients[i].socket_fd != 0 && clients[i].socket_fd != -1 &&
+!clients[i].is_gui && i != id)
             send_to_client(server, message, i);
-        }
     }
 }
 

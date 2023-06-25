@@ -38,12 +38,12 @@ typedef struct s_game {
 
 typedef struct gui_command {
     char *command_id;
-    void (*function)(t_server *, char **);
+    void (*function)(t_server *, char **, int);
 } gui_command;
 
 typedef struct ai_command {
     char *command_id;
-    void (*function_ai)(t_server *, char **);
+    void (*function_ai)(t_server *, char **, int);
     int time;
 } ai_command;
 

@@ -25,7 +25,7 @@ count_all_words_size(array) + 2;
     return res;
 }
 
-void send_name_of_all_the_teams(t_server *server, UNUSED char **array)
+void send_name_of_all_the_teams(t_server *server, UNUSED char **array, int id)
 {
     AUTO_FREE char *message = calloc(count_message_size(
 server->params->team_names, server), sizeof(char));
@@ -37,5 +37,5 @@ server->params->team_names, server), sizeof(char));
 + strlen(server->params->team_names[i]));
         strncat(message, "\n",strlen(message) + 1);
     }
-    send_to_gui(server, message, server->id);
+    send_to_gui(server, message, id);
 }

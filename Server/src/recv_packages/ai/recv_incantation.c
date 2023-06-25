@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_incantation(t_server *server, UNUSED char **message)
+void recv_incantation(t_server *server, UNUSED char **message, int id)
 {
     printf("recv incantation\n");
-    send_incantation(server);
+    send_incantation(server, id);
 }

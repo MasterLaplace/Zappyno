@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_look(t_server *server, UNUSED char **message)
+void recv_look(t_server *server, UNUSED char **message, int id)
 {
     printf("Recv look\n");
-    send_look(server);
+    send_look(server, id);
 }

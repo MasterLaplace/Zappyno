@@ -7,7 +7,7 @@
 
 #include "../../../include/send_package.h"
 
-void send_connect_nbr(t_server *server)
+void send_connect_nbr(t_server *server, int id)
 {
     printf("Connect_nbr : %d\n",
             (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
@@ -17,5 +17,5 @@ void send_connect_nbr(t_server *server)
         return;
     sprintf(response, "%d\n",
             (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
-    send_to_client(server, response, server->id);
+    send_to_client(server, response, id);
 }

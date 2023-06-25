@@ -28,85 +28,84 @@ ai_command ia_client[] = {
     {NULL, NULL, 0}
 };
 
-static void check_command_ai_next(t_server *server, char **message, int i)
+static void check_command_ai_next(t_server *server, char **message, int i,
+int id)
 {
-    CLIENT(server->id).function = NULL;
-    CLIENT(server->id).function = ia_client[i].function_ai;
-    CLIENT(server->id).timer.start = time(NULL);
-    if (CLIENT(server->id).timer.start == -1)
+    CLIENT(id).function = NULL;
+    CLIENT(id).function = ia_client[i].function_ai;
+    CLIENT(id).timer.start = time(NULL);
+    if (CLIENT(id).timer.start == -1)
         return;
-    CLIENT(server->id).timer.duration = ia_client[i].time;
-    printf("Timer set to %f\n", CLIENT(server->id).timer.duration);
-    if (CLIENT(server->id).params_function != NULL)
-        free_double_array(&CLIENT(server->id).params_function);
-    CLIENT(server->id).params_function = copy_array(message);
-    if (!CLIENT(server->id).params_function)
+    CLIENT(id).timer.duration = ia_client[i].time;
+    printf("Timer set to %f\n", CLIENT(id).timer.duration);
+    if (CLIENT(id).params_function != NULL)
+        free_double_array(&CLIENT(id).params_function);
+    CLIENT(id).params_function = copy_array(message);
+    if (!CLIENT(id).params_function)
         return;
 }
 
-static void check_command_ai(t_server *server, char **message)
+static void check_command_ai(t_server *server, char **message, int id)
 {
     for (int i = 0; ia_client[i].command_id; i++) {
         if (!strncmp(ia_client[i].command_id, message[0],
-strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed &&
+strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed &&
 ia_client[i].time == -1.0) {
             printf("Command found : %s\n", ia_client[i].command_id);
-            ia_client[i].function_ai(server, message);
+            ia_client[i].function_ai(server, message, id);
             return;
         }
         if (!strncmp(ia_client[i].command_id, message[0],
-strlen(ia_client[i].command_id)) && !CLIENT(server->id).is_freezed) {
+strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed) {
             printf("Command found : %s\n", ia_client[i].command_id);
-            check_command_ai_next(server, message, i);
+            check_command_ai_next(server, message, i, id);
             return;
         }
     }
 }
 
 static void receive_from_client_next(t_server *server, char *message,
-int current_buf_len, int message_len)
+int current_buf_len, int id)
 {
-    printf("ok\n");
-    server->clients[server->id].buffer = realloc(
-server->clients[server->id].buffer,current_buf_len + message_len + 1);
-    if (!server->clients[server->id].buffer)
+    int message_len = strlen(message);
+    server->clients[id].buffer = realloc(
+server->clients[id].buffer,current_buf_len + message_len + 1);
+    if (!server->clients[id].buffer)
         return;
     ON_CLEANUP(free_double_array) char **mes = stwa(strcat(
-server->clients[server->id].buffer, message), " \n\t");
+server->clients[id].buffer, message), " \n\t");
     if (!mes)
         return;
-    printf("ok3\n");
-    if (!CLIENT(server->id).is_connected) {
-        join_client(server, mes);
+    if (!CLIENT(id).is_connected) {
+        join_client(server, mes, id);
     } else {
-        printf("Message received buf: %s\n", server->clients[server->id].buffer);
-        if (!CLIENT(server->id).is_gui)
-            check_command_ai(server, mes);
+        if (!CLIENT(id).is_gui)
+            check_command_ai(server, mes, id);
         else
-            check_command_gui(server, mes);
+            check_command_gui(server, mes, id);
     }
-    if (server->clients[server->id].buffer != NULL) {
-        free(server->clients[server->id].buffer);
-        server->clients[server->id].buffer = calloc(1, 1);
-        if (!server->clients[server->id].buffer)
+    if (server->clients[id].buffer != NULL) {
+        free(server->clients[id].buffer);
+        server->clients[id].buffer = calloc(1, 1);
+        if (!server->clients[id].buffer)
             return;
     }
 }
 
-void receive_from_client(t_server *server, char *message)
+void receive_from_client(t_server *server, char *message, int id)
 {
     size_t current_buf_len = 0;
     size_t mes_len = strlen(message);
-    if (server->clients[server->id].buffer != NULL)
-        current_buf_len = strlen(server->clients[server->id].buffer);
+    if (server->clients[id].buffer != NULL)
+        current_buf_len = strlen(server->clients[id].buffer);
     if (!strstr(message, "\n")) {
-        server->clients[server->id].buffer = realloc(
-server->clients[server->id].buffer,current_buf_len + mes_len + 1);
-        if (!server->clients[server->id].buffer)
+        server->clients[id].buffer = realloc(
+server->clients[id].buffer,current_buf_len + mes_len + 1);
+        if (!server->clients[id].buffer)
             return;
-        strcat(server->clients[server->id].buffer, message);
+        strcat(server->clients[id].buffer, message);
     } else {
-        receive_from_client_next(server, message, current_buf_len, mes_len);
+        receive_from_client_next(server, message, current_buf_len, id);
     }
 }
 
@@ -115,26 +114,25 @@ server->clients[server->id].buffer,current_buf_len + mes_len + 1);
  * @param server
  * @param fd
  */
-void handle_client_data(t_server *server, int fd)
+void handle_client_data(t_server *server, int fd, int id)
 {
     char message[2];
     int valread;
-    printf("fd : %d\n", fd);
     if ((valread = read(fd, message, 2)))
         message[valread] = '\0';
-    printf("Message received : %s\n", message);
     if (valread == -1) {
         if (errno == ECONNRESET) {
-            return remove_client(server, server->id);
+            printf("Client %d disconnected HERE\n", id);
+            return remove_client(server, id);
         } else {
             perror("recv");
             return;
         }
     } else if (valread == 0) {
-        return remove_client(server, server->id);
+        printf("Client %d disconnected HERE\n", id);
+        return remove_client(server, id);
     } else {
-        printf("Message received : %s\n", message);
-        receive_from_client(server, message);
+        receive_from_client(server, message, id);
     }
     return;
 }

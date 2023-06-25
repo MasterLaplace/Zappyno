@@ -21,16 +21,16 @@ my_nblen(orientation), sizeof(char));
     return message;
 }
 
-void send_player_s_position(t_server *server, char** array)
+void send_player_s_position(t_server *server, char** array, int id)
 {
     if (array[1] == NULL)
-        return send_command_paramater(server);
-    int id = atoi(array[1]);
+        return send_command_paramater(server, id);
+    int id_par = atoi(array[1]);
 
-    if (!is_connected_player(server, id))
-        return send_command_paramater(server);
-    AUTO_FREE char *message = make_pos_message(server, id);
+    if (!is_connected_player(server, id_par))
+        return send_command_paramater(server, id);
+    AUTO_FREE char *message = make_pos_message(server, id_par);
     if (message == NULL)
-        return send_command_paramater(server);
-    send_to_gui(server, message, server->id);
+        return send_command_paramater(server, id);
+    send_to_gui(server, message, id);
 }

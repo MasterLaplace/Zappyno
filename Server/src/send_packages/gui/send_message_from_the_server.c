@@ -7,11 +7,11 @@
 
 #include "../../../include/send_package.h"
 
-void send_message_from_the_server(t_server *server, char *message_)
+void send_message_from_the_server(t_server *server, char *message_, int id)
 {
     AUTO_FREE char *message = calloc(6 + strlen(message_), sizeof(char));
     if (!message)
         return;
     sprintf(message, "smg %s\n", message_);
-    send_to_gui(server, message, server->id);
+    send_to_gui(server, message, id);
 }

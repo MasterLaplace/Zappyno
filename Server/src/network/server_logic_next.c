@@ -21,13 +21,13 @@ gui_command gui_client[] = {
 {NULL, NULL}
 };
 
-void check_command_gui(t_server *server, char **message)
+void check_command_gui(t_server *server, char **message, int id)
 {
     for (int i = 0; gui_client[i].command_id > 0; i++) {
         if (!strncmp(gui_client[i].command_id, message[0],
 strlen(gui_client[i].command_id))) {
             printf("Command found : %s\n", gui_client[i].command_id);
-            gui_client[i].function(server, message);
+            gui_client[i].function(server, message, id);
             return;
         }
     }
@@ -50,24 +50,12 @@ char **copy_array(char **array)
     return new_array;
 }
 
-//TODO maybe I can remove this server->id = i;
-void set_id_player(t_server *server, int fd)
-{
-    for (register int i = 0; i < SOMAXCONN; i++) {
-        if (CLIENT(i).socket_fd == fd) {
-            CLIENT(i).id = i;
-            server->id = i;
-            break;
-        }
-    }
-}
-
-void join_client(t_server *server, char **message)
+void join_client(t_server *server, char **message, int id)
 {
     if (!strcmp(message[0], "GRAPHIC")) {
-        CLIENT(server->id).is_gui = true;
-        recv_check_to_add_gui(server, message);
+        CLIENT(id).is_gui = true;
+        recv_check_to_add_gui(server, message, id);
         return;
     }
-    recv_check_to_add_to_team(server, message);
+    recv_check_to_add_to_team(server, message, id);
 }

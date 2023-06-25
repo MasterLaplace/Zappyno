@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_eject(t_server *server, UNUSED char **message)
+void recv_eject(t_server *server, UNUSED char **message, int id)
 {
     printf("Recv eject\n");
-    send_eject(server);
+    send_eject(server, id);
 }

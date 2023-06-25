@@ -20,41 +20,42 @@ void add_client(t_server *server, int new_socket)
     for (int i = 0; i < SOMAXCONN; i++) {
         if (CLIENT(i).socket_fd == 0 && !CLIENT(i).dead) {
             CLIENT(i).socket_fd = new_socket;
-            server->id = i;
             server->clients[i].params_function = NULL;
+            send_to_client(server, "WELCOME\n", i);
             break;
         }
     }
 }
 
-static bool check_death(t_server *server)
+static bool check_death(t_server *server, int id)
 {
     if (TEAM_INDEX == -1 || INDEX_IN_TEAM == -1)
         return false;
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].id == -1)
         return false;
+    printf("Player %d has %d food\n", id, TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0]);
     if (TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].resources[0] <= 0 &&
     has_timer_expired_gen_food(&server->remove_food_timer,
-server->remove_food_timer.duration)) {
-        AUTO_FREE char *str = calloc(my_nblen(server->id) + 10, sizeof(char));
-        sprintf(str, "pdi %d\n", server->id);
+server->remove_food_timer.duration) && FD_ISSET(CLIENT(id).socket_fd, &server->wfd) && FD_ISSET(CLIENT(id).socket_fd, &server->readfds)) {
+        AUTO_FREE char *str = calloc(my_nblen(id) + 10, sizeof(char));
+        sprintf(str, "pdi %d\n", id);
         send_to_all_gui(server, str);
-        send_to_client(server, "dead\n", server->id);
-        remove_client(server, server->id);
+        send_to_client(server, "dead\n", id);
+        remove_client(server, id);
         return true;
     }
     return false;
 }
 
-static void read_data_next(t_server *server, unsigned client_id)
+static void read_data_next(t_server *server, unsigned id)
 {
-    if (check_death(server)) {
-        printf("Player %d is dead\n", server->id);
-        server->clients[client_id].is_freezed = false;
-        server->clients[client_id].function = NULL;
-        if (server->clients[client_id].params_function != NULL)
-            free_double_array(&server->clients[client_id].params_function);
-        server->clients[client_id].params_function = NULL;
+    if (check_death(server, id)) {
+        printf("Player %d is dead\n", id);
+        server->clients[id].is_freezed = false;
+        server->clients[id].function = NULL;
+        if (server->clients[id].params_function != NULL)
+            free_double_array(&server->clients[id].params_function);
+        server->clients[id].params_function = NULL;
         return;
     }
     if (has_timer_expired_gen_food(&server->remove_food_timer,
@@ -67,29 +68,43 @@ server->remove_food_timer.duration)) {
     }
 }
 
-static void read_data_from_server(t_server *server, unsigned client_id)
+static void read_data_from_server(t_server *server, unsigned id)
 {
-    int sd = server->clients[client_id].socket_fd;
-    read_data_next(server, client_id);
-    /*if (has_timer_expired_gen_food(&server->gen_food_timer,
-server->gen_food_timer.duration))
-        generate_food(server);*/
-    if (has_timer_expired(&server->clients[client_id])) {
-        printf("function : %p\n", server->clients[client_id].function);
-        server->clients[client_id].function(server,
-server->clients[client_id].params_function);
-        server->clients[client_id].is_freezed = false;
-        server->clients[client_id].function = NULL;
-        if (server->clients[client_id].params_function != NULL)
-            free_double_array(&server->clients[client_id].params_function);
-        server->clients[client_id].params_function = NULL;
-    }
+    int sd = server->clients[id].socket_fd;
     if (sd == 0)
         return;
     if (FD_ISSET(sd, &server->readfds)) {
-        handle_client_data(server, sd);
+        handle_client_data(server, sd, id);
+    }
+    read_data_next(server, id);
+    /*if (has_timer_expired_gen_food(&server->gen_food_timer,
+server->gen_food_timer.duration))
+        generate_food(server);*/
+    if (has_timer_expired(&server->clients[id])) {
+        printf("function : %p\n", server->clients[id].function);
+        server->clients[id].function(server,
+server->clients[id].params_function, id);
+        server->clients[id].is_freezed = false;
+        server->clients[id].function = NULL;
+        if (server->clients[id].params_function != NULL)
+            free_double_array(&server->clients[id].params_function);
+        server->clients[id].params_function = NULL;
     }
     return;
+}
+
+void loop(t_server *server)
+{
+    int nfds = set_fds(server);
+    if (select(nfds + 1, &server->readfds, &server->wfd, NULL, NULL) < 0)
+        perror("select");
+    if (FD_ISSET(server->sockfd, &server->readfds))
+        handle_new_connection(server);
+    for (int i = 0; i < SOMAXCONN; i++) {
+        if (server->clients[i].socket_fd > 0 && FD_ISSET(server->clients[i].socket_fd, &server->readfds)) {
+            read_data_from_server(server, i);
+        }
+    }
 }
 
 int main(int ac, char **av)
@@ -106,10 +121,6 @@ int main(int ac, char **av)
     if (!setup_server(server, &params))
         return EXIT_FAILURE;
     do {
-        if (select(set_fds(server) + 1, &server->readfds, NULL, NULL, NULL) < 0)
-            perror("select");
-        if (FD_ISSET(server->sockfd, &server->readfds))
-            handle_new_connection(server);
-        read_data_from_server(server, server->id);
+        loop(server);
     } while (true);
 }

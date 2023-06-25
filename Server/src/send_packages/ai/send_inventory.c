@@ -26,7 +26,7 @@ static char *generate_next(t_server *server, char *str, int resources[])
     str = my_strcat(str, "[");
 }
 
-char *generate_inventory_string(t_server *server)
+char *generate_inventory_string(t_server *server, int id)
 {
     char *str = strdup("]\n");
     if (!str)
@@ -43,19 +43,11 @@ char *generate_inventory_string(t_server *server)
     return generate_next(server, str, resources);
 }
 
-void send_inventory(t_server *server)
+void send_inventory(t_server *server, int id)
 {
     printf("send_inventory\n");
-    AUTO_FREE char *str = generate_inventory_string(server);
+    AUTO_FREE char *str = generate_inventory_string(server, id);
     if (!str)
         return;
-    send_to_client(server, str, server->id);
-}
-
-void send_inventory_to_all(t_server *server)
-{
-    AUTO_FREE char *str = generate_inventory_string(server);
-    if (!str)
-        return;
-    send_to_all_clients(server, str);
+    send_to_client(server, str, id);
 }

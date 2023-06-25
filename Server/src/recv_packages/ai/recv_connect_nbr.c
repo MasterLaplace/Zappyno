@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_connect_nbr(t_server *server, UNUSED char **message)
+void recv_connect_nbr(t_server *server, UNUSED char **message, int id)
 {
     printf("Recv connect_nbr\n");
-    send_connect_nbr(server);
+    send_connect_nbr(server, id);
 }

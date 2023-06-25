@@ -18,12 +18,12 @@ static int required_ressources[8][8] = {
         {7, 6, 2, 2, 2, 2, 2, 1}   // for level 7
 };
 
-int verify_elevation_conditions_next(t_server *server, int j)
+int verify_elevation_conditions_next(t_server *server, int j, int id)
 {
     int nb_players = 0;
-    int x = CLIENT(server->id).pos_x;
-    int y = CLIENT(server->id).pos_y;
-    int pos = find_tile(server, x, y);
+    int x = CLIENT(id).pos_x;
+    int y = CLIENT(id).pos_y;
+    int pos = find_tile(server, x, y, id);
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
 
     for (int i = 0; i < TEAMS[j].max_players; i++) {
@@ -36,11 +36,12 @@ int verify_elevation_conditions_next(t_server *server, int j)
     return nb_players;
 }
 
-bool verify_nmb_ressources_next(t_server *server, int j, int i, int level)
+bool verify_nmb_ressources_next(t_server *server, tmp_t tmp, int level, int id)
 {
-    int x = CLIENT(server->id).pos_x;
-    int y = CLIENT(server->id).pos_y;
-    int pos = find_tile(server, x, y);
+    int i = tmp.i, j = tmp.j;
+    int x = CLIENT(id).pos_x;
+    int y = CLIENT(id).pos_y;
+    int pos = find_tile(server, x, y, id);
     if (TEAMS[j].players[i].pos_x != x ||
         TEAMS[j].players[i].pos_y != y ||
         (level + 1) != TEAMS[j].players[i].level) {
@@ -54,52 +55,54 @@ bool verify_nmb_ressources_next(t_server *server, int j, int i, int level)
     return true;
 }
 
-bool verify_nmb_ressources(t_server *server, int j, int level)
+bool verify_nmb_ressources(t_server *server, int j, int level, int id)
 {
+    tmp_t tmp = {0, 0};
     for (int i = 0; i < TEAMS[j].max_players; i++) {
-        if (!verify_nmb_ressources_next(server, j, i, level))
+        tmp = {i, j};
+        if (!verify_nmb_ressources_next(server, tmp, level, id))
             return false;
     }
     return true;
 }
 
-bool verify_elevation_conditions(t_server *server)
+bool verify_elevation_conditions(t_server *server, int id)
 {
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     int nb_players = 0;
-    int x = CLIENT(server->id).pos_x;
-    int y = CLIENT(server->id).pos_y;
-    int pos = find_tile(server, x, y);
+    int x = CLIENT(id).pos_x;
+    int y = CLIENT(id).pos_y;
+    int pos = find_tile(server, x, y, id);
     for (int j = 0; j < server->params->num_teams; j++) {
-        nb_players += verify_elevation_conditions_next(server, j);
+        nb_players += verify_elevation_conditions_next(server, j, id);
     }
     printf("nb_player: %d | required: %d\n", nb_players,
 required_ressources[level][1]);
     if (nb_players < required_ressources[level][1])
         return !printf("nb_players: %d\n", nb_players);
     for (int j = 0; j < server->params->num_teams; j++) {
-        if (!verify_nmb_ressources(server, j, level))
+        if (!verify_nmb_ressources(server, j, level, id))
             return false;
     }
     return true;
 }
 
-void send_incantation(t_server *server)
+void send_incantation(t_server *server, int id)
 {
     printf("incantation\n");
-    t_client* player = &CLIENT(server->id);
+    t_client* player = &CLIENT(id);
     int x = player->pos_x;
     int y = player->pos_y;
     tmp_t tmp = {x, y};
-    if (!verify_elevation_conditions(server)) {
-        send_to_client(server, "ko\n", server->id);
+    if (!verify_elevation_conditions(server, id)) {
+        send_to_client(server, "ko\n", id);
         return;
     }
-    if (!freeze_participating_players(server, player)) {
-        send_to_client(server, "ko\n", server->id);
+    if (!freeze_participating_players(server, player, id)) {
+        send_to_client(server, "ko\n", id);
         return;
     }
-    perform_elevation(server);
-    remove_required_resources(server);
-    send_end_of_an_incantation(server, tmp, player->level);
+    perform_elevation(server, id);
+    remove_required_resources(server, id);
+    send_end_of_an_incantation(server, tmp, player->level, id);
 }

@@ -7,7 +7,7 @@
 
 #include "../../../include/send_package.h"
 
-void send_con_of_new_player(t_server *server, t_client *player)
+void send_con_of_new_player(t_server *server, t_client *player, int id)
 {
     AUTO_FREE char *message = calloc(11 + my_nblen(player->id) +
     my_nblen(player->pos_x) + my_nblen(player->pos_y) +

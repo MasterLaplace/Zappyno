@@ -8,7 +8,7 @@
 #include "../../../include/send_package.h"
 
 bool freeze_participating_players_next(t_server *server, t_client* player,
-int j)
+int j, int id)
 {
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     int x = player->pos_x;
@@ -27,14 +27,14 @@ int j)
         }
     }
     players[index] = -1;
-    tmp_t tmp = {CLIENT(server->id).pos_x, CLIENT(server->id).pos_y};
+    tmp_t tmp = {CLIENT(id).pos_x, CLIENT(id).pos_y};
     send_start_of_an_incantation(server, tmp, (level + 1), players);
 }
 
-bool freeze_participating_players(t_server *server, t_client* player)
+bool freeze_participating_players(t_server *server, t_client* player, int id)
 {
     for (int j = 0; j < server->params->num_teams; j++) {
-        if (!freeze_participating_players_next(server, player, j))
+        if (!freeze_participating_players_next(server, player, j, id))
             return false;
     }
     return true;
@@ -55,7 +55,7 @@ t_client* player)
     }
 }
 
-void send_perform_elevation(t_server *server, int j, int level,
+static void send_perform_elevation(t_server *server, int j, int level,
 t_client* player)
 {
     int x = player->pos_x;
@@ -69,10 +69,10 @@ t_client* player)
     }
 }
 
-void perform_elevation(t_server *server)
+void perform_elevation(t_server *server, int id)
 {
     int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
-    t_client* player = &CLIENT(server->id);
+    t_client* player = &CLIENT(id);
     for (int j = 0; j < server->params->num_teams; j++) {
         perform_elevation_next(server, j, level, player);
     }

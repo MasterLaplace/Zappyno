@@ -37,9 +37,9 @@ true;
     send_an_egg_was_laid_by_a_player(server, id, x, y);
 }
 
-void send_fork(t_server *server)
+void send_fork(t_server *server, int id)
 {
-    int id = get_last_id(server) + 1;
+    int last_id = get_last_id(server) + 1;
     TEAMS[TEAM_INDEX].max_players += 1;
     TEAMS = realloc(TEAMS, sizeof(t_teams) * TEAMS[TEAM_INDEX].max_players);
     if (!TEAMS)
@@ -47,14 +47,14 @@ void send_fork(t_server *server)
     TEAMS[TEAM_INDEX].players = realloc(TEAMS[TEAM_INDEX].players,
 sizeof(t_client) * TEAMS[TEAM_INDEX].max_players);
     if (!TEAMS[TEAM_INDEX].players) {
-        send_error(server, 0);
+        send_error(server, 0, id);
         return;
     }
-    reset_client_for_fork(server, id);
-    send_to_client(server, "ok\n", server->id);
-    AUTO_FREE char *message = calloc(my_nblen(server->id) + 6, sizeof(char));
+    reset_client_for_fork(server, last_id);
+    send_to_client(server, "ok\n", id);
+    AUTO_FREE char *message = calloc(my_nblen(id) + 6, sizeof(char));
     if (!message)
         return;
-    sprintf(message, "pfk %d\n", server->id);
+    sprintf(message, "pfk %d\n", id);
     send_to_all_gui(server, message);
 }

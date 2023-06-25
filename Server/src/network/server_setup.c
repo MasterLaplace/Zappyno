@@ -19,8 +19,19 @@ int create_socket(void)
         perror("Cannot open socket");
         return -1;
     }
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, "\001", 4) < 0)
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    if (flags == -1) {
+        perror("fcntl F_GETFL failed");
+        return -1;
+    }
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        perror("fcntl F_SETFL failed");
+        return -1;
+    }
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, "\001", 4) < 0) {
         perror("setsockopt(SO_REUSEADDR) failed");
+        return -1;
+    }
     return sockfd;
 }
 
@@ -86,27 +97,24 @@ bool setup_server(t_server *server, t_params *params)
  */
 void remove_client(t_server *server, int id)
 {
-    int pos = find_tile(server, server->clients[id].pos_x, server->clients[id].pos_y);
+    int pos = find_tile(server, server->clients[id].pos_x,
+server->clients[id].pos_y, id);
     TILES(pos).player--;
     printf("Client %d disconnected\n", id);
     close(CLIENT(id).socket_fd);
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
-    memset(&CLIENT(id), 0, sizeof(t_client));
+    CLIENT(id).socket_fd = 0;
     server->max_fd = server->sockfd;
     for (int i = 0; i < SOMAXCONN; i++) {
         if (CLIENT(i).socket_fd > server->max_fd)
             server->max_fd = CLIENT(i).socket_fd;
     }
-    for (int i = 0; i < server->params->num_teams; i++) {
-        if (!server->game.teams[i].players)
-            continue;
-        if (server->game.teams[i].players[INDEX_IN_TEAM].params_function)
+    if (server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function)
             free_double_array(
-&server->game.teams[i].players[INDEX_IN_TEAM].params_function);
-    }
-    memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0,
-sizeof(t_client));
-    //if (server->game.teams[TEAM_INDEX].nb_players > 0)
+&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function);
+    memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0, sizeof(t_client));
+    if (server->game.teams[TEAM_INDEX].nb_players > 0)
         server->game.teams[TEAM_INDEX].nb_players--;
+    memset(&CLIENT(id), 0, sizeof(t_client));
     CLIENT(id).dead = true;
 }

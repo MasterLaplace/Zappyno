@@ -24,7 +24,7 @@ static unsigned size_content_map(t_server *server)
     }
 }
 
-void send_content_of_map(t_server *server, UNUSED char **array)
+void send_content_of_map(t_server *server, UNUSED char **array, int id)
 {
     int size = size_content_map(server);
     int map_size = server->params->width * server->params->height - 1;
@@ -44,5 +44,5 @@ server->game.tiles[i].resources[6]
         );
         message = my_strcat(message, buffer);
     }
-    send_to_gui(server, message, server->id);
+    send_to_gui(server, message, id);
 }

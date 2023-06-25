@@ -16,7 +16,7 @@ SRC_TEST    += $(shell find $(SRC_DIR) -name '*.c')
 
 OBJ          = $(SRC:.c=.o)
 INCLUDE      = -iquote ./include/
-C_FLAGS    = -Wall -Wextra -std=c99 -Wpedantic
+C_FLAGS    = -Wall -Wextra -std=c99 -Wpedantic -lm
 FAST_FLAGS   = -g3 -ggdb
 TEST_FLAGS   = -lcriterion --coverage
 

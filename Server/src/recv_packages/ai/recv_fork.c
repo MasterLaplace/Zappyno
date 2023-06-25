@@ -7,8 +7,8 @@
 
 #include "../../../include/send_package.h"
 
-void recv_fork(t_server *server, UNUSED char **message)
+void recv_fork(t_server *server, UNUSED char **message, int id)
 {
     printf("Recv fork\n");
-    send_fork(server);
+    send_fork(server, id);
 }
