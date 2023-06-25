@@ -32,6 +32,7 @@ namespace Interface {
         GOTO_CREATE,
         GOTO_GAME,
         GOTO_SETTING,
+        GOTO_SETTING_PAUSE,
         GOTO_CREDIT,
         GOTO_RESULT,
         GOTO_MENU,

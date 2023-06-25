@@ -37,6 +37,7 @@ namespace GUI {
             Scene &operator=(const Scene&) = default;
 
             void setPause(bool isPause) { _isPause = isPause; }
+            void setPauseSettings(bool isPauseSettings) { _isPauseSettings = isPauseSettings; }
 
             Scene_Manager::SceneType &getSceneType() { return _scenetype; }
 
@@ -73,6 +74,7 @@ namespace GUI {
             std::shared_ptr<ISprite> _background = nullptr;
             Interface::CALLBACK _callback = Interface::CALLBACK::NONE;
             bool _isPause = false;
+            bool _isPauseSettings = false;
     };
 
     static std::vector<std::string /*music path*/> MUSIC = {
@@ -309,9 +311,21 @@ namespace GUI {
                             if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
                                 break;
                             for (auto &it : scene->getPanels()) {
-                                if (it.getType() == "pause") {
+                                if (it.getType() == "pause" || it.getType() == "pause_setting") {
                                     scene->setPause(true);
+                                    // scene->setPauseSettings(false);
                                     return it.setCallback(Interface::CALLBACK::OPEN_PAUSE);
+                                }
+                            }
+                            break;
+                        case Interface::CALLBACK::GOTO_SETTING_PAUSE:
+                            if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
+                                break;
+                            for (auto &it : scene->getPanels()) {
+                                std::cout << it.getType() << std::endl;
+                                if (it.getType() == "pause_setting") {
+                                    scene->setPauseSettings(true);
+                                    return it.setCallback(Interface::CALLBACK::GOTO_SETTING_PAUSE);
                                 }
                             }
                             break;

@@ -46,9 +46,10 @@
         <Button name="user_button" img="user_img_button" pos="410, 950" scale="1, 1" callback="open_inventory_user"/>
         <Button name="case_button" img="case_img_button" pos="1010, 950" scale="1, 1" callback="open_inventory_case"/>
         <Button name="home_button" img="home_img_button" pos="710, 500" scale="1, 1" callback="goto_menu"/>
-        <Button name="settings_pause_button" img="settings_img_button" pos="710, 606" scale="1, 1" callback="goto_setting"/>
+        <Button name="settings_pause_button" img="settings_img_button" pos="710, 606" scale="1, 1" callback="goto_setting_pause"/>
         <Button name="exit_pause_button" img="exit_img_button" pos="710, 712" scale="1, 1" callback="exit"/>
         <Button name="resume_button" img="resume_img_button" pos="710, 394" scale="1, 1" callback="goto_game"/>
+        <Button name="back_pause_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="open_pause"/>
     </Buttons>
     <Checkboxs>
         <!-- CALLBACK: -->
@@ -93,7 +94,7 @@
         <!-- type: "inventory", "other" -->
         <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" type="other"/>
         <Panel name="settings_panel" img="settings_menu" pos="680, 370" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type="other"/>
-        <Panel name="settings_pause_panel" img="settings_pause_menu" pos="0, 0" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type="other"/>
+        <Panel name="settings_pause_panel" img="settings_pause_menu" pos="0, 0" scale="1, 1" buttons="back_pause_button" checkboxs="mute_button, full_screen_button" type="pause_setting"/>
         <Panel name="game_panel" img="" pos="0, 0" scale="1, 1" buttons="pause_button" type="other"/>
         <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" type="other"/>
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
@@ -105,7 +106,7 @@
     </Panels>
     <Scenes>
         <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
-        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, chat_box, ranking_box, pause_panel" back="game"/>
+        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, chat_box, ranking_box, pause_panel, settings_pause_panel" back="game"/>
         <Scene name="setting" panels="settings_panel" back="space_background"/>
         <Scene name="credit" panels="credits_panel" back="space_background"/>
     </Scenes>

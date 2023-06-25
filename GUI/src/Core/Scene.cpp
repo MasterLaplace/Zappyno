@@ -41,6 +41,10 @@ namespace GUI {
         for (auto &panel : _panels) {
             if (panel.getType() == "pause" && !_isPause && _scenetype == Scene_Manager::SceneType::GAME)
                 continue;
+            if (panel.getType() == "pause_setting" && !_isPauseSettings && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
+            if (_isPause && _isPauseSettings)
+                _isPause = false;
             panel.updatePanel(mousePos, mousePressed);
     }
     }
@@ -49,6 +53,10 @@ namespace GUI {
         for (auto &panel : _panels) {
             if (panel.getType() == "pause" && !_isPause && _scenetype == Scene_Manager::SceneType::GAME)
                 continue;
+            if (panel.getType() == "pause_setting" && !_isPauseSettings && _scenetype == Scene_Manager::SceneType::GAME)
+                continue;
+            if (_isPause && _isPauseSettings)
+                _isPause = false;
             panel.updatePanel(mousePos, key, mousePressed);
         }
         if (_scenetype == Scene_Manager::SceneType::GAME) {
@@ -103,6 +111,8 @@ namespace GUI {
                 return "goto_game";
             case Interface::CALLBACK::GOTO_SETTING:
                 return "goto_setting";
+            case Interface::CALLBACK::GOTO_SETTING_PAUSE:
+                return "goto_setting_pause";
             case Interface::CALLBACK::GOTO_CREDIT:
                 return "goto_credit";
             case Interface::CALLBACK::GOTO_RESULT:

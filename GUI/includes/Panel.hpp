@@ -74,7 +74,7 @@ namespace Interface {
             void addTextCase(const Interface::Text &text) { _text_case->push_back(text); }
             template<typename Win>
             void drawPanel(Win &win) {
-                if (!_isDisplayed || (_callback == NONE && _type == "inventory_user") || (_callback == NONE && _type == "inventory_case") || (_callback == NONE && _type == "pause")) return;
+                if (!_isDisplayed || (_callback == NONE && _type == "inventory_user") || (_callback == NONE && _type == "inventory_case") || (_callback == NONE && _type == "pause") || (_callback == NONE && _type == "pause_setting")) return;
                 if (_sprite) { _sprite->drawSprite(); }
                 for (auto &button : _buttons)
                     button.drawButton();
