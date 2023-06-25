@@ -265,6 +265,21 @@ namespace Manager {
                 }
             }
 
+            void sendTileToServer(int i, int j) {
+                static bool id = false;
+                if (!id) { id = true; return; };
+                // ppo n X Y O\n ppo #n\n player’s position
+                // plv n L\n plv #n\n player’s level
+                if (i + j * _mapSize.y() >= int(_tiles.size()))
+                    return;
+                for (auto &trantorian : _tiles[i + j * _mapSize.y()].getTrantorians()) {
+                    std::string str = "ppo #" + std::to_string(trantorian->getId()) + "\n";
+                    _client->sendToServer(str);
+                    str = "plv #" + std::to_string(trantorian->getId()) + "\n";
+                    _client->sendToServer(str);
+                }
+            }
+
             std::vector<Interface::CALLBACK> getCallback() const {
                 std::vector<Interface::CALLBACK> callback;
                 callback.push_back(_gotoResult);

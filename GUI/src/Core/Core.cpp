@@ -35,6 +35,8 @@ Core::Core(const unsigned ac, const char *av[])
 void Core::run()
 {
     std::cout << "Core: Running..." << std::endl;
+    sf::Clock clock;
+    sf::Time interval = sf::seconds(1.0f);  // intervalle de 1 seconde
     sf::Event event;
     std::string message;
 
@@ -46,6 +48,15 @@ void Core::run()
                 std::cout << "Message received: " << message;
                 _protocol->parseCommand(message);
             }
+                if (clock.getElapsedTime() >= interval) {
+                    _protocol->_client->sendToServer("mct\n");
+                    auto MapSize = _protocol->getMapSize();
+                    for (int j = 0; j < int(MapSize.y()); j++) {
+                        for (int i = 0; i < int(MapSize.x()); i++)
+                            _protocol->sendTileToServer(i, j);
+                    }
+                    clock.restart();
+                }
             }
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
@@ -92,7 +103,7 @@ void Core::run()
         Math::Vector mousePos = {double(pixelPos.x), double(pixelPos.y)};
 
         try {
-        if (event.type == sf::Event::KeyReleased || sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            if (event.type == sf::Event::KeyReleased) {
             _scene->updateScene(mousePos, event.key.code, sf::Mouse::isButtonPressed(sf::Mouse::Left));
         } else {
             _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));

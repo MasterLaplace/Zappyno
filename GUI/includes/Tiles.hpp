@@ -81,11 +81,11 @@ namespace GUI {
 
         protected:
         private:
-            std::shared_ptr<sf::RenderWindow> _window = nullptr;
-            std::shared_ptr<ISprite> _sprite = nullptr;
-            std::vector<Food> _food;
             std::vector<std::shared_ptr<GUI::Trantorian>> _trantorians;
             std::vector<std::shared_ptr<GUI::Egg>> _eggs;
+            std::vector<Food> _food;
+            std::shared_ptr<sf::RenderWindow> _window = nullptr;
+            std::shared_ptr<ISprite> _sprite = nullptr;
             double scaleRatio = 0.2;
             std::map<std::string /* food name */, unsigned /* food quantity */> _inventory;
             Interface::Checkbox::State _state = Interface::Checkbox::State::IDLE;
