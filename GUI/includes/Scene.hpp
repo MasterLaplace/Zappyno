@@ -311,9 +311,8 @@ namespace GUI {
                             if (scene->getSceneType() != Scene_Manager::SceneType::GAME)
                                 break;
                             for (auto &it : scene->getPanels()) {
-                                if (it.getType() == "pause" || it.getType() == "pause_setting") {
+                                if (it.getType() == "pause") {
                                     scene->setPause(true);
-                                    // scene->setPauseSettings(false);
                                     return it.setCallback(Interface::CALLBACK::OPEN_PAUSE);
                                 }
                             }

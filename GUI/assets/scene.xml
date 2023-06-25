@@ -49,7 +49,7 @@
         <Button name="settings_pause_button" img="settings_img_button" pos="710, 606" scale="1, 1" callback="goto_setting_pause"/>
         <Button name="exit_pause_button" img="exit_img_button" pos="710, 712" scale="1, 1" callback="exit"/>
         <Button name="resume_button" img="resume_img_button" pos="710, 394" scale="1, 1" callback="goto_game"/>
-        <Button name="back_pause_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="open_pause"/>
+        <Button name="back_pause_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_game"/>
     </Buttons>
     <Checkboxs>
         <!-- CALLBACK: -->

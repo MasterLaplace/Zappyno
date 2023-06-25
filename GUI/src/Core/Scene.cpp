@@ -43,10 +43,8 @@ namespace GUI {
                 continue;
             if (panel.getType() == "pause_setting" && !_isPauseSettings && _scenetype == Scene_Manager::SceneType::GAME)
                 continue;
-            if (_isPause && _isPauseSettings)
-                _isPause = false;
             panel.updatePanel(mousePos, mousePressed);
-    }
+        }
     }
 
     void Scene::updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed) {
