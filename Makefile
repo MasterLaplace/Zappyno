@@ -17,9 +17,9 @@ LIGHT_BLUE = "\e[94m"
 WHITE = "\e[1;37m"
 
 all: ai gui server
-	@echo $(BOLD) $(GREEN)"► ALL 👷 !\n"$(DEFAULT)
 
 ai:
+	ln -sf ./AI/src/main.py ./zappy_ai
 	@$(MAKE) all -C ./AI $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► AI ⛽ !\n"$(DEFAULT)
 clean_AI:
@@ -29,7 +29,7 @@ fclean_AI:
 	@$(MAKE) fclean -C ./AI $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► FCLEAN AI 🧻 !\n"$(DEFAULT)
 
-server:
+server: fclean_Server
 	@$(MAKE) all -C ./Server $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► SERVER ⛽ !\n"$(DEFAULT)
 clean_Server:
@@ -68,4 +68,4 @@ debug:
 	@$(MAKE) debug -C ./Server $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► DEBUG 🔧 !\n"$(DEFAULT)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re ai

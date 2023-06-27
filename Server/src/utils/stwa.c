@@ -16,6 +16,8 @@ static unsigned count_words(char *str, const char *delim)
     if (!str)
         return (0);
     str_dup = strdup(str);
+    if (!str_dup)
+        return (0);
     if (strtok(str_dup, delim))
         count++;
     for (; strtok(NULL, delim); count++);
@@ -34,10 +36,33 @@ char **stwa(char *str, const char *delim)
         return (NULL);
     }
     str_dup = strdup(str);
+    if (!str_dup)
+        return (NULL);
     words[0] = strdup(strtok(str_dup, delim));
+    if (!words[0])
+        return (NULL);
     for (unsigned i = 1; i < len; ++i)
         words[i] = strdup(strtok(NULL, delim));
     words[len] = NULL;
     free(str_dup);
     return words;
+}
+
+char *my_strcat(char *dest, char *src)
+{
+    char *tmp = malloc(sizeof(char) * (strlen(dest) + strlen(src) + 1));
+    unsigned i = 0;
+    unsigned e = 0;
+
+    if (!tmp)
+        return NULL;
+
+    for (; src && src[i]; ++i)
+        tmp[i] = src[i];
+    for (; dest && dest[e]; ++i, ++e)
+        tmp[i] = dest[e];
+    tmp[i] = '\0';
+    if (dest)
+        free(dest);
+    return tmp;
 }
