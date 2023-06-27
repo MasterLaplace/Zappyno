@@ -27,14 +27,14 @@ namespace Engine {
         Math::Vector CameraRay = (triTransformed[0] - _cam->getPos());
         // if (Math::dot(Normal, CameraRay) >= 0.0f)
         //     return;
-        // if (Normal.z() >= 0.0f)
-        //     return;
+        if (Normal.z() >= 0.0f)
+            return;
 
         // Illumination
-        // Math::Vector LightDirection = {0.0f, 0.0f, -1.0f};
-        // LightDirection.normalise();
-        // triProjected.SetDp(Math::dot(Normal, LightDirection));
-        // triProjected2.SetDp(Math::dot(Normal, LightDirection));
+        Math::Vector LightDirection = {0.0f, 0.0f, -1.0f};
+        LightDirection.normalise();
+        triProjected.SetDp(Math::dot(Normal, LightDirection));
+        triProjected2.SetDp(Math::dot(Normal, LightDirection));
 
         //* World to View (W2V) */
         auto WorldToView = _cam->getWorldToView();

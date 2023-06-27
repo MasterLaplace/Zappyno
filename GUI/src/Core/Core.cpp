@@ -182,7 +182,7 @@ void Core::run()
             if (!star.isFinished() && _scene->getSceneType() == Scene_Manager::SceneType::MENU)
                 star.DoTransition(*_window);
         } catch (const std::exception &e) {
-            // std::cerr << "Error: " << e.what() << std::endl;
+            std::cerr << "Error: " << e.what() << std::endl;
         }
 
         _window->display();

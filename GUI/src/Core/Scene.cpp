@@ -6,6 +6,7 @@
 */
 
 #include "../../includes/Scene.hpp"
+#include <ctime>
 
 namespace GUI {
     //* SCENE *//
@@ -49,19 +50,23 @@ namespace GUI {
         for (auto &popup : _popups) {
             popup.updatePopup(mousePos, mousePressed);
         }
-        auto &cam = _pipeline.getCamera();
-        if (cam != nullptr)
-            cam->Transform();
-        // for (auto &obj : _objects) {
-        //     auto &mesh = obj.getMesh();
-        //     mesh.Transform(obj.getPos(), obj.getRot(), obj.getScale());
-        //     for (auto &shape : mesh.getShapes()) {
-        //         _pipeline.geometry_rendering(mesh, shape, _isVR);
-        //     }
-        // }
+        if (_scenetype == Scene_Manager::SceneType::MENU) {
+            auto &cam = _pipeline.getCamera();
+            if (cam != nullptr)
+                cam->Transform();
+            double time = double(std::time(nullptr)) * 0.1f;
+            for (auto &obj : _objects) {
+                obj.Transform(obj.getPos(), {time, time, time}, obj.getScale());
+                for (auto &shape : obj.getShapes()) {
+                    _pipeline.geometry_rendering(obj, shape, _isVR);
+                }
+            }
+        }
     }
 
     void Scene::updateScene(const Math::Vector &mousePos, int key, const bool &mousePressed) {
+        if (key == sf::Keyboard::Space && _scenetype == Scene_Manager::SceneType::MENU)
+            _isVR = !_isVR;
         for (auto &panel : _panels) {
             if (panel.getType() == "pause" && !_isPause && _scenetype == Scene_Manager::SceneType::GAME)
                 continue;
@@ -75,16 +80,18 @@ namespace GUI {
             if (key == sf::Keyboard::Escape)
                 _callback = Interface::CALLBACK::OPEN_PAUSE;
         }
-        auto &cam = _pipeline.getCamera();
-        if (cam != nullptr)
-            cam->Transform();
-        // for (auto &obj : _objects) {
-        //     auto &mesh = obj.getMesh();
-        //     mesh.Transform(obj.getPos(), obj.getRot(), obj.getScale());
-        //     for (auto &shape : mesh.getShapes()) {
-        //         _pipeline.geometry_rendering(mesh, shape, _isVR);
-        //     }
-        // }
+        if (_scenetype == Scene_Manager::SceneType::MENU) {
+            auto &cam = _pipeline.getCamera();
+            if (cam != nullptr)
+                cam->Transform();
+            double time = double(std::time(nullptr)) * 0.1f;
+            for (auto &obj : _objects) {
+                obj.Transform(obj.getPos(), {time, time, time}, obj.getScale());
+                for (auto &shape : obj.getShapes()) {
+                    _pipeline.geometry_rendering(obj, shape, _isVR);
+                }
+            }
+        }
     }
 
     std::vector<Interface::CALLBACK> Scene::getCallback() {

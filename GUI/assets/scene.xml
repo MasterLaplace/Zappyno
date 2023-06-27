@@ -37,6 +37,8 @@
     </Images>
     <Objs>
         <Obj name="teapot" path="teapot.obj"/>
+        <Obj name="spaceship" path="SpaceShip.obj"/>
+        <Obj name="planet" path="planet.obj" />
     </Objs>
     <Buttons>
         <!-- CALLBACK: -->
@@ -110,7 +112,7 @@
     <Meshes>
         <!-- (plan == create plan of its size && effect) || obj -->
         <Mesh name="perlin_menu" pos="-5, -5, 0" rot="1.047, 0, 0" scale="0.25, 0.25, 0.25" plan="50, 50" effect="move_perlin"/>
-        <Mesh name="teapot_create" pos="0, 0, 0" rot="90, 90, 50" scale="0.5, 0.5, 0.5" obj="teapot" effect="move_perlin"/>
+        <Mesh name="teapot_create" pos="0, 0, 0" rot="0, 0, 0" scale="0.1, 0.1, 1" obj="planet" effect="move_perlin"/>
     </Meshes>
     <Cameras>
         <Camera name="menu" pos="0, 0, 0" dir="0, 0, 0"/>
@@ -130,8 +132,8 @@
         <Panel name="ranking_box" texts="1_ranking, 2_ranking, 3_ranking, 4_ranking, 5_ranking" img="ranking_img" pos="698, 13" scale="1, 1" type="score"/>
     </Panels>
     <Scenes>
-        <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
-        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, chat_box, ranking_box, pause_panel, settings_pause_panel" back="game"/>
+        <Scene name="menu" panels="home_panel" back="space_background" meshes="teapot_create" camera="menu" win="800, 800"/>
+        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, ranking_box, pause_panel, settings_pause_panel" back="game"/>
         <Scene name="setting" panels="settings_panel" back="space_background"/>
         <Scene name="credit" panels="credits_panel" back="space_background"/>
     </Scenes>

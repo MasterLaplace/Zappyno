@@ -18,6 +18,14 @@ namespace Engine {
             Mesh() = default;
             ~Mesh() = default;
 
+            void setPos(const Math::Vector &pos) { _pos = pos; }
+            void setRot(const Math::Vector &angle) { _angle = angle; }
+            void setScale(const Math::Vector &scale) { _scale = scale; }
+
+            Math::Vector getPos() const { return _pos; }
+            Math::Vector getRot() const { return _angle; }
+            Math::Vector getScale() const { return _scale; }
+
             void add(std::shared_ptr<Triangle> shape);
             std::vector<std::shared_ptr<Triangle>> &getShapes() { return _shapes; }
             double getTransparancy() const { return _transparancy; }
@@ -40,6 +48,9 @@ namespace Engine {
             std::vector<std::shared_ptr<Triangle>> _shapes;
             Math::Matrix _modelToWorld;
             double _transparancy;
+            Math::Vector _pos;
+            Math::Vector _angle;
+            Math::Vector _scale;
     };
     std::ostream &operator<<(std::ostream &os, Mesh &mesh);
 } // namespace Engine

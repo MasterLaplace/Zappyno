@@ -55,7 +55,7 @@ namespace GUI {
 
             std::vector<Interface::Panel> &getPanels() { return _panels; }
 
-            // void addObject(const Object &obj) { _objects.push_back(obj); }
+            void addObject(const Engine::Mesh &obj) { _objects.push_back(obj); }
             void addPanel(const Interface::Panel &panel) { _panels.push_back(panel); }
 
             void updateScene(const Math::Vector &mousePos, const bool &mousePressed = false);
@@ -65,17 +65,6 @@ namespace GUI {
 
             template<typename Win, typename Shape>
             void drawScene(std::shared_ptr<Win> &win, std::shared_ptr<Manager::Protocol> &protocol) {
-            //     auto &mesh = _pipeline.getNewMesh();
-            //     if (mesh != nullptr) {
-            //         sort(mesh->getShapes().begin(), mesh->getShapes().end(), [](const std::shared_ptr<Engine::Triangle> &a, const std::shared_ptr<Engine::Triangle> &b) {
-            //             double az = (a->operator[](0).z() + a->operator[](1).z() + a->operator[](2).z()) / 3.0f;
-            //             double bz = (b->operator[](0).z() + b->operator[](1).z() + b->operator[](2).z()) / 3.0f;
-            //             return az > bz;
-            //         });
-
-            //         mesh->drawMesh<Win, Shape>(Sf_primitive::drawTriangleNotFill, win);
-            //         mesh->getShapes().clear();
-            //     }
                 if (protocol->message != "") {
                     std::string path = "GUI/assets/popup.png";
                     auto win_size = win->getSize();
@@ -91,6 +80,19 @@ namespace GUI {
                     _background->drawSprite();
                 if (_scenetype == Scene_Manager::SceneType::GAME)
                     protocol->draw();
+                if (_scenetype == Scene_Manager::SceneType::MENU) {
+                    auto &mesh = _pipeline.getNewMesh();
+                    if (mesh != nullptr) {
+                        sort(mesh->getShapes().begin(), mesh->getShapes().end(), [](const std::shared_ptr<Engine::Triangle> &a, const std::shared_ptr<Engine::Triangle> &b) {
+                            double az = (a->operator[](0).z() + a->operator[](1).z() + a->operator[](2).z()) / 3.0f;
+                            double bz = (b->operator[](0).z() + b->operator[](1).z() + b->operator[](2).z()) / 3.0f;
+                            return az > bz;
+                        });
+
+                        mesh->drawMesh<Win, Shape>(Sf_primitive::drawTriangle, *win);
+                        mesh->getShapes().clear();
+                    }
+                }
                 for (auto &panel : _panels)
                     panel.drawPanel(*win);
                 for (auto it = _popups.begin(); it != _popups.end();) {
@@ -111,7 +113,7 @@ namespace GUI {
             Scene_Manager::SceneType _scenetype;
             std::vector<Interface::Panel> _panels;
             std::vector<Interface::Popup> _popups;
-            // std::vector<Object> _objects;
+            std::vector<Engine::Mesh> _objects;
             Engine::Pipeline _pipeline;
             std::shared_ptr<ISprite> _background = nullptr;
             Interface::CALLBACK _callback = Interface::CALLBACK::NONE;
@@ -324,16 +326,15 @@ namespace GUI {
                                     } else if (it3.find("obj") != it3.end()) {
                                         _mesh = Parser::Obj::loadFile(findInTiles(objs, it3["obj"]));
                                     }
-                                    // Object obj;
                                     // obj.setMesh(_mesh);
-                                    // obj.setPos(Math::Vector(String::string_to_string_vector(it3["pos"], ", \t")));
-                                    // obj.setRot(Math::Vector(String::string_to_string_vector(it3["rot"], ", \t")));
-                                    // obj.setScale(Math::Vector(String::string_to_string_vector(it3["scale"], ", \t")));
+                                    _mesh.setPos(Math::Vector(String::string_to_string_vector(it3["pos"], ", \t")));
+                                    _mesh.setRot(Math::Vector(String::string_to_string_vector(it3["rot"], ", \t")));
+                                    _mesh.setScale(Math::Vector(String::string_to_string_vector(it3["scale"], ", \t")));
                                     // std::cout << "pos: " << obj.getPos() << std::endl;
                                     // std::cout << "rot: " << obj.getRot() << std::endl;
                                     // std::cout << "scale: " << obj.getScale() << std::endl;
                                     // std::cout << "mesh: " << obj.getMesh() << std::endl;
-                                    // scene->addObject(obj);
+                                    scene->addObject(_mesh);
                                 }
                             }
                         }

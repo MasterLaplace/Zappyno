@@ -61,7 +61,7 @@ namespace Manager {
                 return;
             auto size = texture.getSize();
             auto screen_size = _window->getSize();
-            auto sprite = std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - (((size.x) * _scale) * _mapSize.x() / 2)) + ((size.x) * _scale) * x, ((screen_size.y / 2) - (((size.y / 4) * _scale) * _mapSize.y() / 2)) + ((size.y / 4) * _scale) * y), Math::Vector(_scale, _scale));
+            auto sprite = std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - (((size.x) * _scale) * ((_mapSize.x() / 2) -1))) + ((size.x) * _scale) * x, ((screen_size.y / 2) - (((size.y / 4) * _scale) * ((_mapSize.y() / 2) -1))) + ((size.y / 4) * _scale) * y), Math::Vector(_scale, _scale));
             sprite->offset_y = size.y / 4;
             sprite->max_offset_x = 1;
             sprite->sprite.setTextureRect(sf::IntRect(0, 0, size.x, size.y / 4));
@@ -123,7 +123,7 @@ namespace Manager {
         std::cout << "[ppo@Protocol] Trantorian moved: " << args[2] << " " << args[3] << std::endl;
         auto trantorian = getTile(id);
         if (trantorian) {
-            trantorian->setNextPos(getTile(npos).getPos() + trantorian->getOriginalPos() * _scale);
+            trantorian->setNextPos(getTile(npos).getPos() + trantorian->getOriginalPos() * _scale * _tiles[0].getScaleRatio());
             trantorian->setNextPosId(npos.x() + npos.y() * _mapSize.x());
             return trantorian->setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
         }
@@ -136,9 +136,10 @@ namespace Manager {
         unsigned id = std::stoi(args[1]);
 
         auto trantorian = getTile(id);
-        if (trantorian)
+        if (trantorian && int(trantorian->getLevel()) < std::stoi(args[2])) {
+            message = "Player " + std::to_string(id) + " level up to " + args[2];
             return trantorian->setLevel(std::stoi(args[2]));
-        throw std::runtime_error("[plv] Player not found in map (id: " + std::to_string(id) + ")");
+        }
     }
 
     void Protocol::pin(std::string &str)
@@ -216,7 +217,7 @@ namespace Manager {
             msg += args[i] + " ";
         if (msg[msg.size() - 1] == ' ')
             msg[msg.size() - 1] = '\0';
-        std::cout << msg << std::endl;
+        std::cout << "[pbc@Protocol] msg: " << msg << std::endl;
         message = msg;
     }
 
@@ -302,8 +303,10 @@ namespace Manager {
 
         for (auto &tile : _tiles) {
             for (auto &trantorian : tile.getTrantorians()) {
-                if (trantorian->getId() == id)
+                if (trantorian->getId() == id) {
+                    message = "Player " + std::to_string(id) + " died";
                     return tile.removeTrantorian(trantorian);
+                }
             }
         }
         throw std::runtime_error("[pdi] Player not found in map (id: " + std::to_string(id) + ")");
