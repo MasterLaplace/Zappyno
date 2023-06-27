@@ -46,6 +46,9 @@ namespace GUI {
                 continue;
             panel.updatePanel(mousePos, mousePressed);
         }
+        for (auto &popup : _popups) {
+            popup.updatePopup(mousePos, mousePressed);
+        }
         auto &cam = _pipeline.getCamera();
         if (cam != nullptr)
             cam->Transform();

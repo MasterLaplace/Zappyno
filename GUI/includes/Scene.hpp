@@ -13,6 +13,7 @@
     #include <SFML/Audio.hpp>
     #include "Obj.hpp"
     #include "SfPrimitive.hpp"
+    #include "Popup.hpp"
     #include "Protocol.hpp"
 
 namespace Scene_Manager {
@@ -63,7 +64,7 @@ namespace GUI {
             std::vector<Interface::CALLBACK> getCallback();
 
             template<typename Win, typename Shape>
-            void drawScene(Win &win, std::shared_ptr<Manager::Protocol> &protocol) {
+            void drawScene(std::shared_ptr<Win> &win, std::shared_ptr<Manager::Protocol> &protocol) {
             //     auto &mesh = _pipeline.getNewMesh();
             //     if (mesh != nullptr) {
             //         sort(mesh->getShapes().begin(), mesh->getShapes().end(), [](const std::shared_ptr<Engine::Triangle> &a, const std::shared_ptr<Engine::Triangle> &b) {
@@ -75,11 +76,31 @@ namespace GUI {
             //         mesh->drawMesh<Win, Shape>(Sf_primitive::drawTriangleNotFill, win);
             //         mesh->getShapes().clear();
             //     }
-                _background->drawSprite();
+                if (protocol->message != "") {
+                    std::string path = "GUI/assets/popup.png";
+                    auto win_size = win->getSize();
+                    sf::Texture texture;
+                    if (texture.loadFromFile(path)) {
+                        auto size = texture.getSize();
+                        auto sprite = std::make_shared<Sf_sprite::SfSprite>(win, path, Math::Vector(win_size.x, win_size.y / 5 + size.y / 2));
+                        _popups.push_back(Interface::Popup(sprite, win_size.x, protocol->message));
+                    }
+                    protocol->message = "";
+                }
+                if (_background != nullptr)
+                    _background->drawSprite();
                 if (_scenetype == Scene_Manager::SceneType::GAME)
                     protocol->draw();
                 for (auto &panel : _panels)
-                    panel.drawPanel(win);
+                    panel.drawPanel(*win);
+                for (auto it = _popups.begin(); it != _popups.end();) {
+                    if (it->getState() == Interface::Popup::State::END) {
+                        it = _popups.erase(it);
+                    } else {
+                        it->drawPopup<Win>(*win);
+                        ++it;
+                    }
+                }
             };
 
             template<typename Win>
@@ -89,6 +110,7 @@ namespace GUI {
         private:
             Scene_Manager::SceneType _scenetype;
             std::vector<Interface::Panel> _panels;
+            std::vector<Interface::Popup> _popups;
             // std::vector<Object> _objects;
             Engine::Pipeline _pipeline;
             std::shared_ptr<ISprite> _background = nullptr;
@@ -235,11 +257,11 @@ namespace GUI {
                                     }
                                     // loop on chat
                                     auto chats = String::string_to_string_vector(it3["chats"], ", \t");
-                                    std::cout << "inputs: " << it3["chat"] << std::endl;
+                                    std::cout << "chats: " << it3["chat"] << std::endl;
                                     for (auto it4 : chats) {
                                         for (auto it5 : chat) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                std::cout << "name chat: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 auto limit = std::stoi(it5["limit"]);
                                                 Interface::Chat _chat(findInTiles(font, it5["font"]));
@@ -264,6 +286,8 @@ namespace GUI {
                                                 Interface::Text _text(findInTiles(font, it5["font"]));
                                                 _text.setPos(pos);
                                                 _text.setColor(SceneManager::StringToSfColor(it5["color"]));
+                                                if (it5.find("str") != it5.end())
+                                                    _text.setText(it5["str"]);
                                                 if (_panel.getType() == "inventory_user")
                                                     _panel.addTextUser(_text);
                                                 else if (_panel.getType() == "inventory_case")
@@ -380,7 +404,6 @@ namespace GUI {
                             return;
                         case Interface::CALLBACK::GOTO_GAME:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::GAME, window);
-                            protocol->setChat(scene->getChat());
                             protocol->setTextInventoryUser(scene->getTextInventoryUser());
                             protocol->setTextInventoryCase(scene->getTextInventoryCase());
                             return;
@@ -453,6 +476,6 @@ namespace GUI {
             bool _isFullscreen = false;
             Math::Vector _winSize = {1920, 1080};
     };
-}
+} // namespace GUI
 
 #endif /* !SCENE_HPP_ */

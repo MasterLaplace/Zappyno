@@ -17,8 +17,10 @@ namespace Manager {
 
         std::unordered_map<std::string, std::vector<std::string>> map;
         for (auto av : args) {
-            if (av == "WELCOME")
+            if (av == "WELCOME") {
+                message = "Connection established";
                 return _client->sendToServer("GRAPHIC\n");
+            }
             std::string command = av.substr(0, 3);
             if (map.find(command) == map.end())
                 map[command] = std::vector<std::string>();
@@ -40,8 +42,7 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         _mapSize = {std::stod(args[1]), std::stod(args[2])};
-        // if (_chat)
-        //     _chat->addMessage("Map size set to " + std::to_string(_mapSize.x()) + "x" + std::to_string(_mapSize.y()));
+        // message = "Map size set to " + std::to_string(_mapSize.x()) + "x" + std::to_string(_mapSize.y());
     }
 
     void Protocol::bct(std::string &str)
@@ -79,8 +80,7 @@ namespace Manager {
 
         if (std::find(_teams.begin(), _teams.end(), args[1]) == _teams.end())
             _teams.push_back(args[1]);
-        // if (_chat)
-        //     _chat->addMessage("Team " + args[1] + " added");
+        // message = "Team " + args[1] + " added";
     }
 
     void Protocol::pnw(std::string &str)
@@ -206,18 +206,18 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
-        std::string message = args[1] + ": ";
+        std::string msg = args[1] + ": ";
 
         auto trantorian = getTile(id);
         if (trantorian)
             trantorian->setState(GUI::Trantorian::State::BROADCASTING);
         // start from 2 to skip id and "pbc"
         for (unsigned i = 2; i < args.size(); i++)
-            message += args[i] + " ";
-        if (message[message.size() - 1] == ' ')
-            message[message.size() - 1] = '\0';
-        std::cout << message << std::endl;
-        // _chat->addMessage(message);
+            msg += args[i] + " ";
+        if (msg[msg.size() - 1] == ' ')
+            msg[msg.size() - 1] = '\0';
+        std::cout << msg << std::endl;
+        message = msg;
     }
 
     void Protocol::pic(std::string &str)
@@ -375,15 +375,15 @@ namespace Manager {
     void Protocol::smg(std::string &str)
     {
         auto args = String::string_to_string_vector(str, " ");
-        std::string message = "Global message: ";
+        std::string msg = "Global msg: ";
 
         // start at 1 to skip "smg"
         for (unsigned i = 1; i < args.size(); i++)
-            message += args[i] + " ";
-        if (message[message.size() - 1] == ' ')
-            message[message.size() - 1] = '\0';
-        std::cout << message << std::endl;
-        // _chat->addMessage(message);
+            msg += args[i] + " ";
+        if (msg[msg.size() - 1] == ' ')
+            msg[msg.size() - 1] = '\0';
+        std::cout << msg << std::endl;
+        message = msg;
     }
 
     void Protocol::suc(std::string &str)

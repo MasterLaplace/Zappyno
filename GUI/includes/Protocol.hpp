@@ -296,9 +296,6 @@ namespace Manager {
             std::shared_ptr<GUI::Egg> getEgg(unsigned id);
             std::vector<std::string> getScore();
 
-            std::shared_ptr<Interface::Chat> getChat() const { return _chat; }
-            void setChat(std::shared_ptr<Interface::Chat> chat) { _chat = chat; }
-
             void setTextInventoryUser(std::shared_ptr<std::vector<Interface::Text>> text_user) { _text_user = text_user; }
             void setTextInventoryCase(std::shared_ptr<std::vector<Interface::Text>> text_case) { _text_case = text_case; }
 
@@ -369,7 +366,6 @@ namespace Manager {
             unsigned _timeUnit = 100;
             int _tileId = -1;
             int _userId = -1;
-            std::shared_ptr<Interface::Chat> _chat = nullptr;
             std::string _winnerTeam = "";
             Interface::CALLBACK _gotoResult = Interface::CALLBACK::NONE;
             std::shared_ptr<sf::RenderWindow> _window = nullptr;
@@ -377,6 +373,7 @@ namespace Manager {
             std::shared_ptr<std::vector<Interface::Text>> _text_case = nullptr;
         public:
             std::shared_ptr<Manager::Client> _client = nullptr;
+            std::string message = "";
     };
 } // namespace Manager
 
