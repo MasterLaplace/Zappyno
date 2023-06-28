@@ -2,9 +2,8 @@
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
     <Info name="config" sample="500" addr="127.0.0.1" port="49154" ambient="0,0,0"/>
     <Fonts>
-        <Font name="arial" path="GUI/assets/arial.ttf"/>
-        <Font name="open_sans_bold_italic" path="GUI/assets/OpenSans-ExtraBoldItalic.ttf"/>
-        <Font name="open_sans_bold" path="GUI/assets/OpenSans-Bold.ttf"/>
+        <Font name="open_sans_bold_italic" path="GUI/assets/fonts/OpenSans-ExtraBoldItalic.ttf"/>
+        <Font name="open_sans_bold" path="GUI/assets/fonts/OpenSans-Bold.ttf"/>
     </Fonts>
     <Images>
         <!-- <Image name="play_button" path="GUI/assets/play_button-removebg-preview.png" offset="251, 249" max="1"/> -->
@@ -36,9 +35,7 @@
         <Image name="full_screen_img_button" path="GUI/assets/full_screen_check_box.png" offset="80, 80" max="1"/>
     </Images>
     <Objs>
-        <Obj name="teapot" path="teapot.obj"/>
-        <Obj name="spaceship" path="SpaceShip.obj"/>
-        <Obj name="planet" path="planet.obj" />
+        <Obj name="planet" path="GUI/assets/objs/planet.obj" />
     </Objs>
     <Buttons>
         <!-- CALLBACK: -->

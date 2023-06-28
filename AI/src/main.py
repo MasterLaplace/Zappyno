@@ -4,9 +4,19 @@
 This program is an AI for the Zappy project.
 You can find more information with ./zappy_ai -h
 """
+import sys
+
 from argparse import ArgumentParser, Namespace
 from sys import exit as sys_exit
 from client import Client
+
+HELP_MSG = """USAGE: ./zappy_ai -p port -n name -h machine
+
+OPTIONS:
+    -p port     is the port number
+    -n name     is the name of the team
+    -h machine  is the name of the machine; localhost by default
+"""
 
 def get_arguments() -> ArgumentParser:
     """
@@ -21,6 +31,9 @@ def get_arguments() -> ArgumentParser:
     return parser
 
 if __name__ == '__main__':
+    if len(sys.argv) >= 2 and (sys.argv[1] == '-h' or sys.argv[1] == '-help'):
+        print(HELP_MSG)
+        sys_exit(0)
     arguments: ArgumentParser = get_arguments()
 
     args: Namespace = arguments.parse_args()

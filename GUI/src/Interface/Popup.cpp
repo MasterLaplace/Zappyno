@@ -12,7 +12,7 @@ Popup::Popup(std::shared_ptr<ISprite> sprite, double original_x, std::string tex
     _pos = sprite->getPos();
     originalX = original_x;
     _sprite = sprite;
-    _sfText = Sf_text::Text_s(text, {float(_pos.x()), float(_pos.y())}, Sf_text::createFont("GUI/assets/OpenSans-ExtraBoldItalic.ttf"), sf::Color::Red);
+    _sfText = Sf_text::Text_s(text, {float(_pos.x()), float(_pos.y())}, Sf_text::createFont("GUI/assets/fonts/OpenSans-ExtraBoldItalic.ttf"), sf::Color::Red);
     _start = std::chrono::high_resolution_clock::now();
 }
 

@@ -103,7 +103,7 @@ namespace GUI {
                         ++it;
                     }
                 }
-            };
+            }
 
             template<typename Win>
             void setSprite(std::string path, Win &window) { _background = std::make_shared<Sf_sprite::SfSprite>(window, path, Math::Vector(1, 1)); }

@@ -17,7 +17,7 @@
 class Core {
     public:
         Core(const unsigned ac, const char *av[]);
-        ~Core() { if (_window->isOpen()) _window->close(); }
+        ~Core() { if (_window && _window->isOpen()) _window->close(); }
 
         void showUsage(std::ostream &output);
         bool parseArgs(const unsigned ac, const char *av[]);

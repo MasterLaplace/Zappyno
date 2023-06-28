@@ -11,11 +11,11 @@ TOP_FILE = """#
 #
 cxx = g++
 cuda_cxx = nvcc
-gpp_cflags = -std=c++17 -Wall -Wextra -pthread -g3 -ggdb -pg
+gpp_cflags = -std=c++17 -Wall -Wextra -Wpedantic
 nvcc_cflags = -std=c++17
 opti = -Ofast -march=native -flto -pipe
 cuda_opti = -O3
-ldflags = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lconfig -pthread
+ldflags = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
 cuda_flags = --compiler-options -fPIC -Xcompiler -rdynamic
 
 #
@@ -51,7 +51,7 @@ cpp_files = []
 obj_src_files = []
 obj_test_files = []
 
-for root, _, files in os.walk('./'):
+for root, _, files in os.walk('./GUI/'):
     for file in files:
         if file.endswith('.cpp'):
             filepath = os.path.join(root, file)
@@ -70,6 +70,6 @@ with open('build.ninja', 'w') as f:
             obj_test_files.append(obj_file)
         include_path = os.path.dirname(cpp_file)
         f.write(f'build {obj_file}: compile {cpp_file}\n')
-        f.write(f' includes = {include_path}\n\n')
+        f.write(f' includes = ./GUI/includes/\n\n')
 
     f.write(FOOT_FILE % (' '.join(obj_test_files), ' '.join(obj_src_files)))

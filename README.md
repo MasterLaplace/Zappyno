@@ -11,7 +11,9 @@
         <img src="https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge" alt="OS: Linux">
     </a><a>
         <img src="https://img.shields.io/badge/SFML-2.5-blue?style=for-the-badge" alt="SFML: 2.5">
-    </a>
+    </a><a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/releases/latest/">
+        <img src="https://img.shields.io/github/v/release/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros.svg?label=version" alt="Version">
+    <a>
 </p>
 
 Status: in progress
@@ -55,13 +57,13 @@ $ cd B-YEP-400-REN-4-1-zappy-tristan.bros
 $ make
 
 # Run Zappy Server
-$ ./zappy_server –help
+$ ./zappy_server -h
 
 # Run Zappy Gui
-$ ./zappy_gui –help
+$ ./zappy_gui [-h/-help]
 
 # Run Zappy AI
-$ ./zappy_ai –help
+$ ./zappy_ai [-h/-help]
 
 # Run tests
 $ make tests_run
