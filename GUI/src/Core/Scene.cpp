@@ -14,7 +14,7 @@ namespace GUI {
     std::shared_ptr<Interface::Chat> Scene::getChat() {
         for (auto &panel : _panels) {
             auto chat = panel.getChat();
-            if (chat != nullptr)
+            if (chat)
                 return chat;
         }
         throw std::runtime_error("Chat not found");
@@ -24,7 +24,7 @@ namespace GUI {
     std::shared_ptr<std::vector<Interface::Text>> Scene::getTextInventoryUser() {
         for (auto &panel : _panels) {
             auto text = panel.getTextUser();
-            if (text != nullptr && panel.getType() == "inventory_user")
+            if (text && panel.getType() == "inventory_user")
                 return text;
         }
         return nullptr;
@@ -33,7 +33,7 @@ namespace GUI {
     std::shared_ptr<std::vector<Interface::Text>> Scene::getTextInventoryCase() {
         for (auto &panel : _panels) {
             auto text = panel.getTextCase();
-            if (text != nullptr && panel.getType() == "inventory_case")
+            if (text && panel.getType() == "inventory_case")
                 return text;
         }
         return nullptr;
@@ -52,7 +52,7 @@ namespace GUI {
         }
         if (_scenetype == Scene_Manager::SceneType::MENU) {
             auto &cam = _pipeline.getCamera();
-            if (cam != nullptr)
+            if (cam)
                 cam->Transform();
             double time = double(std::time(nullptr)) * 0.1f;
             for (auto &obj : _objects) {
@@ -82,7 +82,7 @@ namespace GUI {
         }
         if (_scenetype == Scene_Manager::SceneType::MENU) {
             auto &cam = _pipeline.getCamera();
-            if (cam != nullptr)
+            if (cam)
                 cam->Transform();
             double time = double(std::time(nullptr)) * 0.1f;
             for (auto &obj : _objects) {

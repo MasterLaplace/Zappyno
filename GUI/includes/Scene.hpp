@@ -76,13 +76,13 @@ namespace GUI {
                     }
                     protocol->message = "";
                 }
-                if (_background != nullptr)
+                if (_background)
                     _background->drawSprite();
                 if (_scenetype == Scene_Manager::SceneType::GAME)
                     protocol->draw();
                 if (_scenetype == Scene_Manager::SceneType::MENU) {
                     auto &mesh = _pipeline.getNewMesh();
-                    if (mesh != nullptr) {
+                    if (mesh) {
                         sort(mesh->getShapes().begin(), mesh->getShapes().end(), [](const std::shared_ptr<Engine::Triangle> &a, const std::shared_ptr<Engine::Triangle> &b) {
                             double az = (a->operator[](0).z() + a->operator[](1).z() + a->operator[](2).z()) / 3.0f;
                             double bz = (b->operator[](0).z() + b->operator[](1).z() + b->operator[](2).z()) / 3.0f;

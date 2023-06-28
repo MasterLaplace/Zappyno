@@ -57,7 +57,7 @@ static void read_data_next(t_server *server, unsigned id)
         printf("Player %d is dead\n", id);
         server->clients[id].is_freezed = false;
         server->clients[id].function = NULL;
-        if (server->clients[id].params_function != NULL)
+        if (server->clients[id].params_function)
             free_double_array(&server->clients[id].params_function);
         server->clients[id].params_function = NULL;
     }
@@ -80,17 +80,15 @@ static void read_data_from_server(t_server *server, unsigned id)
         handle_client_data(server, sd, id);
     }
     read_data_next(server, id);
-    if (has_timer_expired_gen_food(&server->gen_food_timer,
-server->gen_food_timer.duration)) {
-        printf("Generate food\n");
+    if (has_timer_expired_gen_food(&server->gen_food_timer, server->gen_food_timer.duration)) {
+        printf("[Server] Generate food\n");
         generate_food(server);
     }
     if (has_timer_expired(&server->clients[id])) {
-        server->clients[id].function(server,
-server->clients[id].params_function, id);
+        server->clients[id].function(server, server->clients[id].params_function, id);
         server->clients[id].is_freezed = false;
         server->clients[id].function = NULL;
-        if (server->clients[id].params_function != NULL)
+        if (server->clients[id].params_function)
             free_double_array(&server->clients[id].params_function);
         server->clients[id].params_function = NULL;
     }
@@ -106,8 +104,8 @@ void loop(t_server *server)
         handle_new_connection(server);
     for (int i = 0; i < SOMAXCONN; i++) {
         if (server->clients[i].socket_fd > 0
-&& (FD_ISSET(server->clients[i].socket_fd, &server->readfds) ||
-FD_ISSET(server->clients[i].socket_fd, &server->wfd))) {
+            && (FD_ISSET(server->clients[i].socket_fd, &server->readfds) ||
+            FD_ISSET(server->clients[i].socket_fd, &server->wfd))) {
             read_data_from_server(server, i);
         }
     }
@@ -121,8 +119,6 @@ int main(int ac, char **av)
     parse_args(ac, av, &params);
     check_params(&params);
     t_server *server = set_server_struct(&params);
-    if (server == NULL)
-        exit_malloc();
     set_environment_variable("SERVER_PTR", server);
     if (!setup_server(server, &params))
         return EXIT_FAILURE;

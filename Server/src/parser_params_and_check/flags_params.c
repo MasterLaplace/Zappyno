@@ -18,7 +18,7 @@ void handle_p(char *optarg, t_params *params)
 
     if (tmp < 0 || tmp > 65535) {
         printf("Port must be between 0 and 65535\n");
-        exit(84);
+        exit(EXIT_ERROR);
     }
     params->port = tmp;
 }

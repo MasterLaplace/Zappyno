@@ -52,8 +52,6 @@ void free_server(t_server **server)
 
     if (!serv)
         return;
-    if (!serv->clients)
-        return;
     for (unsigned i = 0; i < SOMAXCONN; i++) {
         if (serv->clients[i].buffer)
             free(serv->clients[i].buffer);

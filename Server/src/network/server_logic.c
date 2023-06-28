@@ -34,7 +34,7 @@ int id)
     CLIENT(id).function = NULL;
     CLIENT(id).function = ia_client[i].function_ai;
     CLIENT(id).timer.duration = ia_client[i].time / server->params->freq;
-    if (CLIENT(id).params_function != NULL)
+    if (CLIENT(id).params_function)
         free_double_array(&CLIENT(id).params_function);
     CLIENT(id).params_function = copy_array(message);
     if (!CLIENT(id).params_function)
@@ -79,7 +79,7 @@ int current_buf_len, int id)
         else
             check_command_gui(server, mes, id);
     }
-    if (server->clients[id].buffer != NULL) {
+    if (server->clients[id].buffer) {
         free(server->clients[id].buffer);
         server->clients[id].buffer = calloc(1, 1);
     }
@@ -90,7 +90,7 @@ void receive_from_client(t_server *server, char *message, int id)
     size_t current_buf_len = 0;
     size_t mes_len = strlen(message);
 
-    if (server->clients[id].buffer != NULL)
+    if (server->clients[id].buffer)
         current_buf_len = strlen(server->clients[id].buffer);
     if (!strstr(message, "\n")) {
         server->clients[id].buffer = realloc(

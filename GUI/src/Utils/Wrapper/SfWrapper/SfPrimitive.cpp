@@ -32,7 +32,7 @@ namespace Sf_primitive {
             sf::Vertex(triangle.point[1], triangle.color),
             sf::Vertex(triangle.point[2], triangle.color)
         };
-        if (triangle.texture != nullptr) {
+        if (triangle.texture) {
             vertices[0].texCoords = triangle.textureCoords[0];
             vertices[1].texCoords = triangle.textureCoords[1];
             vertices[2].texCoords = triangle.textureCoords[2];
@@ -48,7 +48,7 @@ namespace Sf_primitive {
             sf::Vertex(rectangle.point[2], rectangle.color),
             sf::Vertex(rectangle.point[3], rectangle.color)
         };
-        if (rectangle.texture != nullptr) {
+        if (rectangle.texture) {
             vertices[0].texCoords = rectangle.textureCoords[0];
             vertices[1].texCoords = rectangle.textureCoords[1];
             vertices[2].texCoords = rectangle.textureCoords[2];

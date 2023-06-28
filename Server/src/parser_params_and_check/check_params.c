@@ -30,6 +30,7 @@ void display_params(t_params params)
 void check_params(t_params *params)
 {
     bool check = false;
+
     if (params->width == 0 || params->height == 0 ||
         params->clientsNb == 0 || params->freq == 0 || params->num_teams == 0)
         check = true;
