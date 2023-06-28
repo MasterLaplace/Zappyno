@@ -111,7 +111,7 @@ void Core::run()
                         now.pause();
                 }
             }
-            if (event.type == sf::Event::MouseWheelScrolled) {
+            if (event.type == sf::Event::MouseWheelScrolled && _scene->getSceneType() == Scene_Manager::SceneType::GAME) {
                 if (event.mouseWheelScroll.delta > 0) {
                     _protocol->setScaleTile(_protocol->getScaleTile() + 0.1f);
                     _protocol->updatePosition();

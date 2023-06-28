@@ -146,7 +146,6 @@ namespace GUI {
                 if (!music.openFromFile(MUSIC[0]))
                     throw std::invalid_argument("Core: Cannot load music file");
                 music.play();
-                music.setVolume(0);
             }
             ~SceneManager() { music.stop(); }
             SceneManager(SceneManager&) = default;

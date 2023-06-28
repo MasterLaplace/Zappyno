@@ -273,8 +273,6 @@ vgcore.*
 test*
 .Test/
 openvr/
-Server/
-AI/
 **/craftpix-net-280167-free-level-map-pixel-art-assets-pack/
 **/Hex Tiles/
 zappy_*
