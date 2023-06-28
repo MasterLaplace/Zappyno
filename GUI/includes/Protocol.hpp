@@ -42,31 +42,31 @@ i resource number
  * @brief Protocol class
  *
  * SERVER CLIENT DETAILS
- * msz X Y\n msz\n map size                         // OK
- * bct X Y q0 q1 q2 q3 q4 q5 q6\n bct X Y\n content of a tile           // OK
- * bct X Y q0 q1 q2 q3 q4 q5 q6\n * nbr_tiles mct\n content of the map (all the tiles)  // OK
- * tna N\n * nbr_teams tna\n name of all the teams  // OK
- * pnw #n X Y O L N\n connection of a new player    // NEED TO BE CHECKED
- * ppo n X Y O\n ppo #n\n player’s position         // OK
- * plv n L\n plv #n\n player’s level                // OK
- * pin n X Y q0 q1 q2 q3 q4 q5 q6\n pin #n\n player’s inventory         // OK
- * pex n\n expulsion                                // OK
- * pbc n M\n broadcast                              // OK
- * pic X Y L n n . . . \n start of an incantation (by the first player) // OK
- * pie X Y R\n end of an incantation                // OK
- * pfk n\n egg laying by the player                 // OK
- * pdr n i\n resource dropping                      // OK
- * pgt n i\n resource collecting                    // OK
- * pdi n\n death of a player                        // OK
- * enw e n X Y\n an egg was laid by a player        // OK
- * ebo e\n player connection for an egg             // OK
- * edi e\n death of an egg                          // OK
- * sgt T\n sgt\n time unit request                  // OK
- * sst T\n sst T\n time unit modification           // OK
- * seg N\n end of game                              // OK
- * smg M\n message from the server                  // OK
- * suc\n unknown command                            // OK
- * sbp\n command parameter                          // OK
+ * msz X Y\n msz\n map size
+ * bct X Y q0 q1 q2 q3 q4 q5 q6\n bct X Y\n content of a tile
+ * bct X Y q0 q1 q2 q3 q4 q5 q6\n * nbr_tiles mct\n content of the map (all the tiles)
+ * tna N\n * nbr_teams tna\n name of all the teams
+ * pnw #n X Y O L N\n connection of a new player
+ * ppo n X Y O\n ppo #n\n player’s position
+ * plv n L\n plv #n\n player’s level
+ * pin n X Y q0 q1 q2 q3 q4 q5 q6\n pin #n\n player’s inventory
+ * pex n\n expulsion
+ * pbc n M\n broadcast
+ * pic X Y L n n . . . \n start of an incantation (by the first player)
+ * pie X Y R\n end of an incantation
+ * pfk n\n egg laying by the player
+ * pdr n i\n resource dropping
+ * pgt n i\n resource collecting
+ * pdi n\n death of a player
+ * enw e n X Y\n an egg was laid by a player
+ * ebo e\n player connection for an egg
+ * edi e\n death of an egg
+ * sgt T\n sgt\n time unit request
+ * sst T\n sst T\n time unit modification
+ * seg N\n end of game
+ * smg M\n message from the server
+ * suc\n unknown command
+ * sbp\n command parameter
 */
 namespace Manager {
     class Protocol {
@@ -98,15 +98,6 @@ namespace Manager {
                 commands["smg"] = [this](std::string &str) { smg(str); };
                 commands["suc"] = [this](std::string &str) { suc(str); };
                 commands["sbp"] = [this](std::string &str) { sbp(str); };
-                // msz X Y\n msz\n map size // je m'en fout
-                // bct X Y q0 q1 q2 q3 q4 q5 q6\n bct X Y\n content of a tile // je m'en fout
-                // bct X Y q0 q1 q2 q3 q4 q5 q6\n * nbr_tiles mct\n content of the map (all the tiles)
-                // tna N\n * nbr_teams tna\n name of all the teams // je m'en fout
-                // ppo n X Y O\n ppo #n\n player’s position
-                // plv n L\n plv #n\n player’s level
-                // pin n X Y q0 q1 q2 q3 q4 q5 q6\n pin #n\n player’s inventory
-                // sgt T\n sgt\n time unit request
-                // sst T\n sst T\n time unit modification
             }
             ~Protocol() = default;
 
@@ -315,7 +306,6 @@ namespace Manager {
                     tile.updateTile(mousePos, mousePressed, _userId, _scale);
                     if (tile.getState() == Interface::Checkbox::State::RELEASED)
                         _tileId = id;
-                    // std::cout << "[updateProtocol] Tile " << id << " clicked" << std::endl;
                     id++;
                 }
             }

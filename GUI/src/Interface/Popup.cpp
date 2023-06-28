@@ -20,7 +20,7 @@ void Popup::updatePopup(const Math::Vector &mousePos, const bool &mousePressed) 
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - _start);
 
-    // I have 3 states: POP(1000), FADE(2000), END(3000) (and I can't go back once I've passed the END state)
+    // I have 3 states: POP(1000), FADE(2500), END (and I can't go back once I've passed the END state)
     // POP: the popup appears and moves in 1 second (from pos to pos - 100)
     // FADE: the popup disappears in 2 seconds (from 255 to 0)
     // END: the popup is completely transparent and doesn't move anymore (it's dead)
@@ -45,7 +45,7 @@ void Popup::updatePopup(const Math::Vector &mousePos, const bool &mousePressed) 
         _sprite->setPos({originalX - (_sprite->getSize().x() * ratio), _pos.y()});
         _sfText.pos = sf::Vector2f(_sprite->getPos().x() + 10 , _pos.y() + _sprite->getSize().y() / 2 - 10);
         _pos = _sprite->getPos();
-    } else if (_state == FADE) { // 2 seconds to be fully transparent
+    } else if (_state == FADE) { // 2.5 seconds to be fully transparent
         double ratio = double(elapsed.count()) / double(FADE);
         _sprite->setTransparency(255 - (ratio * 255));
         _sfText.color.a = 255 - (ratio * 255);

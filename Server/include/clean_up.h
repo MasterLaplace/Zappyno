@@ -21,8 +21,6 @@
     #define CLF_BODY(type, func, ptr) if (*(type *)(ptr)) func(*(type *)ptr);
     #define CL_INTERN(n, t, f) CLF_HEAD(n, ptr) { CLF_BODY(t, f, ptr) }
     #define CLEANUP_FUNC(n, t, f) CL_INTERN(n, t, f) NEED_COMMA
-    //#define AUTO_FREE_ARRAY ON_CLEANUP(free_array)
-    //CLEANUP_FUNC(array_free, char **, free_array);
 
     CLEANUP_FUNC(free_stack, void *, free);
 

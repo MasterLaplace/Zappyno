@@ -24,9 +24,6 @@ namespace Engine {
         Line2 = triTransformed[2] - triTransformed[0];
 
         Normal = Math::cross(Line1, Line2).normalise();
-        Math::Vector CameraRay = (triTransformed[0] - _cam->getPos());
-        // if (Math::dot(Normal, CameraRay) >= 0.0f)
-        //     return;
         if (Normal.z() >= 0.0f)
             return;
 
@@ -76,10 +73,8 @@ namespace Engine {
             triProjected[0] = (triProjected[0] + vOffsetView) * 0.5f * _win_x;
             triProjected[1] = (triProjected[1] + vOffsetView) * 0.5f * _win_x;
             triProjected[2] = (triProjected[2] + vOffsetView) * 0.5f * _win_x;
-            // if (!outScreen(triProjected)) {
-                // std::cout << "triProjected[0].x() = " << triProjected[0].x() << std::endl;
+            if (!outScreen(triProjected))
                 newMesh->add(std::make_shared<Engine::Triangle>(triProjected));
-            // }
         }
     }
 } // namespace Engine

@@ -165,7 +165,7 @@ void send_time_unit(t_server *server, char **message, int id);
 //
 void recv_time_unit_change(t_server *server, char **message, int id);
 
-//OTHERS
+// OTHERS
 void send_command_not_found_to_all(t_client *clients);
 void send_command_not_found(t_client *client);
 

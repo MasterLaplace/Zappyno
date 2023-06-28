@@ -42,7 +42,6 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         _mapSize = {std::stod(args[1]), std::stod(args[2])};
-        // message = "Map size set to " + std::to_string(_mapSize.x()) + "x" + std::to_string(_mapSize.y());
     }
 
     void Protocol::bct(std::string &str)
@@ -71,7 +70,6 @@ namespace Manager {
             if (i == x + y * _mapSize.x())
                 return _tiles[i].setInventory(resources, _scale);
         }
-        // throw std::runtime_error("[bct] Tile not found in map (x: " + std::to_string(x) + ", y: " + std::to_string(y) + ")");
     }
 
     void Protocol::tna(std::string &str)
@@ -80,7 +78,6 @@ namespace Manager {
 
         if (std::find(_teams.begin(), _teams.end(), args[1]) == _teams.end())
             _teams.push_back(args[1]);
-        // message = "Team " + args[1] + " added";
     }
 
     void Protocol::pnw(std::string &str)
@@ -153,7 +150,7 @@ namespace Manager {
         throw std::runtime_error("[pin] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
-    void Protocol::pex(std::string &str) // TODO
+    void Protocol::pex(std::string &str)
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
@@ -332,7 +329,7 @@ namespace Manager {
         throw std::runtime_error("[enw] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
-    void Protocol::ebo(std::string &str) // TODO
+    void Protocol::ebo(std::string &str)
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
@@ -567,13 +564,11 @@ namespace Manager {
 
     int Protocol::getCallbackTileId() {
         auto user = _tileId;
-        // _tileId = -1;
         std::cout << "[getCallbackTileId] tile id : " << user << std::endl;
         return user;
     }
     int Protocol::getCallbackUserId() {
         auto user = _userId;
-        // _userId = -1;
         return user;
     }
 

@@ -175,10 +175,6 @@ namespace GUI {
                 std::vector<std::map<std::string, std::string>> panel = _xml.getTiles("GUI/assets/scene.xml", "Panels");
                 std::vector<std::map<std::string, std::string>> meshes = _xml.getTiles("GUI/assets/scene.xml", "Meshes");
                 std::vector<std::map<std::string, std::string>> cameras = _xml.getTiles("GUI/assets/scene.xml", "Cameras");
-                // std::vector<std::map<std::string, std::string>> text = _xml.getTiles("GUI/assets/scene.xml", "Texts");
-                // std::vector<std::map<std::string, std::string>> checkbox = _xml.getTiles("GUI/assets/scene.xml", "CheckBoxes");
-                // std::vector<std::map<std::string, std::string>> slider = _xml.getTiles("GUI/assets/scene.xml", "Sliders");
-                // std::vector<std::map<std::string, std::string>> scrollBar = _xml.getTiles("GUI/assets/scene.xml", "ScrollBars");
                 std::vector<std::map<std::string, std::string>> scenes = _xml.getTiles("GUI/assets/scene.xml", "Scenes");
                 std::vector<std::map<std::string, std::string>> chat = _xml.getTiles("GUI/assets/scene.xml", "Chats");
                 std::vector<std::map<std::string, std::string>> text = _xml.getTiles("GUI/assets/scene.xml", "Texts");
@@ -322,17 +318,11 @@ namespace GUI {
                                                 _mesh.add(std::make_shared<Engine::Triangle>(tri2));
                                             }
                                         }
-                                    } else if (it3.find("obj") != it3.end()) {
+                                    } else if (it3.find("obj") != it3.end())
                                         _mesh = Parser::Obj::loadFile(findInTiles(objs, it3["obj"]));
-                                    }
-                                    // obj.setMesh(_mesh);
                                     _mesh.setPos(Math::Vector(String::string_to_string_vector(it3["pos"], ", \t")));
                                     _mesh.setRot(Math::Vector(String::string_to_string_vector(it3["rot"], ", \t")));
                                     _mesh.setScale(Math::Vector(String::string_to_string_vector(it3["scale"], ", \t")));
-                                    // std::cout << "pos: " << obj.getPos() << std::endl;
-                                    // std::cout << "rot: " << obj.getRot() << std::endl;
-                                    // std::cout << "scale: " << obj.getScale() << std::endl;
-                                    // std::cout << "mesh: " << obj.getMesh() << std::endl;
                                     scene->addObject(_mesh);
                                 }
                             }

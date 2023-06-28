@@ -66,7 +66,6 @@ namespace Engine {
 
     int Triangle::ClipAgainstPlane(Math::Vector plane_p, Math::Vector plane_n, Triangle &out_tri1, Triangle &out_tri2)
     {
-        // Make sure plane normal is indeed normal
         plane_n.normalise();
 
         // Return signed shortest distance from point to plane, plane normal must be normalised
@@ -74,8 +73,6 @@ namespace Engine {
             return (plane_n.x() * p.x() + plane_n.y() * p.y() + plane_n.z() * p.z() - Math::dot(plane_n, plane_p));
         };
 
-        // Create two temporary storage arrays to classify points either side of plane
-        // If distance sign is positive, point lies on "inside" of plane
         Math::Vector* inside_points[3];  int nInsidePointCount = 0;
         Math::Vector* outside_points[3]; int nOutsidePointCount = 0;
 
@@ -91,22 +88,11 @@ namespace Engine {
         if (d2 >= 0) { inside_points[nInsidePointCount++] = &_vertex[2]; }
         else { outside_points[nOutsidePointCount++] = &_vertex[2]; }
 
-        // Now classify triangle points, and break the input triangle into
-        // smaller output triangles if required. There are four possible
-        // outcomes...
-
-        if (nInsidePointCount == 0)
-        {
-            // All points lie on the outside of plane, so clip whole triangle
-            // It ceases to exist
-
+        if (nInsidePointCount == 0) {
             return 0; // No returned triangles are valid
         }
 
-        if (nInsidePointCount == 3)
-        {
-            // All points lie on the inside of plane, so do nothing
-            // and allow the triangle to simply pass through
+        if (nInsidePointCount == 3) {
             out_tri1 = *this;
 
             return 1; // Just the one returned original triangle is valid
@@ -114,17 +100,9 @@ namespace Engine {
 
         if (nInsidePointCount == 1 && nOutsidePointCount == 2)
         {
-            // Triangle should be clipped. As two points lie outside
-            // the plane, the triangle simply becomes a smaller triangle
-
-            // Copy appearance info to new triangle
             out_tri1.SetDp(_dp);
-
-            // The inside point is valid, so keep that...
             out_tri1[0] = *inside_points[0];
 
-            // but the two new points are at the locations where the
-            // original sides of the triangle (lines) intersect with the plane
             out_tri1[1].IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0]);
             out_tri1[2].IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[1]);
 
@@ -133,25 +111,13 @@ namespace Engine {
 
         if (nInsidePointCount == 2 && nOutsidePointCount == 1)
         {
-            // Triangle should be clipped. As two points lie inside the plane,
-            // the clipped triangle becomes a "quad". Fortunately, we can
-            // represent a quad with two new triangles
-
-            // Copy appearance info to new triangles
             out_tri1.SetDp(_dp);
-
             out_tri2.SetDp(_dp);
 
-            // The first triangle consists of the two inside points and a new
-            // point determined by the location where one side of the triangle
-            // intersects with the plane
             out_tri1[0] = *inside_points[0];
             out_tri1[1] = *inside_points[1];
             out_tri1[2].IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0]);
 
-            // The second triangle is composed of one of he inside points, a
-            // new point determined by the intersection of the other side of the
-            // triangle and the plane, and the newly created point above
             out_tri2[0] = *inside_points[1];
             out_tri2[1] = out_tri1[2];
             out_tri2[2].IntersectPlane(plane_p, plane_n, *inside_points[1], *outside_points[0]);

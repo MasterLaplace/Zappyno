@@ -80,7 +80,7 @@ namespace Math {
         int minValue = INT_MAX;
         int maxValue = INT_MIN;
 
-        // Trouver la valeur minimale et maximale dans map
+        // Find the minimum and maximum value in map
         for (int i = 0; i < mapHeight; i++) {
             for (int j = 0; j < mapWidth; j++) {
                 int value = map[i][j];
@@ -93,12 +93,12 @@ namespace Math {
             }
         }
 
-        // Convertir les valeurs de map à l'échelle de 0 à 255
+        // Convert the values in map to be in the range 0-255
         for (int i = 0; i < mapHeight; i++) {
             for (int j = 0; j < mapWidth; j++) {
                 double perlinValue = map[i][j];
-                perlinValue = (perlinValue - minValue) / (maxValue - minValue);  // Réduire à une plage de 0 à 1
-                perlinValue *= 255;  // Mettre à l'échelle de 0 à 255
+                perlinValue = (perlinValue - minValue) / (maxValue - minValue);  // Reduce to a range of 0 to 1
+                perlinValue *= 255; // Scale to a range of 0 to 255
                 map[i][j] = static_cast<int>(perlinValue);
             }
         }
