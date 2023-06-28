@@ -97,8 +97,9 @@ bool setup_server(t_server *server, t_params *params)
  */
 void remove_client(t_server *server, int id)
 {
-    unsigned pos = find_tile(server, server->clients[id].pos_x, server->clients[id].pos_y);
-    TILES(pos).player--;
+    TILES(find_tile(
+        server, server->clients[id].pos_x, server->clients[id].pos_y)
+    ).player--;
     close(CLIENT(id).socket_fd);
     FD_CLR(CLIENT(id).socket_fd, &server->readfds);
     CLIENT(id).socket_fd = 0;
@@ -107,13 +108,13 @@ void remove_client(t_server *server, int id)
         if (CLIENT(i).socket_fd > server->max_fd)
             server->max_fd = CLIENT(i).socket_fd;
     }
-    if (server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function)
-        free_double_array(
-            &server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function
-        );
-    memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0, sizeof(t_client));
-    if (server->game.teams[TEAM_INDEX].nb_players > 0)
-        server->game.teams[TEAM_INDEX].nb_players--;
-    memset(&CLIENT(id), 0, sizeof(t_client));
-    CLIENT(id).dead = true;
+    if ((int)TEAM_INDEX >= 0 && (int)INDEX_IN_TEAM >= 0) {
+        if (server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function)
+            free_double_array(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM].params_function);
+        memset(&server->game.teams[TEAM_INDEX].players[INDEX_IN_TEAM], 0, sizeof(t_client));
+        if (server->game.teams[TEAM_INDEX].nb_players > 0)
+            server->game.teams[TEAM_INDEX].nb_players--;
+        memset(&CLIENT(id), 0, sizeof(t_client));
+        CLIENT(id).dead = true;
+    }
 }
