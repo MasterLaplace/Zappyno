@@ -79,10 +79,10 @@ namespace Math {
             }
 
             Vector &operator/=(const Vector &other) {
-                e[0] /= other.e[0];
-                e[1] /= other.e[1];
-                e[2] /= other.e[2];
-                e[3] /= other.e[3];
+                e[0] /= (!other.e[0]) ? 1 : other.e[0];
+                e[1] /= (!other.e[1]) ? 1 : other.e[1];
+                e[2] /= (!other.e[2]) ? 1 : other.e[2];
+                e[3] /= (!other.e[3]) ? 1 : other.e[3];
                 return *this;
             }
 
@@ -109,6 +109,8 @@ namespace Math {
 
             Vector normalise() const;
 
+            Vector IntersectPlane(Vector &plane_p, Vector &plane_n, Vector &lineStart, Vector &lineEnd);
+
         public:
             double e[4];
     };
@@ -125,6 +127,7 @@ namespace Math {
     std::ostream &operator<<(std::ostream &os, const Vector &vector);
 
     double radians(double degrees);
+    Vector radians(Vector degrees);
     template <typename T>
     inline T clamp(T x, T min, T max) { return x < min ? min : (x > max ? max : x); }
 

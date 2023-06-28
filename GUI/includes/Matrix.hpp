@@ -29,6 +29,13 @@ namespace Math {
             std::vector<double> &operator[](unsigned i) { return m[i]; };
             const std::vector<double> &operator[](unsigned i) const { return m[i]; };
 
+            void SetLeftEyeProjectionMatrix(float fFovDegrees, float fAspectRatio, float fNear, float fFar, float fIPD = 0.06f, float fDistortion = 1.0f);
+            void SetRightEyeProjectionMatrix(float fFovDegrees, float fAspectRatio, float fNear, float fFar, float fIPD = 0.06f, float fDistortion = 1.0f);
+
+            void SetProjectionMatrix(float fFovDegrees, float fAspectRatio, float fNear, float fFar);
+
+            void SetViewMatrix(Vector &pos, Vector &dir, Vector &up);
+
             void SetRotateXMatrix(double angle);
 
             void SetRotateYMatrix(double angle);

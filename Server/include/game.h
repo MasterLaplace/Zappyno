@@ -8,7 +8,7 @@
 #ifndef GAME_H_
     #define GAME_H_
 
-    //Include all the libraries you need here
+    //Include all the libraries needed here
     #include <stdio.h>
     #include <string.h>
 

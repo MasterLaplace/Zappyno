@@ -9,6 +9,6 @@
 
 void recv_look(t_server *server, UNUSED char **message, int id)
 {
-    printf("Recv look\n");
+    printf("[ai@recv] look\n");
     send_look(server, id);
 }

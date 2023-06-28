@@ -25,7 +25,7 @@ namespace Math {
     };
 
     Vector operator/(Vector vec, double scalar) {
-        vec /= scalar;
+        vec /= (!scalar) ? 1 : scalar;
         return vec;
     };
     Vector operator-(const Vector lhs, const Vector rhs) {
@@ -62,7 +62,19 @@ namespace Math {
         return *this / length();
     };
 
+    Vector Vector::IntersectPlane(Vector &plane_p, Vector &plane_n, Vector &lineStart, Vector &lineEnd)
+    {
+        plane_n.normalise();
+        float plane_d = -Math::dot(plane_n, plane_p);
+        float ad = Math::dot(lineStart, plane_n);
+        float bd = Math::dot(lineEnd, plane_n);
+        float t = (-plane_d - ad) / (bd - ad);
+        Vector lineToIntersect = ((lineEnd - lineStart) * t);
+        return (lineStart + lineToIntersect);
+    }
+
     double radians(double degrees) { return degrees * M_PI / 180.0; };
+    Vector radians(Vector degrees) { return degrees * M_PI / 180.0; };
 
     std::ostream &operator<<(std::ostream &os, const Vector &vector) {
         os << "Vector content:" << std::endl;

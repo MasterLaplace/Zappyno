@@ -10,6 +10,7 @@
 static void modify_direction(t_server *server, int id)
 {
     int orientation = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
+
     switch (orientation) {
         case 1:
             TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 4;
@@ -29,7 +30,5 @@ static void modify_direction(t_server *server, int id)
 void send_left(t_server *server, int id)
 {
     modify_direction(server, id);
-    printf("Orientation player : %d\n",
-        TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation);
     send_to_client(server, "ok\n", id);
 }

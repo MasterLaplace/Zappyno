@@ -7,18 +7,18 @@
 
 #include "../../../include/send_package.h"
 
-bool freeze_participating_players_next(t_server *server, t_client* player,
-int j, int id)
+static bool freeze_participating_players_next(t_server *server,
+    t_client* player, unsigned j, int id)
 {
-    int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
-    int x = player->pos_x;
-    int y = player->pos_y;
+    unsigned level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
+    unsigned x = player->pos_x;
+    unsigned y = player->pos_y;
     int *players = calloc(TEAMS[j].max_players, sizeof(int));
     if (!players)
         return false;
-    int index = 0;
+    unsigned index = 0;
 
-    for (int i = 0; i < TEAMS[j].max_players; i++) {
+    for (unsigned i = 0; i < TEAMS[j].max_players; i++) {
         if (TEAMS[j].players[i].pos_x == x &&
             TEAMS[j].players[i].pos_y == y &&
             (level + 1) == TEAMS[j].players[i].level) {
@@ -34,22 +34,23 @@ int j, int id)
 
 bool freeze_participating_players(t_server *server, t_client* player, int id)
 {
-    for (int j = 0; j < server->params->num_teams; j++) {
+    for (unsigned j = 0; j < server->params->num_teams; j++) {
         if (!freeze_participating_players_next(server, player, j, id))
             return false;
     }
     return true;
 }
 
-void perform_elevation_next(t_server *server, int j, int level,
-t_client* player)
+void perform_elevation_next(t_server *server, unsigned j, unsigned level,
+    t_client* player)
 {
-    int x = player->pos_x;
-    int y = player->pos_y;
-    for (int i = 0; i < TEAMS[j].max_players; i++) {
+    unsigned x = player->pos_x;
+    unsigned y = player->pos_y;
+
+    for (unsigned i = 0; i < TEAMS[j].max_players; i++) {
         if (TEAMS[j].players[i].pos_x == x &&
-            TEAMS[j].players[i].pos_y == y &&
-            (level + 1) == TEAMS[j].players[i].level) {
+                TEAMS[j].players[i].pos_y == y &&
+                (level + 1) == TEAMS[j].players[i].level) {
             TEAMS[j].players[i].level++;
             TEAMS[j].players[i].is_freezed = false;
         }
@@ -58,9 +59,10 @@ t_client* player)
 
 void perform_elevation(t_server *server, int id)
 {
-    int level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
+    unsigned level = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level - 1;
     t_client* player = &CLIENT(id);
-    for (int j = 0; j < server->params->num_teams; j++) {
+
+    for (unsigned j = 0; j < server->params->num_teams; j++) {
         perform_elevation_next(server, j, level, player);
         CLIENT(id).level++;
         TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].level++;

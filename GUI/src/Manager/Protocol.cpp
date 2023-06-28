@@ -17,8 +17,10 @@ namespace Manager {
 
         std::unordered_map<std::string, std::vector<std::string>> map;
         for (auto av : args) {
-            if (av == "WELCOME")
+            if (av == "WELCOME") {
+                message = "Connection established";
                 return _client->sendToServer("GRAPHIC\n");
+            }
             std::string command = av.substr(0, 3);
             if (map.find(command) == map.end())
                 map[command] = std::vector<std::string>();
@@ -58,7 +60,7 @@ namespace Manager {
                 return;
             auto size = texture.getSize();
             auto screen_size = _window->getSize();
-            auto sprite = std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - (((size.x) * _scale) * _mapSize.x() / 2)) + ((size.x) * _scale) * x, ((screen_size.y / 2) - (((size.y / 4) * _scale) * _mapSize.y() / 2)) + ((size.y / 4) * _scale) * y), Math::Vector(_scale, _scale));
+            auto sprite = std::make_shared<Sf_sprite::SfSprite>(_window, path, Math::Vector(((screen_size.x / 2) - (((size.x) * _scale) * ((_mapSize.x() / 2) -1))) + ((size.x) * _scale) * x, ((screen_size.y / 2) - (((size.y / 4) * _scale) * ((_mapSize.y() / 2) -1))) + ((size.y / 4) * _scale) * y), Math::Vector(_scale, _scale));
             sprite->offset_y = size.y / 4;
             sprite->max_offset_x = 1;
             sprite->sprite.setTextureRect(sf::IntRect(0, 0, size.x, size.y / 4));
@@ -68,7 +70,6 @@ namespace Manager {
             if (i == x + y * _mapSize.x())
                 return _tiles[i].setInventory(resources, _scale);
         }
-        throw std::runtime_error("[bct] Tile not found in map (x: " + std::to_string(x) + ", y: " + std::to_string(y) + ")");
     }
 
     void Protocol::tna(std::string &str)
@@ -119,7 +120,7 @@ namespace Manager {
         std::cout << "[ppo@Protocol] Trantorian moved: " << args[2] << " " << args[3] << std::endl;
         auto trantorian = getTile(id);
         if (trantorian) {
-            trantorian->setNextPos(getTile(npos).getPos() + trantorian->getOriginalPos() * _scale);
+            trantorian->setNextPos(getTile(npos).getPos() + trantorian->getOriginalPos() * _scale * _tiles[0].getScaleRatio());
             trantorian->setNextPosId(npos.x() + npos.y() * _mapSize.x());
             return trantorian->setDir(GUI::Trantorian::Direction(std::stoi(args[4])));
         }
@@ -132,27 +133,20 @@ namespace Manager {
         unsigned id = std::stoi(args[1]);
 
         auto trantorian = getTile(id);
-        if (trantorian)
+        if (trantorian && int(trantorian->getLevel()) < std::stoi(args[2])) {
+            message = "Player " + std::to_string(id) + " level up to " + args[2];
             return trantorian->setLevel(std::stoi(args[2]));
-        throw std::runtime_error("[plv] Player not found in map (id: " + std::to_string(id) + ")");
+        }
     }
 
     void Protocol::pin(std::string &str)
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
-        std::map<std::string, unsigned> inventory;
-        inventory["food"] = std::stoi(args[4]);
-        inventory["linemate"] = std::stoi(args[5]);
-        inventory["deraumere"] = std::stoi(args[6]);
-        inventory["sibur"] = std::stoi(args[7]);
-        inventory["mendiane"] = std::stoi(args[8]);
-        inventory["phiras"] = std::stoi(args[9]);
-        inventory["thystame"] = std::stoi(args[10]);
-
         auto trantorian = getTile(id);
+
         if (trantorian)
-            return trantorian->setInventory(inventory);
+            return trantorian->setFood("food", std::stoi(args[4]));
         throw std::runtime_error("[pin] Player not found in map (id: " + std::to_string(id) + ")");
     }
 
@@ -210,17 +204,18 @@ namespace Manager {
     {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
-        std::string message = args[1] + ": ";
+        std::string msg = args[1] + ": ";
 
         auto trantorian = getTile(id);
         if (trantorian)
             trantorian->setState(GUI::Trantorian::State::BROADCASTING);
         // start from 2 to skip id and "pbc"
         for (unsigned i = 2; i < args.size(); i++)
-            message += args[i] + " ";
-        if (message[message.size() - 1] == ' ')
-            message[message.size() - 1] = '\0';
-        std::cout << message << std::endl;
+            msg += args[i] + " ";
+        if (msg[msg.size() - 1] == ' ')
+            msg[msg.size() - 1] = '\0';
+        std::cout << "[pbc@Protocol] msg: " << msg << std::endl;
+        message = msg;
     }
 
     void Protocol::pic(std::string &str)
@@ -243,12 +238,12 @@ namespace Manager {
         bool success = std::stoi(args[3]);
 
         for (auto &trantorian : getTile(pos).getTrantorians()) {
-                if (success)
-                    trantorian->setState(GUI::Trantorian::State::IDLE); // Temporary
-                else
-                    trantorian->setState(GUI::Trantorian::State::DYING); // Temporary
-            }
+            if (success)
+                trantorian->setState(GUI::Trantorian::State::IDLE); // Temporary
+            else
+                trantorian->setState(GUI::Trantorian::State::DYING); // Temporary
         }
+    }
 
     void Protocol::pfk(std::string &str)
     {
@@ -266,14 +261,15 @@ namespace Manager {
         auto args = String::string_to_string_vector(str, " ");
         unsigned id = std::stoi(args[1]);
 
+        std::cout << "[pdr] pdr" << std::endl;
         auto trantorian = getTile(id);
         for (auto &tile : _tiles) {
             for (auto &trantorian : tile.getTrantorians()) {
                 if (trantorian->getId() == id) {
-            trantorian->removeFood(std::stoi(args[2]), 1);
+                    trantorian->removeFood(std::stoi(args[2]), 1);
                     tile.addFood(trantorian->intToFoodString(std::stoi(args[2])), _scale);
-            return trantorian->setState(GUI::Trantorian::State::DROPPING);
-        }
+                    return trantorian->setState(GUI::Trantorian::State::DROPPING);
+                }
             }
         }
         throw std::runtime_error("[pdr] Player not found in map (id: " + std::to_string(id) + ")");
@@ -288,10 +284,10 @@ namespace Manager {
         for (auto &tile : _tiles) {
             for (auto &trantorian : tile.getTrantorians()) {
                 if (trantorian->getId() == id) {
-            trantorian->addFood(food, 1);
+                    trantorian->addFood(food, 1);
                     tile.removeFood(trantorian->intToFoodString(food));
-            return trantorian->setState(GUI::Trantorian::State::TAKING);
-        }
+                    return trantorian->setState(GUI::Trantorian::State::TAKING);
+                }
             }
         }
         throw std::runtime_error("[pgt] Player not found in map (id: " + std::to_string(id) + ")");
@@ -304,8 +300,10 @@ namespace Manager {
 
         for (auto &tile : _tiles) {
             for (auto &trantorian : tile.getTrantorians()) {
-                if (trantorian->getId() == id)
+                if (trantorian->getId() == id) {
+                    message = "Player " + std::to_string(id) + " died";
                     return tile.removeTrantorian(trantorian);
+                }
             }
         }
         throw std::runtime_error("[pdi] Player not found in map (id: " + std::to_string(id) + ")");
@@ -377,14 +375,15 @@ namespace Manager {
     void Protocol::smg(std::string &str)
     {
         auto args = String::string_to_string_vector(str, " ");
-        std::string message = "Global message: ";
+        std::string msg = "Global msg: ";
 
         // start at 1 to skip "smg"
         for (unsigned i = 1; i < args.size(); i++)
-            message += args[i] + " ";
-        if (message[message.size() - 1] == ' ')
-            message[message.size() - 1] = '\0';
-        std::cout << message << std::endl;
+            msg += args[i] + " ";
+        if (msg[msg.size() - 1] == ' ')
+            msg[msg.size() - 1] = '\0';
+        std::cout << msg << std::endl;
+        message = msg;
     }
 
     void Protocol::suc(std::string &str)
@@ -565,12 +564,11 @@ namespace Manager {
 
     int Protocol::getCallbackTileId() {
         auto user = _tileId;
-        // _tileId = -1;
+        std::cout << "[getCallbackTileId] tile id : " << user << std::endl;
         return user;
     }
     int Protocol::getCallbackUserId() {
         auto user = _userId;
-        // _userId = -1;
         return user;
     }
 

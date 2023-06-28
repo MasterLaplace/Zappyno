@@ -9,13 +9,11 @@
 
 void send_connect_nbr(t_server *server, int id)
 {
-    printf("Connect_nbr : %d\n",
-            (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
     AUTO_FREE char *response = malloc(sizeof(char) * my_nblen(
-(TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players)) + 2);
+        (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players)
+    ) + 2);
     if (!response)
         return;
-    sprintf(response, "%d\n",
-            (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
+    sprintf(response, "%d\n", (TEAMS[TEAM_INDEX].max_players - TEAMS[TEAM_INDEX].nb_players));
     send_to_client(server, response, id);
 }

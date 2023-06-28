@@ -35,8 +35,8 @@ Core::Core(const unsigned ac, const char *av[])
 void Core::run()
 {
     std::cout << "Core: Running..." << std::endl;
-    sf::Clock clockProtocol;
-    sf::Time interval = sf::seconds(1.0f);  // intervalle de 1 seconde
+    std::chrono::steady_clock::time_point clockProtocol;
+    std::chrono::seconds interval(1); // intervalle de 1 seconde
     sf::Event event;
     std::string message;
 
@@ -44,24 +44,21 @@ void Core::run()
 
         try {
             if (_scene->getSceneType() == Scene_Manager::SceneType::GAME) {
-            if ((message = _protocol->_client->receiveFromServer()) != "") {
-                std::cout << "Message received: " << message;
-                _protocol->parseCommand(message);
-            }
-                if (clockProtocol.getElapsedTime() >= interval) {
+                if ((message = _protocol->_client->receiveFromServer()) != "")
+                    _protocol->parseCommand(message);
+                if (std::chrono::steady_clock::now() - clockProtocol >= interval) {
                     _protocol->_client->sendToServer("mct\n");
                     auto MapSize = _protocol->getMapSize();
                     for (int j = 0; j < int(MapSize.y()); j++) {
                         for (int i = 0; i < int(MapSize.x()); i++)
                             _protocol->sendTileToServer(i, j);
                     }
-                    clockProtocol.restart();
+                    clockProtocol = std::chrono::steady_clock::now();
                 }
             }
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }
-
 
         while (_window->pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -75,7 +72,7 @@ void Core::run()
                         now.pause();
                 }
             }
-            if (event.type == sf::Event::MouseWheelScrolled) {
+            if (event.type == sf::Event::MouseWheelScrolled && _scene->getSceneType() == Scene_Manager::SceneType::GAME) {
                 if (event.mouseWheelScroll.delta > 0) {
                     _protocol->setScaleTile(_protocol->getScaleTile() + 0.1f);
                     _protocol->updatePosition();
@@ -85,6 +82,7 @@ void Core::run()
                 }
             }
         }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             _protocol->move_map({0, 5});
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
@@ -93,8 +91,10 @@ void Core::run()
             _protocol->move_map({5, 0});
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             _protocol->move_map({-5, 0});
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            _protocol->move_map({5, 0});
+        if (_scene->getSceneType() != Scene_Manager::GAME && sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            _window->close();
+            break;
+        }
 
         _window->clear();
 
@@ -104,25 +104,26 @@ void Core::run()
 
         try {
             if (event.type == sf::Event::KeyReleased) {
-            _scene->updateScene(mousePos, event.key.code, sf::Mouse::isButtonPressed(sf::Mouse::Left));
-        } else {
-            _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
-        }
+                _scene->updateScene(mousePos, event.key.code, sf::Mouse::isButtonPressed(sf::Mouse::Left));
+            } else {
+                _scene->updateScene(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
+            }
             if (_scene->getSceneType() == Scene_Manager::SceneType::GAME) {
                 _protocol->updateProtocol(mousePos, sf::Mouse::isButtonPressed(sf::Mouse::Left));
-                    _protocol->animationProtocol();
+                _protocol->animationProtocol();
             }
-        _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
-        _scene->drawScene<sf::RenderWindow>(*_window, _protocol);
+            _sceneManager.switchScene<sf::RenderWindow, Sf_sprite::SfSprite>(_window, _scene, _protocol);
+            if (!_window->isOpen())
+                break;
+            _scene->drawScene<sf::RenderWindow, Sf_primitive::Triangle_s>(_window, _protocol);
 
-        if (!star.isFinished() && _scene->getSceneType() == Scene_Manager::SceneType::MENU)
-            star.DoTransition(*_window);
+            if (!star.isFinished() && _scene->getSceneType() == Scene_Manager::SceneType::MENU)
+                star.DoTransition(*_window);
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }
 
         _window->display();
-
     }
 }
 

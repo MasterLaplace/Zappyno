@@ -10,6 +10,7 @@
 static void modify_direction(t_server *server, int id)
 {
     int orientation = TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation;
+
     switch (orientation) {
         case 1:
             TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM].orientation = 2;

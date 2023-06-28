@@ -9,6 +9,6 @@
 
 void recv_inventory(t_server *server, UNUSED char **message, int id)
 {
-    printf("Recv inventory\n");
+    printf("[ai@recv] inventory\n");
     send_inventory(server, id);
 }

@@ -17,58 +17,51 @@
  */
 void send_to_client(t_server *server, char *message, int id)
 {
-    printf("Send to client %d\n", id);
     t_client *client = &CLIENT(id);
     if (client->socket_fd == 0 || client->socket_fd == -1 || client->is_gui)
         return;
-    int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
-    if (bytes_sent == -1) {
-        perror("send");
+    if (send(client->socket_fd, message, strlen(message), 0) == -1) {
+        perror("Send failed, retrying after 1 second");
         sleep(1);
         send(client->socket_fd, message, strlen(message), 0);
         return;
     }
-    if (errno == EPIPE) {
+    if (errno == EPIPE)
         remove_client(server, id);
-    }
 }
 
-void send_to_all_clients(t_server *server, char *message, int id)
+void send_to_all_clients(t_server *server, char *message, unsigned id)
 {
     t_client *clients = server->clients;
 
-    for (int i = 0; i < SOMAXCONN; i++) {
+    for (unsigned i = 0; i < SOMAXCONN; i++) {
         if (clients[i].socket_fd != 0 && clients[i].socket_fd != -1 &&
-!clients[i].is_gui && i != id)
+                !clients[i].is_gui && i != id)
             send_to_client(server, message, i);
     }
 }
 
-void send_to_gui(t_server *server, char * message, int id)
+void send_to_gui(t_server *server, char * message, unsigned id)
 {
     t_client *client = &CLIENT(id);
     if (client->socket_fd == 0 || client->socket_fd == -1 || !client->is_gui)
         return;
-    int bytes_sent = send(client->socket_fd, message, strlen(message), 0);
-    if (bytes_sent == -1) {
-        perror("send");
+    if (send(client->socket_fd, message, strlen(message), 0) == -1) {
+        perror("Send failed, retrying after 1 second");
         sleep(1);
         send(client->socket_fd, message, strlen(message), 0);
         return;
     }
-    if (errno == EPIPE) {
+    if (errno == EPIPE)
         remove_client(server, id);
-    }
 }
 
 void send_to_all_gui(t_server *server, char * message)
 {
     t_client *clients = server->clients;
 
-    for (int i = 0; i < SOMAXCONN; i++) {
-        if (clients[i].socket_fd != 0) {
-            printf("Send to client %d\n", i);
+    for (unsigned i = 0; i < SOMAXCONN; i++) {
+        if (clients[i].socket_fd != 0)
             send_to_gui(server, message, i);
-        }
     }
 }

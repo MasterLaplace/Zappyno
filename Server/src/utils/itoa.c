@@ -13,13 +13,11 @@ int my_nblen(int nb)
     int tmp = nb;
 
     if (nb == 0)
-        return 1;
-    for (; tmp > 0; i++) {
+        return (1);
+    for (; tmp > 0; i++)
         tmp = tmp / 10;
-    }
-    for (; tmp < 0; i++) {
+    for (; tmp < 0; i++)
         tmp = tmp / 10;
-    }
     return i;
 }
 
@@ -31,7 +29,7 @@ char *itoa(int nb)
     char *nb_str = malloc(sizeof(char) * len + 1);
 
     if (!nb_str)
-        return NULL;
+        return (NULL);
     if (nb < 0) {
         nb_str[0] = '-';
         nb *= -1;

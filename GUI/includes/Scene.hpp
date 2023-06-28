@@ -8,9 +8,12 @@
 #ifndef SCENE_HPP_
     #define SCENE_HPP_
     #include "Panel.hpp"
-    #include "Mesh.hpp"
+    #include "Pipeline.hpp"
     #include "Xml.hpp"
     #include <SFML/Audio.hpp>
+    #include "Obj.hpp"
+    #include "SfPrimitive.hpp"
+    #include "Popup.hpp"
     #include "Protocol.hpp"
 
 namespace Scene_Manager {
@@ -36,8 +39,12 @@ namespace GUI {
             Scene(const Scene&) = default;
             Scene &operator=(const Scene&) = default;
 
+            void setVR(const bool &isVR) { _isVR = isVR; }
             void setPause(bool isPause) { _isPause = isPause; }
             void setPauseSettings(bool isPauseSettings) { _isPauseSettings = isPauseSettings; }
+
+            void setPipeline(Engine::Pipeline pipeline) { _pipeline = pipeline; }
+            Engine::Pipeline &getPipeline() { return _pipeline; }
 
             Scene_Manager::SceneType &getSceneType() { return _scenetype; }
 
@@ -48,6 +55,7 @@ namespace GUI {
 
             std::vector<Interface::Panel> &getPanels() { return _panels; }
 
+            void addObject(const Engine::Mesh &obj) { _objects.push_back(obj); }
             void addPanel(const Interface::Panel &panel) { _panels.push_back(panel); }
 
             void updateScene(const Math::Vector &mousePos, const bool &mousePressed = false);
@@ -55,13 +63,46 @@ namespace GUI {
 
             std::vector<Interface::CALLBACK> getCallback();
 
-            template<typename Win>
-            void drawScene(Win &win, std::shared_ptr<Manager::Protocol> &protocol) {
-                _background->drawSprite();
+            template<typename Win, typename Shape>
+            void drawScene(std::shared_ptr<Win> &win, std::shared_ptr<Manager::Protocol> &protocol) {
+                if (protocol->message != "") {
+                    std::string path = "GUI/assets/popup.png";
+                    auto win_size = win->getSize();
+                    sf::Texture texture;
+                    if (texture.loadFromFile(path)) {
+                        auto size = texture.getSize();
+                        auto sprite = std::make_shared<Sf_sprite::SfSprite>(win, path, Math::Vector(win_size.x, win_size.y / 5 + size.y / 2));
+                        _popups.push_back(Interface::Popup(sprite, win_size.x, protocol->message));
+                    }
+                    protocol->message = "";
+                }
+                if (_background)
+                    _background->drawSprite();
                 if (_scenetype == Scene_Manager::SceneType::GAME)
                     protocol->draw();
+                if (_scenetype == Scene_Manager::SceneType::MENU) {
+                    auto &mesh = _pipeline.getNewMesh();
+                    if (mesh) {
+                        sort(mesh->getShapes().begin(), mesh->getShapes().end(), [](const std::shared_ptr<Engine::Triangle> &a, const std::shared_ptr<Engine::Triangle> &b) {
+                            double az = (a->operator[](0).z() + a->operator[](1).z() + a->operator[](2).z()) / 3.0f;
+                            double bz = (b->operator[](0).z() + b->operator[](1).z() + b->operator[](2).z()) / 3.0f;
+                            return az > bz;
+                        });
+
+                        mesh->drawMesh<Win, Shape>(Sf_primitive::drawTriangle, *win);
+                        mesh->getShapes().clear();
+                    }
+                }
                 for (auto &panel : _panels)
-                    panel.drawPanel(win);
+                    panel.drawPanel(*win);
+                for (auto it = _popups.begin(); it != _popups.end();) {
+                    if (it->getState() == Interface::Popup::State::END) {
+                        it = _popups.erase(it);
+                    } else {
+                        it->drawPopup<Win>(*win);
+                        ++it;
+                    }
+                }
             };
 
             template<typename Win>
@@ -71,8 +112,12 @@ namespace GUI {
         private:
             Scene_Manager::SceneType _scenetype;
             std::vector<Interface::Panel> _panels;
+            std::vector<Interface::Popup> _popups;
+            std::vector<Engine::Mesh> _objects;
+            Engine::Pipeline _pipeline;
             std::shared_ptr<ISprite> _background = nullptr;
             Interface::CALLBACK _callback = Interface::CALLBACK::NONE;
+            bool _isVR = false;
             bool _isPause = false;
             bool _isPauseSettings = false;
     };
@@ -122,11 +167,14 @@ namespace GUI {
                 std::shared_ptr<Scene> scene = std::make_shared<Scene>(sceneType);
                 std::vector<std::map<std::string, std::string>> image = _xml.getTiles("GUI/assets/scene.xml", "Images");
                 std::vector<std::map<std::string, std::string>> font = _xml.getTiles("GUI/assets/scene.xml", "Fonts");
+                std::vector<std::map<std::string, std::string>> objs = _xml.getTiles("GUI/assets/scene.xml", "Objs");
                 std::vector<std::map<std::string, std::string>> button = _xml.getTiles("GUI/assets/scene.xml", "Buttons");
                 std::vector<std::map<std::string, std::string>> checkbox = _xml.getTiles("GUI/assets/scene.xml", "Checkboxs");
                 std::vector<std::map<std::string, std::string>> input = _xml.getTiles("GUI/assets/scene.xml", "Inputs");
                 std::vector<std::map<std::string, std::string>> bar = _xml.getTiles("GUI/assets/scene.xml", "Bars");
                 std::vector<std::map<std::string, std::string>> panel = _xml.getTiles("GUI/assets/scene.xml", "Panels");
+                std::vector<std::map<std::string, std::string>> meshes = _xml.getTiles("GUI/assets/scene.xml", "Meshes");
+                std::vector<std::map<std::string, std::string>> cameras = _xml.getTiles("GUI/assets/scene.xml", "Cameras");
                 std::vector<std::map<std::string, std::string>> scenes = _xml.getTiles("GUI/assets/scene.xml", "Scenes");
                 std::vector<std::map<std::string, std::string>> chat = _xml.getTiles("GUI/assets/scene.xml", "Chats");
                 std::vector<std::map<std::string, std::string>> text = _xml.getTiles("GUI/assets/scene.xml", "Texts");
@@ -206,11 +254,11 @@ namespace GUI {
                                     }
                                     // loop on chat
                                     auto chats = String::string_to_string_vector(it3["chats"], ", \t");
-                                    std::cout << "inputs: " << it3["chat"] << std::endl;
+                                    std::cout << "chats: " << it3["chat"] << std::endl;
                                     for (auto it4 : chats) {
                                         for (auto it5 : chat) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                std::cout << "name chat: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 auto limit = std::stoi(it5["limit"]);
                                                 Interface::Chat _chat(findInTiles(font, it5["font"]));
@@ -235,6 +283,8 @@ namespace GUI {
                                                 Interface::Text _text(findInTiles(font, it5["font"]));
                                                 _text.setPos(pos);
                                                 _text.setColor(SceneManager::StringToSfColor(it5["color"]));
+                                                if (it5.find("str") != it5.end())
+                                                    _text.setText(it5["str"]);
                                                 if (_panel.getType() == "inventory_user")
                                                     _panel.addTextUser(_text);
                                                 else if (_panel.getType() == "inventory_case")
@@ -247,6 +297,47 @@ namespace GUI {
                                     scene->addPanel(_panel);
                                 }
                             }
+                        }
+                        std::vector<std::string> ok2;
+                        if (it.find("meshes") != it.end())
+                            ok2 = String::string_to_string_vector(it["meshes"], ", \t");
+                        for (auto it2 : ok2) {
+                            // loop on meshes
+                            for (auto it3 : meshes) {
+                                if (it3["name"] == it2) {
+                                    std::cout << "name meshes: " << it3["name"] << std::endl;
+                                    Engine::Mesh _mesh;
+                                    if (it3.find("plan") != it3.end()) {
+                                        Math::Vector size(String::string_to_string_vector(it3["plan"], ", \t"));
+
+                                        for (int y = 0; y < size.y(); y++) {
+                                            for (int x = 0; x < size.x(); x++) {
+                                                Engine::Triangle tri(Math::Vector(x, y), Math::Vector((x + 1), y), Math::Vector((x + 1), (y + 1)));
+                                                _mesh.add(std::make_shared<Engine::Triangle>(tri));
+                                                Engine::Triangle tri2(Math::Vector(x, (y + 1)), Math::Vector((x + 1), (y + 1)), Math::Vector(x, y));
+                                                _mesh.add(std::make_shared<Engine::Triangle>(tri2));
+                                            }
+                                        }
+                                    } else if (it3.find("obj") != it3.end())
+                                        _mesh = Parser::Obj::loadFile(findInTiles(objs, it3["obj"]));
+                                    _mesh.setPos(Math::Vector(String::string_to_string_vector(it3["pos"], ", \t")));
+                                    _mesh.setRot(Math::Vector(String::string_to_string_vector(it3["rot"], ", \t")));
+                                    _mesh.setScale(Math::Vector(String::string_to_string_vector(it3["scale"], ", \t")));
+                                    scene->addObject(_mesh);
+                                }
+                            }
+                        }
+                        if (it.find("camera") != it.end() && it["camera"] != "") {
+                            std::cout << "name camera: " << it["camera"] << std::endl;
+                            Engine::Pipeline pipeline;
+                            pipeline.setCamera(std::make_shared<Engine::Camera>());
+                            pipeline.setNewMesh(std::make_shared<Engine::Mesh>());
+                            pipeline.setWinSize(Math::Vector(String::string_to_string_vector(it["win"], ", \t")));
+                            auto camera = pipeline.getCamera();
+                            camera->setPos(Math::Vector(String::string_to_string_vector(findInTiles(cameras, it["camera"], "pos"), ", \t")));
+                            camera->setDir(Math::Vector(String::string_to_string_vector(findInTiles(cameras, it["camera"], "dir"), ", \t")));
+                            scene->setPipeline(pipeline);
+                            scene->setVR(_isVR);
                         }
                     }
                 }
@@ -303,7 +394,6 @@ namespace GUI {
                             return;
                         case Interface::CALLBACK::GOTO_GAME:
                             scene = create_scene<Win, Sprite>(Scene_Manager::SceneType::GAME, window);
-                            protocol->setChat(scene->getChat());
                             protocol->setTextInventoryUser(scene->getTextInventoryUser());
                             protocol->setTextInventoryCase(scene->getTextInventoryCase());
                             return;
@@ -341,6 +431,7 @@ namespace GUI {
                                 break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_user") {
+                                    std::cout << "user id: " << protocol->getCallbackTileId() << std::endl;
                                     it.setUserData(protocol->getUserData(protocol->getCallbackTileId()));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_USER);
                                 }
@@ -351,10 +442,15 @@ namespace GUI {
                                 break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_case") {
+                                    std::cout << "case id: " << protocol->getCallbackTileId() << std::endl;
                                     it.setCaseData(protocol->getCaseData(protocol->getCallbackUserId()));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_CASE);
                                 }
                             }
+                            break;
+                        case Interface::CALLBACK::VR:
+                            _isVR = !_isVR;
+                            scene->setVR(_isVR);
                             break;
                         default:
                             break;
@@ -366,9 +462,10 @@ namespace GUI {
         private:
             Parser::Xml _xml;
             sf::Music music;
+            bool _isVR = false;
             bool _isFullscreen = false;
             Math::Vector _winSize = {1920, 1080};
     };
-}
+} // namespace GUI
 
 #endif /* !SCENE_HPP_ */
