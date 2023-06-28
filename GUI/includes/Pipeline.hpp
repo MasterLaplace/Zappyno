@@ -30,7 +30,6 @@ namespace Engine {
             void setNewMesh(std::shared_ptr<Engine::Mesh> mesh) { newMesh = mesh; }
             void setWinSize(Math::Vector win_size) {
                 _win_x = win_size.x(); _win_y = win_size.y();
-                std::cout << "win_x: " << _win_x << " win_y: " << _win_y << std::endl;
                 ViewtoProjection.SetProjectionMatrix(120.0f, float(_win_y) / float(_win_x), 0.1f, 1000.0f);
                 VRLeftProjection.SetLeftEyeProjectionMatrix(120.0f, float(_win_y/2) / float(_win_x), 0.1f, 1000.0f);
                 VRRightProjection.SetRightEyeProjectionMatrix(120.0f, float(_win_y/2) / float(_win_x), 0.1f, 1000.0f);

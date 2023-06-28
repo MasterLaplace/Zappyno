@@ -214,7 +214,7 @@ namespace GUI {
     std::string SceneManager::findInTiles(std::vector<std::map<std::string, std::string>> tile, std::string compare, std::string key) {
         for (auto &it : tile) {
             if (compare == it["name"]) {
-                std::cout << "Final key: " << it[key] << std::endl;
+                std::cout << "[findInTiles] Final key: key=\"" << it[key] << "\"" << std::endl;
                 return it[key];
             }
         }

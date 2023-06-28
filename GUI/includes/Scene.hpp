@@ -180,15 +180,15 @@ namespace GUI {
                 std::vector<std::map<std::string, std::string>> text = _xml.getTiles("GUI/assets/scene.xml", "Texts");
                 // loop on scene
                 for (auto it : scenes) {
-                    std::cout << "name scene: " << it["name"] << std::endl;
                     if (it["name"] == SceneManager::SceneTypeToString(sceneType)) {
+                        std::cout << "[create_scene@Scene] name scene: " << it["name"] << std::endl;
                         auto ok = String::string_to_string_vector(it["panels"], ", \t");
                         scene->setSprite(findInTiles(image, it["back"]), window);
                         for (auto it2 : ok) {
                             // loop on panel
                             for (auto it3 : panel) {
                                 if (it3["name"] == it2) {
-                                    std::cout << "name type: " << it3["type"] << std::endl;
+                                    std::cout << "[create_scene@Scene] name pannel type: " << it3["type"] << std::endl;
                                     Math::Vector pos(String::string_to_string_vector(it3["pos"], ", \t"));
                                     Math::Vector scale(String::string_to_string_vector(it3["scale"], ", \t"));
                                     std::string path = findInTiles(image, it3["img"]);
@@ -202,11 +202,10 @@ namespace GUI {
                                     _panel.setType(it3["type"]);
                                     // loop on button
                                     auto buttons = String::string_to_string_vector(it3["buttons"], ", \t");
-                                    std::cout << "buttons: " << it3["buttons"] << std::endl;
                                     for (auto it4 : buttons) {
                                         for (auto it5 : button) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name button: " << it5["name"] << std::endl;
+                                                std::cout << "[create_scene@Scene] name button: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 Math::Vector scale(String::string_to_string_vector(it5["scale"], ", \t"));
                                                 Interface::Button _button = Interface::Button(std::make_shared<Sprite>(window, findInTiles(image, it5["img"]), pos, scale));
@@ -219,11 +218,10 @@ namespace GUI {
                                         }
                                     }
                                     auto checkboxs = String::string_to_string_vector(it3["checkboxs"], ", \t");
-                                    std::cout << "checkboxs: " << it3["checkboxs"] << std::endl;
                                     for (auto it4 : checkboxs) {
                                         for (auto it5 : checkbox) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name checkbox: " << it5["name"] << std::endl;
+                                                std::cout << "[create_scene@Scene] name checkbox: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 Math::Vector scale(String::string_to_string_vector(it5["scale"], ", \t"));
                                                 Interface::Checkbox _checkbox = Interface::Checkbox(std::make_shared<Sprite>(window, findInTiles(image, it5["img"]), pos, scale));
@@ -238,11 +236,10 @@ namespace GUI {
                                     }
                                     // loop on input
                                     auto inputs = String::string_to_string_vector(it3["inputs"], ", \t");
-                                    std::cout << "inputs: " << it3["input"] << std::endl;
                                     for (auto it4 : inputs) {
                                         for (auto it5 : input) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name input: " << it5["name"] << std::endl;
+                                                std::cout << "[create_scene@Scene] name input: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 auto fsize = std::stoi(it5["fsize"]);
                                                 auto limit = std::stoi(it5["limit"]);
@@ -254,11 +251,10 @@ namespace GUI {
                                     }
                                     // loop on chat
                                     auto chats = String::string_to_string_vector(it3["chats"], ", \t");
-                                    std::cout << "chats: " << it3["chat"] << std::endl;
                                     for (auto it4 : chats) {
                                         for (auto it5 : chat) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name chat: " << it5["name"] << std::endl;
+                                                std::cout << "[create_scene@Scene] name chat: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 auto limit = std::stoi(it5["limit"]);
                                                 Interface::Chat _chat(findInTiles(font, it5["font"]));
@@ -274,11 +270,10 @@ namespace GUI {
                                     else if (_panel.getType() == "inventory_case")
                                         _panel.setTextCase(std::make_shared<std::vector<Interface::Text>>());
                                     auto texts = String::string_to_string_vector(it3["texts"], ", \t");
-                                    std::cout << "texts: " << it3["text"] << std::endl;
                                     for (auto it4 : texts) {
                                         for (auto it5 : text) {
                                             if (it5["name"] == it4) {
-                                                std::cout << "name text: " << it5["name"] << std::endl;
+                                                std::cout << "[create_scene@Scene] name text: " << it5["name"] << std::endl;
                                                 Math::Vector pos(String::string_to_string_vector(it5["pos"], ", \t"));
                                                 Interface::Text _text(findInTiles(font, it5["font"]));
                                                 _text.setPos(pos);
@@ -305,7 +300,7 @@ namespace GUI {
                             // loop on meshes
                             for (auto it3 : meshes) {
                                 if (it3["name"] == it2) {
-                                    std::cout << "name meshes: " << it3["name"] << std::endl;
+                                    std::cout << "[create_scene@Scene] name meshes: " << it3["name"] << std::endl;
                                     Engine::Mesh _mesh;
                                     if (it3.find("plan") != it3.end()) {
                                         Math::Vector size(String::string_to_string_vector(it3["plan"], ", \t"));
@@ -328,7 +323,7 @@ namespace GUI {
                             }
                         }
                         if (it.find("camera") != it.end() && it["camera"] != "") {
-                            std::cout << "name camera: " << it["camera"] << std::endl;
+                            std::cout << "[create_scene@Scene] name camera: " << it["camera"] << std::endl;
                             Engine::Pipeline pipeline;
                             pipeline.setCamera(std::make_shared<Engine::Camera>());
                             pipeline.setNewMesh(std::make_shared<Engine::Mesh>());
@@ -442,7 +437,6 @@ namespace GUI {
                                 break;
                             for (auto &it : scene->getPanels()) {
                                 if (it.getType() == "inventory_case") {
-                                    std::cout << "case id: " << protocol->getCallbackTileId() << std::endl;
                                     it.setCaseData(protocol->getCaseData(protocol->getCallbackUserId()));
                                     return it.setCallback(Interface::CALLBACK::OPEN_INVENTORY_CASE);
                                 }

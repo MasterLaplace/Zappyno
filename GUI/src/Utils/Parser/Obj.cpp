@@ -108,7 +108,7 @@ namespace Parser {
         // print elapsed time
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
-        std::cout << "OBJ file \"" << filename << "\" loaded in " << duration.count() << "ms" << std::endl;
+        std::cout << "[Obj] OBJ file \"" << filename << "\" loaded in " << duration.count() << "ms" << std::endl;
         return newshape;
     }
 } // namespace Parser

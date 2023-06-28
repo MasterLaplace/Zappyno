@@ -564,7 +564,6 @@ namespace Manager {
 
     int Protocol::getCallbackTileId() {
         auto user = _tileId;
-        std::cout << "[getCallbackTileId] tile id : " << user << std::endl;
         return user;
     }
     int Protocol::getCallbackUserId() {
