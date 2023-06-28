@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2023
-** B-YEP-400-REN-4-1-zappy-tristan.bros
+** Zappyno
 ** File description:
-** main.c
+** free_struct_server
 */
 
 #include "../../include/server.h"

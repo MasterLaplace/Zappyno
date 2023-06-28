@@ -1,8 +1,10 @@
 # ME : <p align="center">Zappyno (Zappy)</p>
 
 <p align="center">
-    <a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/blob/main/LICENSE">
+    <a href="https://github.com/MasterLaplace/Zappyno/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License: MIT">
+    </a><a>
+        <img src="https://img.shields.io/badge/Python-3.11.3-yellow?style=for-the-badge" alt="Python: 3.11.3">
     </a><a>
         <img src="https://img.shields.io/badge/C++-17-blue?style=for-the-badge" alt="C++: 17">
     </a><a>
@@ -11,12 +13,12 @@
         <img src="https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge" alt="OS: Linux">
     </a><a>
         <img src="https://img.shields.io/badge/SFML-2.5-blue?style=for-the-badge" alt="SFML: 2.5">
-    </a><a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/releases/latest/">
-        <img src="https://img.shields.io/github/v/release/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros.svg?label=version" alt="Version">
-    <a>
+    </a>
 </p>
 
 Status: in progress
+
+[![Zappyno Version](https://img.shields.io/github/v/release/MasterLaplace/Zappyno.svg?label=version)](https://github.com/MasterLaplace/Zappyno/releases/latest/)
 
 
 ## :placard: Table of Contents
@@ -50,8 +52,8 @@ Zappy is an interesting project that integrates concepts from networking, multi-
 
 ```shell
 # Clone repository
-$ git clone git@github.com:EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros.git
-$ cd B-YEP-400-REN-4-1-zappy-tristan.bros
+$ git clone https://github.com/MasterLaplace/Zappyno.git
+$ cd Zappyno
 
 # Dependencies
 $ make
@@ -76,7 +78,6 @@ $ make clean
 
 | Key | Action |
 | --- | --- |
-| <kbd>`...`</kbd> | ... |
 | <kbd>`ESC`</kbd> | Quit |
 | <kbd>`F1`</kbd>  | Pause Music |
 | <kbd>`UP`</kbd>/<kbd>`Z`</kbd>  | Move up |
@@ -94,17 +95,18 @@ $ make clean
 .
 ├── AI                                # AI client code
 │   ├── Docs
-│   ├── include
-│   ├── src
-│   └── tests
-├── B-YEP-400-zappy
+│   └── src
 ├── Docs                              # Documentation directory
 ├── GUI                               # GUI code
+│   ├── assets
+│   │   ├── fonts
+│   │   ├── rock_assets
+│   │   └── sounds
 │   ├── Docs
 │   ├── includes
-│   ├── Install
 │   ├── obj
 │   ├── Script
+│   │   └── Install
 │   ├── src
 │   │   ├── Core
 │   │   ├── Engine
@@ -112,20 +114,28 @@ $ make clean
 │   │   ├── Manager
 │   │   └── Utils
 │   │       ├── Math
+│   │       ├── Network
 │   │       ├── Parser
-│   │       └── String
+│   │       ├── String
+│   │       └── Wrapper
+│   │           └── SfWrapper
 │   └── tests
-├── __MACOSX
-│   └── Zappy
-│       └── Docs
 └── Server                            # Server code
     ├── Docs
     ├── include
     ├── src
-    │   ├── commands
-    │   ├── game_logic
+    │   ├── free_all
     │   ├── network
-    │   └── thread_logic
+    │   ├── parser_params_and_check
+    │   ├── recv_packages
+    │   │   ├── ai
+    │   │   ├── connection
+    │   │   └── gui
+    │   ├── send_packages
+    │   │   ├── ai
+    │   │   ├── connection
+    │   │   └── gui
+    │   └── utils
     └── tests
 ```
 
@@ -133,8 +143,8 @@ $ make clean
 
 Here's more documentation about the project
 
-* [Technical documentation [PDF]](Docs/technical.pdf)
-* [Technical documentation](Docs/Zappy/html/index.html)
+* [Technical documentation [PDF]](./Docs/B-YEP-400_zappy.pdf)
+* [Technical documentation](./Docs/Zappy/html/index.html)
 
 
 <div id='license'/>

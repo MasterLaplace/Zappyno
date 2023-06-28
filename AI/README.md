@@ -1,15 +1,16 @@
 # ME : <p align="center">Zappyno (AI)</p>
 
 <p align="center">
-    <a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/blob/main/LICENSE">
+    <a href="https://github.com/MasterLaplace/Zappyno/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License: MIT">
     </a><a>
         <img src="https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge" alt="OS: Linux">
+    </a><a>
+        <img src="https://img.shields.io/badge/Python-3.11.3-yellow?style=for-the-badge" alt="Python: 3.11.3">
     </a>
 </p>
 
 Status: in progress
-
 
 ## :placard: Table of Contents
 - [Description](#description)
@@ -23,6 +24,7 @@ Status: in progress
 
 ## :pencil: **DESCRIPTION**
 
+[Description and Documentation here](Docs/README.md)
 
 
 <div id='running'/>
@@ -31,8 +33,8 @@ Status: in progress
 
 ```shell
 # Clone repository
-$ git clone git@github.com:EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros.git
-$ cd B-YEP-400-REN-4-1-zappy-tristan.bros
+$ git clone https://github.com/MasterLaplace/Zappyno.git
+$ cd Zappyno
 
 # Dependencies
 $ make
@@ -49,15 +51,11 @@ $./zappy_ai –help
 ```shell
 Zappy/
 │
-├── Client/               # AI client code
-    ├── Docs/
-    │   └── README.md
-    ├── src/
-    ├── include/
-    ├── tests/
-    │   └── main_tests.cpp
-    └── Makefile
+├── AI                                # AI client code
+│   ├── Docs
+│   └── src
 ```
+
 
 <div id='license'/>
 
@@ -78,6 +76,7 @@ Copyright © 2022-2023 :
 [mlbonniec](https://github.com/mlbonniec),
 
 [Tristan](https://github.com/Tristan).
+
 
 <div id='contacts'/>
 

@@ -1,7 +1,7 @@
 # ME : <p align="center">Zappyno (Server)</p>
 
 <p align="center">
-    <a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/blob/main/LICENSE">
+    <a href="https://github.com/MasterLaplace/Zappyno/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License: MIT">
     </a><a>
         <img src="https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge" alt="OS: Linux">
@@ -33,8 +33,8 @@ Status: in progress
 
 ```shell
 # Clone repository
-$ git clone git@github.com:EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros.git
-$ cd B-YEP-400-REN-4-1-zappy-tristan.bros
+$ git clone https://github.com/MasterLaplace/Zappyno.git
+$ cd Zappyno
 
 # Dependencies
 $ make
@@ -51,19 +51,23 @@ $ ./zappy_server –help
 ```shell
 Zappy/
 │
-├── Server/               # Server code
-    ├── Docs/
-    │   └── README.md
-    ├── src/
-    │   ├── commands/
-    │   ├── network/
-    │   ├── game_logic/
-    │   ├── thread_management/
-    │   └── main.c
-    ├── include/
-    ├── tests/
-    │   └── main_tests.c
-    └── Makefile
+└── Server                            # Server code
+    ├── Docs
+    ├── include
+    ├── src
+    │   ├── free_all
+    │   ├── network
+    │   ├── parser_params_and_check
+    │   ├── recv_packages
+    │   │   ├── ai
+    │   │   ├── connection
+    │   │   └── gui
+    │   ├── send_packages
+    │   │   ├── ai
+    │   │   ├── connection
+    │   │   └── gui
+    │   └── utils
+    └── tests
 ```
 
 <div id='license'/>

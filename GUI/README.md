@@ -1,7 +1,7 @@
 # ME : <p align="center">Zappyno (GUI)</p>
 
 <p align="center">
-    <a href="https://github.com/EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros/blob/main/LICENSE">
+    <a href="https://github.com/MasterLaplace/Zappyno/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License: MIT">
     </a><a>
         <img src="https://img.shields.io/badge/C++-17-blue?style=for-the-badge" alt="C++: 17">
@@ -35,8 +35,8 @@ Status: in progress
 
 ```shell
 # Clone repository
-$ git clone git@github.com:EpitechPromo2026/B-YEP-400-REN-4-1-zappy-tristan.bros.git
-$ cd B-YEP-400-REN-4-1-zappy-tristan.bros
+$ git clone https://github.com/MasterLaplace/Zappyno.git
+$ cd Zappyno
 
 # Dependencies
 $ make
@@ -53,12 +53,16 @@ $./zappy_gui –help
 ```shell
 Zappy/
 │
-├── GUI                   # GUI code
+├── GUI                               # GUI code
+│   ├── assets
+│   │   ├── fonts
+│   │   ├── rock_assets
+│   │   └── sounds
 │   ├── Docs
 │   ├── includes
-│   ├── Install
 │   ├── obj
 │   ├── Script
+│   │   └── Install
 │   ├── src
 │   │   ├── Core
 │   │   ├── Engine
@@ -66,8 +70,11 @@ Zappy/
 │   │   ├── Manager
 │   │   └── Utils
 │   │       ├── Math
+│   │       ├── Network
 │   │       ├── Parser
-│   │       └── String
+│   │       ├── String
+│   │       └── Wrapper
+│   │           └── SfWrapper
 │   └── tests
 ```
 
