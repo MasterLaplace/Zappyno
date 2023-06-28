@@ -8,7 +8,7 @@
 #ifndef SERVER_H
     #define SERVER_H
     #define UNUSED __attribute__((unused))
-    #define EXIT_ERROR 84
+    #define RETURN_FAILED -1
     #define BUFFER_SIZE 1024
     #define TEAMS server->game.teams
     #define CLIENT(id) server->clients[id]
@@ -40,6 +40,7 @@
     #include <netinet/in.h>
     #include <stdint.h>
     #include <fcntl.h>
+    #include <time.h>
 
     #include "params.h"
     #include "client.h"
@@ -49,7 +50,7 @@
 typedef struct tmp_s tmp_t;
 
 typedef struct server_timer_s {
-    time_t start;
+    clock_t start;
     double duration;
 } server_timer_t;
 
@@ -87,19 +88,19 @@ void handle_client_data(t_server *server, int fd, int id);
 void remove_client(t_server *server, int id);
 // send_to_client will send a message to a specific client
 void send_to_client(t_server *, char *, int);
-//
-void send_to_all_clients(t_server *server, char *message, int id);
+// send_to_all_clients will send a message to all clients
+void send_to_all_clients(t_server *server, char *message, unsigned id);
 // receive_from_client will receive a message from a specific client
 void receive_from_client(t_server *server, char *message, int id);
-//
+// receive_from_all_clients will receive a message from all clients
 void send_to_all_gui(t_server *server, char * message);
-//
-void send_to_gui(t_server *server, char * message, int id);
+// send_to_gui will send a message to the gui
+void send_to_gui(t_server *server, char * message, unsigned id);
 
 //
 char **stwa(char *str, const char *delim);
 //
-unsigned find_tile(t_server *server, unsigned x, unsigned y, int id);
+unsigned find_tile(t_server *server, unsigned x, unsigned y);
 //
 int wrap_x(int x, int width);
 //
@@ -107,7 +108,7 @@ int wrap_y(int y, int height);
 //
 int set_timer(void);
 //
-bool generate_food(t_server *server);
+void generate_food(t_server *server);
 //
 t_server *set_server_struct(t_params *params);
 //
@@ -156,8 +157,9 @@ uintptr_t get_environment_variable(const char *key);
 void clean(void) __attribute__((destructor));
 //
 void add_client(t_server *server, int new_socket);
-
-
-
+//
+double calcul_angle(int x, int y);
+//
+struct timespec get_current_time();
 
 #endif // SERVER_H

@@ -430,7 +430,7 @@ class Player:
 
     def __manage_initialized(self) -> None:
         if self.unused_slots > 0:
-            self.response = Command.FORK.value
+            self.response = ''
             self.fork = True
         self.step = 0
 

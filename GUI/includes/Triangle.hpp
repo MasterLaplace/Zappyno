@@ -25,7 +25,22 @@ namespace Engine {
             Math::Vector &operator[](T index) { return _vertex[index]; }
             template <typename T>
             const Math::Vector &operator[](T index) const { return _vertex[index]; }
-            void SetVertex(std::size_t index, const Math::Vector &v) { _vertex[index] = v; }
+
+            void SetVertex(unsigned index, const Math::Vector &v) { _vertex[index] = v; }
+            void SetTexCoord(unsigned index, const Math::Vector &v) { _tex_coords[index] = v; }
+            const Math::Vector &GetVertex(unsigned index) const { return _vertex[index]; }
+            Math::Vector &GetVertex(unsigned index) { return _vertex[index]; }
+
+            const Math::Vector &GetTexCoord(unsigned index) const { return _tex_coords[index]; }
+            Math::Vector &GetTexCoord(unsigned index) { return _tex_coords[index]; }
+
+            void SetDp(double depth) { _dp = depth; }
+            double GetDp() const { return _dp; }
+
+            int ClipAgainstPlane(Math::Vector plane_p, Math::Vector plane_n, Triangle &out_tri1, Triangle &out_tri2);
+            // take a pointer to a function that takes a window and a primitive struct type
+            template <typename Win, typename T>
+            void drawTriangle(void (*draw)(Win &, const T &), Win &window, const T &tri) const { draw(window, tri); }
 
         protected:
         private:
@@ -35,8 +50,9 @@ namespace Engine {
                 Math::Vector(0, 1),
                 Math::Vector(1, 1)
             };
+            double _dp = 1;
     };
     std::ostream &operator<<(std::ostream &os, const Triangle &triangle);
-}
+} // namespace Engine
 
 #endif /* !TRIANGLE_HPP_ */

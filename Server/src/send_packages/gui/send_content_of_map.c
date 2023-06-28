@@ -10,18 +10,22 @@
 static unsigned size_content_map(t_server *server)
 {
     unsigned size = 0;
-    int map_size = server->params->width * server->params->height - 1;
-    for (int i = 0; i < map_size; i++) {
-        size += my_nblen(server->game.tiles[i].x) +
-        my_nblen(server->game.tiles[i].y) +
-        my_nblen(server->game.tiles[i].resources[0]) +
-        my_nblen(server->game.tiles[i].resources[1]) +
-        my_nblen(server->game.tiles[i].resources[2]) +
-        my_nblen(server->game.tiles[i].resources[3]) +
-        my_nblen(server->game.tiles[i].resources[4]) +
-        my_nblen(server->game.tiles[i].resources[5]) +
-        my_nblen(server->game.tiles[i].resources[6]) + 14;
+    unsigned map_size = server->params->width * server->params->height - 1;
+
+    for (unsigned i = 0; i < map_size; i++) {
+        size += (
+            my_nblen(server->game.tiles[i].x) +
+            my_nblen(server->game.tiles[i].y) +
+            my_nblen(server->game.tiles[i].resources[0]) +
+            my_nblen(server->game.tiles[i].resources[1]) +
+            my_nblen(server->game.tiles[i].resources[2]) +
+            my_nblen(server->game.tiles[i].resources[3]) +
+            my_nblen(server->game.tiles[i].resources[4]) +
+            my_nblen(server->game.tiles[i].resources[5]) +
+            my_nblen(server->game.tiles[i].resources[6]) + 14
+        );
     }
+    return size;
 }
 
 void send_content_of_map(t_server *server, UNUSED char **array, int id)
@@ -35,12 +39,13 @@ void send_content_of_map(t_server *server, UNUSED char **array, int id)
     if (!buffer)
         return;
     for (int i = map_size; i >= 0; i--) {
-        sprintf(buffer, "bct %d %d %d %d %d %d %d %d %d\n",
-server->game.tiles[i].x, server->game.tiles[i].y,
-server->game.tiles[i].resources[0], server->game.tiles[i].resources[1],
-server->game.tiles[i].resources[2], server->game.tiles[i].resources[3],
-server->game.tiles[i].resources[4], server->game.tiles[i].resources[5],
-server->game.tiles[i].resources[6]
+        sprintf(
+            buffer, "bct %d %d %d %d %d %d %d %d %d\n",
+            server->game.tiles[i].x, server->game.tiles[i].y,
+            server->game.tiles[i].resources[0], server->game.tiles[i].resources[1],
+            server->game.tiles[i].resources[2], server->game.tiles[i].resources[3],
+            server->game.tiles[i].resources[4], server->game.tiles[i].resources[5],
+            server->game.tiles[i].resources[6]
         );
         message = my_strcat(message, buffer);
     }

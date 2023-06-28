@@ -8,7 +8,7 @@
 #ifndef GAME_H_
     #define GAME_H_
 
-    //Include all the libraries you need here
+    //Include all the libraries needed here
     #include <stdio.h>
     #include <string.h>
 
@@ -44,7 +44,7 @@ typedef struct gui_command {
 typedef struct ai_command {
     char *command_id;
     void (*function_ai)(t_server *, char **, int);
-    int time;
+    double time;
 } ai_command;
 
 #endif /* !GAME_H_ */

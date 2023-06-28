@@ -10,6 +10,7 @@
 
     #include <stdbool.h>
     #include <stddef.h>
+    #include <time.h>
 
 typedef struct s_server t_server;
 
@@ -25,7 +26,7 @@ typedef enum {
 } e_resources;
 
 typedef struct my_timer_s {
-    time_t start;
+    clock_t start;
     double duration;
 } my_timer_t;
 
@@ -49,7 +50,6 @@ typedef struct s_client {
     bool is_an_egg;
     bool is_forked;
     bool dead;
-    // TODO: add more client-specific data (player info, team info, etc.)
 } t_client;
 
 void client_init(t_client *client, int socket_fd);

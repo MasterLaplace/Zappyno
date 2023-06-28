@@ -9,6 +9,6 @@
 
 void recv_forward(t_server *server, UNUSED char **message, int id)
 {
-    printf("Recv forward\n");
+    printf("[ai@recv] forward\n");
     send_forward(server, id);
 }

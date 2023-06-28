@@ -37,6 +37,7 @@ namespace Interface {
         GOTO_RESULT,
         GOTO_MENU,
         RESIZE,
+        VR,
         EXIT,
         MUTE_SOUND,
         OPEN_INVENTORY_USER,

@@ -56,7 +56,7 @@ class Utils:
         """
         Get the minimum food quantity to survive.
         """
-        return 75
+        return 25
 
     @staticmethod
     def generate_uuid() -> str:

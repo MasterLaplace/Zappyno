@@ -25,19 +25,20 @@
  */
 namespace Interface {
     class Popup {
-        enum State {
-            POP = 1,
-            FADE = 2,
-            END = 3
-        };
         public:
-            Popup(std::shared_ptr<ISprite> sprite, std::string text);
+            enum State {
+                POP = 1000,
+                FADE = 2500,
+                END = 3000
+            };
+        public:
+            Popup(std::shared_ptr<ISprite> sprite, double original_x, std::string text = "An egg has been cracked, time to eat!");
             ~Popup() = default;
 
             void setPos(const Math::Vector &pos) { _pos = pos; }
 
             Math::Vector getPos() const { return _pos; }
-            unsigned getState() const { return _state; }
+            State getState() const { return _state; }
 
             /**
              * @brief updateState is used to update the state of the popup (POP, FADE, END)
@@ -45,7 +46,7 @@ namespace Interface {
              * @param mousePos  mouse position
              * @param mousePressed  is the mouse pressed
              */
-            void updateState(const Math::Vector &mousePos, const bool &mousePressed = false);
+            void updatePopup(const Math::Vector &mousePos, const bool &mousePressed);
 
             template<typename T>
             void drawPopup(T &window) {
@@ -60,6 +61,7 @@ namespace Interface {
             std::shared_ptr<ISprite> _sprite;
             Sf_text::Text_s _sfText;
             State _state = POP;
+            double originalX;
     };
 }
 

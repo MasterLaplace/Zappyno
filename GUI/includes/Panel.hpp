@@ -102,8 +102,6 @@ namespace Interface {
                 if (_text_case)
                     for (auto &text : *_text_case)
                         text.drawText<Win>(win);
-                if (_chat)
-                    _chat->drawChat<Win>(win);
             }
             void updatePanel(const Math::Vector &mousePos, const bool &mousePressed = false);
             void updatePanel(const Math::Vector &mousePos, int key, const bool &mousePressed = false);

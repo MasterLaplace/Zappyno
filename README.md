@@ -77,6 +77,11 @@ $ make clean
 | <kbd>`...`</kbd> | ... |
 | <kbd>`ESC`</kbd> | Quit |
 | <kbd>`F1`</kbd>  | Pause Music |
+| <kbd>`UP`</kbd>/<kbd>`Z`</kbd>  | Move up |
+| <kbd>`RIGHT`</kbd>/<kbd>`D`</kbd> | Move right |
+| <kbd>`DOWN`</kbd>/<kbd>`S`</kbd> | Move down |
+| <kbd>`LEFT`</kbd>/<kbd>`Q`</kbd> | Move left |
+| <kbd>`Scroll`</kbd> | Zoom |
 
 
 <div id='tree'>

@@ -11,12 +11,12 @@ void exit_malloc(void)
 {
     printf("Error: malloc failed\n");
     printf("%s\n", HELP);
-    exit(84);
+    exit(EXIT_ERROR);
 }
 
 void exit_timer(void)
 {
     printf("Error: timer failed\n");
     printf("%s\n", HELP);
-    exit(84);
+    exit(EXIT_ERROR);
 }

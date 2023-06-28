@@ -9,6 +9,6 @@
 
 void recv_right(t_server *server, UNUSED char **message, int id)
 {
-    printf("Recv right\n");
+    printf("[ai@recv] right\n");
     send_right(server, id);
 }

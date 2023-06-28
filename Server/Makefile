@@ -16,7 +16,7 @@ SRC_TEST    += $(shell find $(SRC_DIR) -name '*.c')
 
 OBJ          = $(SRC:.c=.o)
 INCLUDE      = -iquote ./include/
-C_FLAGS    = -Wall -Wextra -std=c99 -Wpedantic -lm
+C_FLAGS      = -Wall -Wextra -lm # -Wpedantic
 FAST_FLAGS   = -g3 -ggdb
 TEST_FLAGS   = -lcriterion --coverage
 
@@ -28,7 +28,7 @@ $(NAME): $(OBJ)
 	@make -s CLEAN_BUILD_FILES
 	@make -s COMPLETE_TEXT
 
-%.o: %.cpp
+%.o: %.c
 	$(eval counter=$(shell echo $$(($(counter)+1))))
 	$(eval percentage=$(shell echo $$((($(counter) * 100) /\
 	$(TOTAL_FILES)))))

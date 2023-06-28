@@ -14,11 +14,18 @@
 namespace Interface {
     class Chat {
         public:
-            Chat(const std::string &font) { _font = Sf_text::createFont(font); }
-            Chat(const Chat &other) = default;
+            Chat(const std::string &font) {
+                _font = Sf_text::createFont(font);
+                _chat.emplace_back(Sf_text::Text_s("Welcome to the server !", sf::Vector2f(0, 0), _font, sf::Color::Red, 20));
+            }
+            Chat(const Chat &other) {
+                _chat = other._chat;
+                _pos = other._pos;
+                _font = other._font;
+            }
             ~Chat() = default;
 
-            void addMessage(const std::string &message, const sf::Color &color = sf::Color::White);
+            void addMessage(const std::string &message, const sf::Color &color = sf::Color::Black);
 
             void setPos(const Math::Vector &pos) { _pos = pos; }
             void setLimit(unsigned limit) { this->limit = limit; }

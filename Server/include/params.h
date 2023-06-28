@@ -7,8 +7,9 @@
 
 #ifndef PARAMS_H
     #define PARAMS_H
+    #define EXIT_ERROR 84
 
-    //Include all the libraries you need here
+    //Include all the libraries needed here
     #include <stdio.h>
     #include <stdlib.h>
     #include <unistd.h>

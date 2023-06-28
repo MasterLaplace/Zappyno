@@ -35,9 +35,14 @@
         <Image name="mute_img_button" path="GUI/assets/mute_check_box.png" offset="80, 80" max="1"/>
         <Image name="full_screen_img_button" path="GUI/assets/full_screen_check_box.png" offset="80, 80" max="1"/>
     </Images>
+    <Objs>
+        <Obj name="teapot" path="teapot.obj"/>
+        <Obj name="spaceship" path="SpaceShip.obj"/>
+        <Obj name="planet" path="planet.obj" />
+    </Objs>
     <Buttons>
         <!-- CALLBACK: -->
-        <!-- "NONE", "goto_create", "goto_game", "goto_setting", "goto_credit", "goto_result", "goto_menu", "resize", "mute_sound", "exit" -->
+        <!-- "NONE", "goto_create", "goto_game", "goto_setting", "goto_credit", "goto_result", "goto_menu", "resize", "mute_sound", "vr", "exit" -->
         <Button name="create_game_button" img="create_game_img_button" pos="710, 401" scale="1, 1" callback="goto_game"/>
         <Button name="settings_button" img="settings_img_button" pos="710, 518" scale="1, 1" callback="goto_setting"/>
         <Button name="credits_button" img="credits_img_button" pos="710, 634" scale="1, 1" callback="goto_credit"/>
@@ -45,6 +50,8 @@
         <Button name="back_button" img="back_img_button" pos="27, 920" scale="1, 1" callback="goto_menu"/>
         <Button name="user_button" img="user_img_button" pos="410, 950" scale="1, 1" callback="open_inventory_user"/>
         <Button name="case_button" img="case_img_button" pos="1010, 950" scale="1, 1" callback="open_inventory_case"/>
+        <!-- <Button name="user_button" img="user_img_button" pos="410, 950" scale="1, 1" callback="open_inventory_user"/>
+        <Button name="case_button" img="case_img_button" pos="1010, 950" scale="1, 1" callback="open_inventory_case"/> -->
         <Button name="home_button" img="home_img_button" pos="710, 500" scale="1, 1" callback="goto_menu"/>
         <Button name="settings_pause_button" img="settings_img_button" pos="710, 606" scale="1, 1" callback="goto_setting_pause"/>
         <Button name="exit_pause_button" img="exit_img_button" pos="710, 712" scale="1, 1" callback="exit"/>
@@ -61,7 +68,7 @@
         <Input name="ip" img="table_panel" pos="0, 0" limit="20" font="open_sans_bold_italic" fsize="24" color="white"/>
     </Inputs>
     <Chats>
-        <Chat name="chat" pos="800, 700" limit="20" font="open_sans_bold_italic"/>
+        <Chat name="chat" pos="1605, 565" limit="20" font="open_sans_bold_italic"/>
     </Chats>
     <Bars>
         <Bar name="healh" img="health_bar" pos="710, 745" scale="1, 1" vertical="true"/>
@@ -89,14 +96,34 @@
         <Text name="3_ranking" pos="732, 141" font="open_sans_bold_italic" color="bronze"/>
         <Text name="4_ranking" pos="732, 185" font="open_sans_bold_italic" color="black"/>
         <Text name="5_ranking" pos="732, 229" font="open_sans_bold_italic" color="black"/>
+        <!-- credit -->
+        <Text name="mathis" pos="820, 401" str="Mathis LE BONNIEC" font="open_sans_bold_italic" color="gold"/>
+        <Text name="mathieu" pos="820, 445" str="Mathieu Couronne" font="open_sans_bold_italic" color="white"/>
+        <Text name="mathys" pos="820, 489" str="Mathys T" font="open_sans_bold_italic" color="gold"/>
+        <Text name="tristan" pos="820, 533" str="Tristanepitech" font="open_sans_bold_italic" color="white"/>
+        <Text name="master" pos="820, 577" str="Master Laplace" font="open_sans_bold_italic" color="gold"/>
+        <Text name="raphy" pos="820, 621" str="Raphael LECOQ" font="open_sans_bold_italic" color="white"/>
     </Texts>
+    <Effects>
+        <Effect name="perlin"/>
+        <Effect name="move_perlin"/>
+        <Effect name="water"/>
+    </Effects>
+    <Meshes>
+        <!-- (plan == create plan of its size && effect) || obj -->
+        <Mesh name="perlin_menu" pos="-5, -5, 0" rot="1.047, 0, 0" scale="0.25, 0.25, 0.25" plan="50, 50" effect="move_perlin"/>
+        <Mesh name="teapot_create" pos="0, 0, 0" rot="0, 0, 0" scale="0.1, 0.1, 1" obj="planet" effect="move_perlin"/>
+    </Meshes>
+    <Cameras>
+        <Camera name="menu" pos="0, 0, 0" dir="0, 0, 0"/>
+    </Cameras>
     <Panels>
-        <!-- type: "inventory", "other" -->
+        <!-- type: "inventory_user", "inventory_case", "pause", "pause_setting", "chat", "score", "other" -->
         <Panel name="home_panel" img="home_menu" pos="426, 216" scale="1, 1" buttons="create_game_button, settings_button, credits_button, exit_button" type="other"/>
         <Panel name="settings_panel" img="settings_menu" pos="680, 370" scale="1, 1" buttons="back_button" checkboxs="mute_button, full_screen_button" type="other"/>
         <Panel name="settings_pause_panel" img="settings_pause_menu" pos="0, 0" scale="1, 1" buttons="back_pause_button" checkboxs="mute_button, full_screen_button" type="pause_setting"/>
         <Panel name="game_panel" img="" pos="0, 0" scale="1, 1" buttons="pause_button" type="other"/>
-        <Panel name="credits_panel" img="" pos="426, 216" scale="1, 1" buttons="" type="other"/>
+        <Panel name="credits_panel" texts="mathis, mathieu, mathys, tristan, master, raphy" img="home_menu" pos="426, 216" scale="1, 1" buttons="back_button" type="other"/>
         <Panel name="table_create" img="home_menu" pos="426, 216" scale="1, 1" buttons="play" type="other"/>
         <Panel name="user_inventory_panel" texts="food_user, linemate_user, deraumere_user, sibur_user, mendiane_user, phiras_user, thystame_user" img="inventory_user_img" pos="0, 0" scale="1, 1" type="inventory_user"/>
         <Panel name="case_inventory_panel" texts="food_case, linemate_case, deraumere_case, sibur_case, mendiane_case, phiras_case, thystame_case" img="inventory_case_img" pos="0, 0" scale="1, 1" type="inventory_case"/>
@@ -105,8 +132,8 @@
         <Panel name="ranking_box" texts="1_ranking, 2_ranking, 3_ranking, 4_ranking, 5_ranking" img="ranking_img" pos="698, 13" scale="1, 1" type="score"/>
     </Panels>
     <Scenes>
-        <Scene name="menu" panels="home_panel" back="space_background" meshes="" camera="" win="800, 800"/>
-        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, chat_box, ranking_box, pause_panel, settings_pause_panel" back="game"/>
+        <Scene name="menu" panels="home_panel" back="space_background" meshes="teapot_create" camera="menu" win="800, 800"/>
+        <Scene name="game" panels="game_panel, user_inventory_panel, case_inventory_panel, ranking_box, pause_panel, settings_pause_panel" back="game"/>
         <Scene name="setting" panels="settings_panel" back="space_background"/>
         <Scene name="credit" panels="credits_panel" back="space_background"/>
     </Scenes>

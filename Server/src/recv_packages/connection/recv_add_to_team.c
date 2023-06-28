@@ -7,10 +7,10 @@
 
 #include "../../../include/send_package.h"
 
-void init_inventory(int *resources)
+void init_inventory(unsigned *resources)
 {
     resources[FOOD] = 10;
-    resources[LINEMATE] = 1;
+    resources[LINEMATE] = 0;
     resources[DERAUMERE] = 0;
     resources[SIBUR] = 0;
     resources[MENDIANE] = 0;
@@ -18,7 +18,7 @@ void init_inventory(int *resources)
     resources[THYSTAME] = 0;
 }
 
-static void add_team_next(t_server *server, int i, int j, int id)
+static void add_team_next(t_server *server, unsigned i, unsigned j, int id)
 {
     CLIENT(id).orientation = TEAMS[i].players[j].orientation;
     TEAMS[i].players[j].is_an_egg = false;
@@ -28,14 +28,13 @@ static void add_team_next(t_server *server, int i, int j, int id)
     TEAMS[i].players[j].id = id;
     TEAMS[i].players[j].level = 1;
     init_inventory(TEAMS[i].players[j].resources);
-    TILES(find_tile(server, TEAMS[i].players[j].pos_x,
-                    TEAMS[i].players[j].pos_y, id)).player++;
-    printf("id = %d\n", id);
-    if (TEAMS[i].players[j].is_forked) {
+    TILES(find_tile(
+        server, TEAMS[i].players[j].pos_x, TEAMS[i].players[j].pos_y
+    )).player++;
+    if (TEAMS[i].players[j].is_forked)
         send_player_connection_for_an_egg(server, id);
-    } else {
+    else
         send_con_of_new_player(server, &TEAMS[i].players[j], id);
-    }
 }
 
 /**
@@ -44,14 +43,12 @@ static void add_team_next(t_server *server, int i, int j, int id)
  * @param message
  * @param i
  */
-static void add_to_team(t_server *server, int i, int id)
+static void add_to_team(t_server *server, unsigned i, int id)
 {
     TEAMS[i].nb_players++;
-    for (int j = 0; j < TEAMS[i].max_players; j++) {
-        if (TEAMS[i].players[j].socket_fd == 0 && id == -1) {
-            printf("id = %d\n", id);
+    for (unsigned j = 0; j < TEAMS[i].max_players; j++) {
+        if (TEAMS[i].players[j].socket_fd == 0 && id == -1)
             CLIENT(id).id = id;
-        }
         if (TEAMS[i].players[j].socket_fd == 0) {
             TEAMS[i].players[j].socket_fd = CLIENT(id).socket_fd;
             CLIENT(id).pos_x = TEAMS[i].players[j].pos_x;
@@ -74,12 +71,10 @@ static void add_to_team(t_server *server, int i, int id)
  */
 bool recv_check_to_add_to_team(t_server *server, char **message, int id)
 {
-    printf("An AI is trying to join the team : \"%s\"\n", message[0]);
-    for (int i = 0; i < server->params->num_teams; i++) {
+    printf("[ai@recv] An AI is trying to join the team : \"%s\"\n", message[0]);
+    for (unsigned i = 0; i < server->params->num_teams; i++) {
         if (strcmp(message[0], server->params->team_names[i]))
             continue;
-        printf("nb_players = %d | max_players = %d\n", TEAMS[i].nb_players,
-TEAMS[i].max_players);
         if (TEAMS[i].nb_players >= TEAMS[i].max_players)
             return send_error(server, 0, id), false;
         add_to_team(server, i, id);

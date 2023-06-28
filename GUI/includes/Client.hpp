@@ -63,7 +63,7 @@ namespace Manager {
             fd_set readfds = {0};
             timeval timeout;
             char buffer[BUFFER_SIZE] = {0};
-            unsigned _framerate = 60;
+            unsigned _framerate = 30;
     };
 } // namespace Manager
 

@@ -13,7 +13,7 @@ char *make_lvl_message(t_server *server, int id)
     int lvl = TEAMS[pos.i].players[pos.j].level;
     char *message = calloc(7 + my_nblen(lvl) + my_nblen(id), sizeof(char));
     if (!message)
-        return NULL;
+        return (NULL);
     sprintf(message, "plv %d %d\n", id, lvl);
     return message;
 }

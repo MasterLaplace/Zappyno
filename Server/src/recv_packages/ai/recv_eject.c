@@ -9,6 +9,6 @@
 
 void recv_eject(t_server *server, UNUSED char **message, int id)
 {
-    printf("Recv eject\n");
+    printf("[ai@recv] eject\n");
     send_eject(server, id);
 }

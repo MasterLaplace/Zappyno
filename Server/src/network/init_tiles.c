@@ -29,55 +29,41 @@ static unsigned calculate_density(t_params *params, unsigned type)
     }
 }
 
-static void add_resource(t_server *server, unsigned i, unsigned tile_index,
-int *max_resources)
+static void add_resource_random_tile(t_server *server, unsigned *max_resources)
 {
     unsigned total_tiles = server->params->width * server->params->height;
 
     for (unsigned j = 0; j < 7; j++) {
         if (max_resources[j] <= 0)
             continue;
-        unsigned max_rsc_on_tile = max_resources[j] / (total_tiles - i) + 1;
-        unsigned resource_to_add = rand() % max_rsc_on_tile;
-        if (resource_to_add > max_resources[j])
-            resource_to_add = max_resources[j];
+        unsigned tile_index = rand() % total_tiles;
         if (j < TOTAL_RESOURCES)
-            TILES(tile_index).resources[j] += resource_to_add;
-        max_resources[j] -= resource_to_add;
+            TILES(tile_index).resources[j] += 1;
+        max_resources[j] -= 1;
     }
 }
 
-static void fill_tiles(t_server *server, int *permutation, int *max_resources)
+static void fill_tiles_random(t_server *server, unsigned *max_resources)
 {
-    unsigned total_tiles = server->params->width * server->params->height;
+    bool resources_remaining = true;
 
-    for (unsigned i = 0; i < total_tiles; i++) {
-        unsigned tile_index = permutation[i];
-        add_resource(server, i, tile_index, max_resources);
-    }
-    if (permutation != NULL)
-        free(permutation);
+    do {
+        add_resource_random_tile(server, max_resources);
+        resources_remaining = false;
+        for (unsigned i = 0; i < 7; i++) {
+            if (max_resources[i] > 0) {
+                resources_remaining = true;
+                break;
+            }
+        }
+    } while (resources_remaining);
 }
 
-bool generate_food(t_server *server)
+void generate_food(t_server *server)
 {
-    unsigned total_tiles = server->params->width * server->params->height;
     unsigned max_resources[7];
-    unsigned* permutation = (unsigned*)malloc(total_tiles * sizeof(unsigned));
-    if (permutation == NULL)
-        return false;
-    for (unsigned i = 0; i < 7; i++) {
+
+    for (unsigned i = 0; i < 7; i++)
         max_resources[i] = calculate_density(server->params, i);
-    }
-    for (unsigned i = 0; i < total_tiles; i++) {
-        permutation[i] = i;
-    }
-    for (unsigned i = total_tiles - 1; i > 0; i--) {
-        unsigned j = rand() % (i + 1);
-        unsigned tmp = permutation[i];
-        permutation[i] = permutation[j];
-        permutation[j] = tmp;
-    }
-    fill_tiles(server, permutation, max_resources);
-    return true;
+    fill_tiles_random(server, max_resources);
 }
