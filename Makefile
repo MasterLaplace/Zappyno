@@ -39,7 +39,7 @@ fclean_Server:
 	@$(MAKE) fclean -C ./Server $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► FCLEAN SERVER 🧻 !\n"$(DEFAULT)
 
-gui: # fclean_GUI
+gui: fclean_GUI
 	@./GUI/Script/norm_checker.py
 	@$(MAKE) all -C ./GUI $(NO_PRINT)
 	@echo $(BOLD) $(GREEN)"► GUI ⛽ !\n"$(DEFAULT)
