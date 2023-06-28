@@ -51,7 +51,7 @@ static void handle_n(char **argv, int optind, int argc, t_params *params)
 
 static void check_operator(int argc, char *argv[], t_params *params, int opt)
 {
-    for (int i = 0; opts[i].opt; i++) {
+    for (unsigned i = 0; opts[i].opt; i++) {
         if (opt == 'n') {
             handle_n(argv, optind, argc, params);
             break;
@@ -73,7 +73,6 @@ void parse_args(int argc, char *argv[], t_params *params)
 {
     int opt;
 
-    while ((opt = getopt(argc, argv, "p:x:y:c:f:n:")) != -1) {
+    while ((opt = getopt(argc, argv, "p:x:y:c:f:n:")) != -1)
         check_operator(argc, argv, params, opt);
-    }
 }

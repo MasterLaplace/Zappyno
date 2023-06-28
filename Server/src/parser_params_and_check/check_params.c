@@ -33,7 +33,7 @@ void check_params(t_params *params)
     if (params->width == 0 || params->height == 0 ||
         params->clientsNb == 0 || params->freq == 0 || params->num_teams == 0)
         check = true;
-    if (params->port < 1024 || params->port > 65535)
+    if (params->port < 1024)
         check = true;
     if (params->width < 10 || params->width > 30)
         check = true;
@@ -43,6 +43,6 @@ void check_params(t_params *params)
         check = true;
     if (check == true) {
         printf("Error: invalid parameters\n");
-        exit(84);
+        exit(EXIT_ERROR);
     }
 }

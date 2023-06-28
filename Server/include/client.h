@@ -50,7 +50,6 @@ typedef struct s_client {
     bool is_an_egg;
     bool is_forked;
     bool dead;
-    // TODO: add more client-specific data (player info, team info, etc.)
 } t_client;
 
 void client_init(t_client *client, int socket_fd);

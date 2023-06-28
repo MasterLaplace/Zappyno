@@ -29,7 +29,7 @@ static unsigned calculate_density(t_params *params, unsigned type)
     }
 }
 
-static void add_resource_random_tile(t_server *server, int *max_resources)
+static void add_resource_random_tile(t_server *server, unsigned *max_resources)
 {
     unsigned total_tiles = server->params->width * server->params->height;
 
@@ -43,9 +43,10 @@ static void add_resource_random_tile(t_server *server, int *max_resources)
     }
 }
 
-static void fill_tiles_random(t_server *server, int *max_resources)
+static void fill_tiles_random(t_server *server, unsigned *max_resources)
 {
     bool resources_remaining = true;
+
     do {
         add_resource_random_tile(server, max_resources);
         resources_remaining = false;
@@ -58,12 +59,11 @@ static void fill_tiles_random(t_server *server, int *max_resources)
     } while (resources_remaining);
 }
 
-bool generate_food(t_server *server)
+void generate_food(t_server *server)
 {
     unsigned max_resources[7];
-    for (unsigned i = 0; i < 7; i++) {
+
+    for (unsigned i = 0; i < 7; i++)
         max_resources[i] = calculate_density(server->params, i);
-    }
     fill_tiles_random(server, max_resources);
-    return true;
 }

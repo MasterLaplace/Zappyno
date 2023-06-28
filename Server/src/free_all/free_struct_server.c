@@ -54,12 +54,12 @@ void free_server(t_server **server)
         return;
     if (!serv->clients)
         return;
-    for (int i = 0; i < SOMAXCONN; i++) {
+    for (unsigned i = 0; i < SOMAXCONN; i++) {
         if (serv->clients[i].buffer)
             free(serv->clients[i].buffer);
+        if (serv->clients[i].params_function)
+            free_double_array(&serv->clients[i].params_function);
     }
-    for (int i = 0; serv->clients[i].params_function; i++)
-        free_double_array(&serv->clients[i].params_function);
     if (serv->params)
         free_params(serv->params);
     free_game(&serv->game);

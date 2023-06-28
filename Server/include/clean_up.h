@@ -4,6 +4,7 @@
 ** File description:
 ** clean_up.h
 */
+
 #ifndef CLEAN_UP_H
     #define CLEAN_UP_H
     #include <stdlib.h>
@@ -24,4 +25,5 @@
     //CLEANUP_FUNC(array_free, char **, free_array);
 
     CLEANUP_FUNC(free_stack, void *, free);
+
 #endif /* !CLEAN_UP_H */

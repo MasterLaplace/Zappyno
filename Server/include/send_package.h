@@ -22,31 +22,31 @@ typedef struct tmp_s {
 } tmp_t;
 
 // CONNECTION DIRECTORY
-//------------------ \\
+//------------------
 // Send to all the clients gui joined the clients
 void send_join_gui_to_all(t_server *server);
 // Send to the client gui joined the clients
 void send_join_gui(t_server *server, int id);
 
-//------------------ \\
+//------------------
 // Send to all the Ai she joined the clients
 void send_join_ai(t_server *server, int id);
 // Send to all the clients the AI joined the clients
 void send_join_ai_to_all(t_server *server);
 
-//------------------ \\
+//------------------
 // Send to all the clients if the team exists or not
 void send_team_not_exists_to_all(t_client *clients);
 // Send to the client if the team exists or not
 void send_team_not_exists(t_client *client);
 
-//------------------ \\
+//------------------
 // Send to all the client team is full
 void send_team_is_full_to_all(t_client *clients);
 // Send to the client team is full
 void send_team_is_full(t_client *client);
 
-//------------------ \\
+//------------------
 // Send to the client join is impossible
 void send_error(t_server *server, int id_error, int id);
 // CONNECTION DIRECTORY
@@ -54,7 +54,7 @@ void send_error(t_server *server, int id_error, int id);
 
 
 //SEND DIRECTORY AI
-//------------------ \\
+//------------------
 
 void send_look(t_server *server, int id);
 void send_look_to_all(t_server *server, int id);
@@ -89,7 +89,7 @@ void send_eject(t_server *server, int id);
 void send_incantation(t_server *server, int id);
 
 //SEND DIRECTORY GUI
-//------------------ \\
+//------------------
 // Send to all clients all teams names
 void send_name_of_all_the_teams(t_server *server, char** array, int id);
 void send_name_of_all_the_teams_to_all(t_server *server, char** array);

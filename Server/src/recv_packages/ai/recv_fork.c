@@ -9,6 +9,6 @@
 
 void recv_fork(t_server *server, UNUSED char **message, int id)
 {
-    printf("Recv fork\n");
+    printf("[ai@recv] fork\n");
     send_fork(server, id);
 }

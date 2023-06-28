@@ -7,12 +7,12 @@
 
 #include "../../../include/send_package.h"
 
-size_t count_inv_size(int *resources, int x, int y, int id)
+size_t count_inv_size(unsigned *resources, int x, int y, int id)
 {
     size_t count = 0;
 
-    for (int i = 0; i != 7; i++)
-        count += my_nblen(resources[i]);
+    for (unsigned i = 0; i != 7; i++)
+        count += my_nblen((int)resources[i]);
     return count + my_nblen(x) + my_nblen(y) + my_nblen(id);
 }
 
@@ -22,17 +22,18 @@ char *make_inv_message(t_server *server, int id)
     int data = 0;
     int x = server->game.teams[pos.i].players[pos.j].pos_x;
     int y = server->game.teams[pos.i].players[pos.j].pos_y;
-    char *message = calloc(16 + count_inv_size(server->clients[id].resources,
-    x, y, id), sizeof(char));
+    char *message = calloc(
+        16 + count_inv_size(server->clients[id].resources, x, y, id),
+        sizeof(char)
+    );
     char *tmp = NULL;
     if (!message)
-        return NULL;
+        return (NULL);
     sprintf(message, "pin %d %d %d ", id, x, y);
     for (size_t i = 0; i < 7; i++) {
         data = server->game.teams[pos.i].players[pos.j].resources[i];
-        tmp = itoa(data);
-        if (!tmp)
-            return NULL;
+        if (!(tmp = itoa(data)))
+            return (NULL);
         strncat(message, tmp, strlen(message) + my_nblen(data));
         strncat(message, " ", strlen(message) + 1);
     }

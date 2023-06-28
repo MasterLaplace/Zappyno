@@ -28,13 +28,12 @@ ai_command ia_client[] = {
     {NULL, NULL, 0.0}
 };
 
-static void check_command_ai_next(t_server *server, char **message, int i,
+static void check_command_ai_next(t_server *server, char **message, unsigned i,
 int id)
 {
     CLIENT(id).function = NULL;
     CLIENT(id).function = ia_client[i].function_ai;
     CLIENT(id).timer.duration = ia_client[i].time / server->params->freq;
-    printf("Timer duration: %f\n", CLIENT(id).timer.duration);
     if (CLIENT(id).params_function != NULL)
         free_double_array(&CLIENT(id).params_function);
     CLIENT(id).params_function = copy_array(message);
@@ -44,16 +43,15 @@ int id)
 
 static void check_command_ai(t_server *server, char **message, int id)
 {
-    for (int i = 0; ia_client[i].command_id; i++) {
+    for (unsigned i = 0; ia_client[i].command_id; i++) {
         if (!strncmp(ia_client[i].command_id, message[0],
-strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed &&
-ia_client[i].time == -1.0) {
+                strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed &&
+                ia_client[i].time == -1.0) {
             ia_client[i].function_ai(server, message, id);
             return;
         }
         if (!strncmp(ia_client[i].command_id, message[0],
-strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed) {
-            printf("AI command: %s | %s\n", ia_client[i].command_id, message[0]);
+                strlen(ia_client[i].command_id)) && !CLIENT(id).is_freezed) {
             check_command_ai_next(server, message, i, id);
             return;
         }
@@ -64,17 +62,18 @@ static void receive_from_client_next(t_server *server, char *message,
 int current_buf_len, int id)
 {
     server->clients[id].buffer = realloc(
-server->clients[id].buffer,current_buf_len + strlen(message) + 1);
+        server->clients[id].buffer,current_buf_len + strlen(message) + 1
+    );
     if (!server->clients[id].buffer)
         return;
-    ON_CLEANUP(free_double_array) char **mes = stwa(strcat(
-server->clients[id].buffer, message), " \n\t");
+    ON_CLEANUP(free_double_array) char **mes = stwa(
+        strcat(server->clients[id].buffer, message), " \n\t"
+    );
     if (!mes)
         return;
-    printf("mes[0] = %s\n", mes[0]);
-    if (!CLIENT(id).is_connected) {
+    if (!CLIENT(id).is_connected)
         join_client(server, mes, id);
-    } else {
+    else {
         if (!CLIENT(id).is_gui)
             check_command_ai(server, mes, id);
         else
@@ -83,8 +82,6 @@ server->clients[id].buffer, message), " \n\t");
     if (server->clients[id].buffer != NULL) {
         free(server->clients[id].buffer);
         server->clients[id].buffer = calloc(1, 1);
-        if (!server->clients[id].buffer)
-            return;
     }
 }
 
@@ -92,39 +89,38 @@ void receive_from_client(t_server *server, char *message, int id)
 {
     size_t current_buf_len = 0;
     size_t mes_len = strlen(message);
+
     if (server->clients[id].buffer != NULL)
         current_buf_len = strlen(server->clients[id].buffer);
     if (!strstr(message, "\n")) {
         server->clients[id].buffer = realloc(
-server->clients[id].buffer,current_buf_len + mes_len + 1);
+            server->clients[id].buffer, current_buf_len + mes_len + 1
+        );
         if (!server->clients[id].buffer)
             return;
         strcat(server->clients[id].buffer, message);
-    } else {
+    } else
         receive_from_client_next(server, message, current_buf_len, id);
-    }
 }
 
 /**
  * Handle the data received from a client
  * @param server
  * @param fd
+ * @param id
  */
 void handle_client_data(t_server *server, int fd, int id)
 {
-    char message[2];
+    char message[2] = {0};
     int valread;
+
     if ((valread = read(fd, message, 2)))
         message[valread] = '\0';
     if (valread == -1) {
-        if (errno == ECONNRESET) {
+        if (errno == ECONNRESET)
             return remove_client(server, id);
-        } else {
-            perror("recv");
-            return;
-        }
-    } else {
+        else
+            return perror("recv");
+    } else if (message[0] != '\0')
         receive_from_client(server, message, id);
-    }
-    return;
 }

@@ -11,7 +11,6 @@
 
 void return_for_exit(UNUSED int sig)
 {
-    printf("Server is closing...\n");
     exit(EXIT_SUCCESS);
 }
 
@@ -27,7 +26,6 @@ void clean(void)
 {
     printf("Server is closing...\n");
     t_server *ptr = (t_server *)get_environment_variable("SERVER_PTR");
-    printf("addr : %p\n", ptr);
     free_server(&ptr);
     if (ptr)
         free(ptr);

@@ -25,4 +25,5 @@ HELP[] = "USAGE: ./zappy_server -p port -x width -y height"
 int main(int ac, char **av);
 void exit_malloc(void);
 void exit_timer(void);
+
 #endif /* !MAIN_H */

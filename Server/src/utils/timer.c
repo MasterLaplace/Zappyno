@@ -25,9 +25,8 @@ bool has_timer_expired(t_client *player)
 {
     if (!player)
         return !printf("No player\n");
-    if (player->timer.duration == 0) {
+    if (player->timer.duration == 0)
         return false;
-    }
     double wait_time = (clock() - player->timer.start) / CLOCKS_PER_SEC;
     if (wait_time >= player->timer.duration) {
         player->timer.start = clock();

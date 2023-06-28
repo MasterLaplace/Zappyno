@@ -9,6 +9,6 @@
 
 void recv_connect_nbr(t_server *server, UNUSED char **message, int id)
 {
-    printf("Recv connect_nbr\n");
+    printf("[ai@recv] connect_nbr\n");
     send_connect_nbr(server, id);
 }

@@ -13,7 +13,7 @@ static void modify_position(t_server *server, int id)
 {
     t_client *player = &TEAMS[TEAM_INDEX].players[INDEX_IN_TEAM];
     unsigned x = player->pos_x, y = player->pos_y, new_x = x, new_y = y;
-    TILES(find_tile(server, x, y, id)).player--;
+    TILES(find_tile(server, x, y)).player--;
     switch (player->orientation) {
         case North:
             new_y = (y - 1 + server->params->height) % server->params->height;
@@ -30,13 +30,11 @@ static void modify_position(t_server *server, int id)
     }
     player->pos_x = CLIENT(id).pos_x = new_x;
     player->pos_y = CLIENT(id).pos_y = new_y;
-    TILES(find_tile(server, new_x, new_y, id)).player++;
+    TILES(find_tile(server, new_x, new_y)).player++;
 }
 
 void send_forward(t_server *server, int id)
 {
     modify_position(server, id);
-    printf("Position player : %d %d\n", CLIENT(id).pos_x,
-        CLIENT(id).pos_y);
     send_to_client(server, "ok\n", id);
 }

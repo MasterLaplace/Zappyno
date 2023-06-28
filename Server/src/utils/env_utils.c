@@ -25,6 +25,6 @@ uintptr_t get_environment_variable(const char *key)
     char *env = getenv(key);
 
     if (!env)
-        return 0x0;
+        return (0x0);
     return (uintptr_t)strtoull(env, NULL, 16);
 }

@@ -9,7 +9,7 @@
 
 void recv_check_to_add_gui(t_server *server, UNUSED char **message, int id)
 {
-    printf("A gui joined the server\n");
+    printf("[gui@recv] A gui joined the server\n");
     CLIENT(id).is_connected = true;
     CLIENT(id).is_gui = true;
     send_to_gui(server, "WELCOME GUI\n", id);

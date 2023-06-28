@@ -9,8 +9,9 @@
 
 void send_time_unit(t_server *server, UNUSED char **message, UNUSED int id)
 {
-    AUTO_FREE char *time_unit = calloc(10 + my_nblen(server->params->freq),
-sizeof(char));
+    AUTO_FREE char *time_unit = calloc(
+        10 + my_nblen(server->params->freq), sizeof(char)
+    );
     sprintf(time_unit, "sgt %d\n", server->params->freq);
     send_to_all_gui(server, time_unit);
 }

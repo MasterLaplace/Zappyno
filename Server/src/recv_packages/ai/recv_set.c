@@ -11,10 +11,8 @@ void recv_set(t_server *server, char **message, int id)
 {
     if (!message)
         return;
-    printf("%s\n", message[0]);
-    if (message[1] == NULL) {
-        send_error(server, 0, id);
-        return;
-    }
+    printf("[ai@recv] %s\n", message[0]);
+    if (message[1] == NULL)
+        return send_error(server, 0, id);
     send_set_object(server, message, id);
 }
