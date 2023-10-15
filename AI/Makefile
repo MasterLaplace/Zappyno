@@ -23,10 +23,10 @@ type:
 	$(PYTHON) -m mypy src/*.py
 
 clean:
-	rm -rf __pycache__ .pytest_cache
+	@$(RM) -rf __pycache__ .pytest_cache
 
 fclean: clean
-	rm -rf $(NAME)
+	@$(RM) -rf $(NAME)
 
 re: clean all
 
